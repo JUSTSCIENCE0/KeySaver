@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KeySaver</string>
+    <string name="your_password">Ваш пароль</string>
+    <string name="enter_master_key">Введите мастер ключ</string>
+    <string name="copy_password">Скопировать пароль</string>
+    <string name="select_service">Выберите сервис</string>
+    <string name="select_image">Выберите изображение</string>
+    <string name="confirm_master_key">Подтвердить</string>
+    <string name="add_smth">Добавить новый…</string>
+    <string name="service_display_name">Отображаемое имя сервиса</string>
+    <string name="configuration">Конфигурация</string>
+    <string name="cancel">Отмена</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="delete_service">Удалить сервис</string>
+    <string name="service_url">URL сервиса</string>
+    <string name="configuration_name">Имя конфигурации</string>
+    <string name="password_length">Длина пароля</string>
+    <string name="character_set">Набор символов</string>
+    <string name="use_upper_case">Верхний регистр</string>
+    <string name="use_lower_case">Нижний регистр</string>
+    <string name="alphabet">Алфавит</string>
+    <string name="use_special_characters">Добавлять спецсимволы</string>
+    <string name="special_characters_count">Количество спецсимволов</string>
+    <string name="special_characters_set">Набор спецсимволов</string>
+    <string name="use_digits">Добавлять цифры</string>
+    <string name="digits_count">Количество цифр</string>
+    <string name="warning">Внимание!</string>
+    <string name="want_continue">Вы уверены, что хотите продолжить?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="short_master_key">Слишком короткий мастер ключ</string>
+    <string name="invalid_master_key">Мастер ключ не совпадает с введенным в первый раз</string>
+    <string name="unknown_error">Неизвестная ошибка</string>
+</resources>

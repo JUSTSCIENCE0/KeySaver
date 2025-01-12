@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">KeySaver</string>
+    <string name="your_password">Your password</string>
+    <string name="enter_master_key">Enter master key</string>
+    <string name="copy_password">Copy password</string>
+    <string name="select_service">Select service</string>
+    <string name="select_image">Choose image</string>
+    <string name="confirm_master_key">Confirm</string>
+    <string name="add_smth">Add new…</string>
+    <string name="service_display_name">Service display name</string>
+    <string name="configuration">Configuration</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="delete_service">Delete service</string>
+    <string name="service_url">Service URL</string>
+    <string name="configuration_name">Configuration name</string>
+    <string name="password_length">Password length</string>
+    <string name="character_set">Character set</string>
+    <string name="use_upper_case">Use upper case</string>
+    <string name="use_lower_case">Use lower case</string>
+    <string name="alphabet">Alphabet</string>
+    <string name="use_special_characters">Add special characters</string>
+    <string name="special_characters_count">Special characters count</string>
+    <string name="special_characters_set">Special characters set</string>
+    <string name="default_characters_set" translatable="false"><![CDATA[!@#$%^&*()_-+=/?.,<>\'\";:[]{}]]></string>
+    <string name="use_digits">Add digits</string>
+    <string name="digits_count">Digits count</string>
+    <string name="warning">Warning!</string>
+    <string name="want_continue">Are you sure you want to continue?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="short_master_key">The master key is too short</string>
+    <string name="invalid_master_key">The master key does not match the one entered initially</string>
+    <string name="unknown_error">Unknown error</string>
+</resources>
