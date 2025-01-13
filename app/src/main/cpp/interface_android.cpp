@@ -3,14 +3,15 @@
 //
 // License: MIT
 
-#include "keysaver/interface.h"
+#include "implementation.hpp"
 
-constexpr int MIN_PASSWORD_LENGTH = 8;
+KEYSAVER_API(keysaverInit, jstring configPath) {
+    auto c_config_path = j_env->GetStringUTFChars(configPath, nullptr);
+    return Keysaver::init(c_config_path);
+}
 
-KEYSAVER_API(keysaverSetMasterKey, jshortArray unicodePassword){
-    const jsize length = j_env->GetArrayLength(unicodePassword);
-    if (length < MIN_PASSWORD_LENGTH)
-        return KeysaverError::TOO_SHORT_MASTER_PASSWORD;
-
-    return KeysaverError::OK;
+KEYSAVER_API(keysaverSetMasterPassword, jstring masterPassword){
+    auto c_master_password =
+            j_env->GetStringUTFChars(masterPassword, nullptr);
+    return Keysaver::set_master_password(c_master_password);
 }

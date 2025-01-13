@@ -2,11 +2,11 @@
 <resources>
     <string name="app_name">KeySaver</string>
     <string name="your_password">Ваш пароль</string>
-    <string name="enter_master_key">Введите мастер ключ</string>
+    <string name="enter_master_password">Введите мастер пароль</string>
     <string name="copy_password">Скопировать пароль</string>
     <string name="select_service">Выберите сервис</string>
     <string name="select_image">Выберите изображение</string>
-    <string name="confirm_master_key">Подтвердить</string>
+    <string name="confirm_master_password">Подтвердить</string>
     <string name="add_smth">Добавить новый…</string>
     <string name="service_display_name">Отображаемое имя сервиса</string>
     <string name="configuration">Конфигурация</string>
@@ -29,7 +29,9 @@
     <string name="want_continue">Вы уверены, что хотите продолжить?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
-    <string name="short_master_key">Слишком короткий мастер ключ</string>
-    <string name="invalid_master_key">Мастер ключ не совпадает с введенным в первый раз</string>
-    <string name="unknown_error">Неизвестная ошибка</string>
+    <string name="short_master_password">Слишком короткий мастер пароль</string>
+    <string name="invalid_master_password">Мастер пароль не совпадает с введенным в первый раз</string>
+    <string name="unknown_error">Неожиданная внутренняя ошибка</string>
+    <string name="welcome">Добро пожаловать!</string>
+    <string name="welcome_message">Похоже вы впервые используете приложение Keysaver. Для начала работы придумайте и введите мастер пароль. На его основе будут генерироваться все новые пароли и шифроваться конфигурации. Минимальная длина мастер пароля - 8 символов. Мастер пароль будет невозможно восстановить, поэтому обязательно хорошо запомните его!</string>
 </resources>

@@ -13,10 +13,27 @@
 #error "Unsupported OS"
 #endif
 
-enum KeysaverError {
-    OK = 0,
-    TOO_SHORT_MASTER_PASSWORD = -1,
-    INVALID_MASTER_PASSWORD = -2
+enum KeysaverStatus {
+    // SUCCESS
+    S_OK = 0,
+
+    // Messages
+    M_CONFIG_NOT_FOUND = 1,
+
+    // Errors
+    E_NOT_IMPLEMENTED = -1,
+    E_NOT_INITIALIZED = -2,
+    E_TOO_SHORT_MASTER_PASSWORD = -3,
+    E_INVALID_MASTER_PASSWORD = -4,
 };
 
-//KEYSAVER_API_EX(keysaverSetMasterKey, jshortArray unicodePassword);
+static inline bool is_keysaver_error(KeysaverStatus code) {
+    return code < 0;
+}
+
+static inline bool is_keysaver_success(KeysaverStatus code) {
+    return code == 0;
+}
+
+KEYSAVER_API(keysaverInit, jstring configPath);
+KEYSAVER_API(keysaverSetMasterPassword, jstring masterPassword);

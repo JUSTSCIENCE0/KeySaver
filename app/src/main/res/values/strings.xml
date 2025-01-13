@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">KeySaver</string>
     <string name="your_password">Your password</string>
-    <string name="enter_master_key">Enter master key</string>
+    <string name="enter_master_password">Enter master password</string>
     <string name="copy_password">Copy password</string>
     <string name="select_service">Select service</string>
     <string name="select_image">Choose image</string>
-    <string name="confirm_master_key">Confirm</string>
+    <string name="confirm_master_password">Confirm</string>
     <string name="add_smth">Add new…</string>
     <string name="service_display_name">Service display name</string>
     <string name="configuration">Configuration</string>
@@ -29,7 +29,9 @@
     <string name="want_continue">Are you sure you want to continue?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="short_master_key">The master key is too short</string>
-    <string name="invalid_master_key">The master key does not match the one entered initially</string>
-    <string name="unknown_error">Unknown error</string>
+    <string name="short_master_password">The master password is too short</string>
+    <string name="invalid_master_password">The master password does not match the one entered initially</string>
+    <string name="unknown_error">Unexpected internal error</string>
+    <string name="welcome">Welcome!</string>
+    <string name="welcome_message">It seems you are using the Keysaver application for the first time. To get started, create and enter a master password. All new passwords will be generated based on it, and configurations will be encrypted. The minimum length of the master password is 8 characters. The master password cannot be recovered, so make sure to remember it well!</string>
 </resources>

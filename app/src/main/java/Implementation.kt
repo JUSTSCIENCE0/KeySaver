@@ -8,36 +8,68 @@ import android.widget.ArrayAdapter
 import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import kotlin.reflect.KClass
 
-enum class KeysaverError(val code: Int) {
-    OK(0),
+enum class KeysaverStatus(val code: Int) {
+    // Success
+    S_OK(0),
 
-    TOO_SHORT_MASTER_PASSWORD(-1),
-    INVALID_MASTER_PASSWORD(-2),
+    // Messages
+    M_CONFIG_NOT_FOUND(1),
+
+    // Errors
+    E_NOT_IMPLEMENTED(-1),
+    E_NOT_INITIALIZED(-2),
+    TOO_SHORT_MASTER_PASSWORD(-3),
+    INVALID_MASTER_PASSWORD(-4),
 
     UNKNOWN(Int.MAX_VALUE);
 
     companion object {
-        fun fromCode(code: Int): KeysaverError {
+        fun fromCode(code: Int): KeysaverStatus {
             return entries.find { it.code == code } ?: UNKNOWN
         }
     }
 
     fun getDescription(context: Context): String {
         return when (this) {
-            OK -> "ok"
-            TOO_SHORT_MASTER_PASSWORD -> context.getString(R.string.short_master_key)
-            INVALID_MASTER_PASSWORD -> context.getString(R.string.invalid_master_key)
+            S_OK -> "ok"
+            TOO_SHORT_MASTER_PASSWORD -> context.getString(R.string.short_master_password)
+            INVALID_MASTER_PASSWORD -> context.getString(R.string.invalid_master_password)
             else -> context.getString(R.string.unknown_error)
         }
+    }
+
+    fun isSuccess() : Boolean {
+        return when (this) {
+            S_OK -> true
+            else -> false
+        }
+    }
+
+    fun isError() : Boolean {
+        return code < 0
     }
 }
 
 class Implementation private constructor() {
-    private external fun keysaverSetMasterKey(unicodePassword: ShortArray): Int
+    private external fun keysaverInit(configPath: String) : Int
+    private external fun keysaverSetMasterPassword(masterPassword: String): Int
 
     companion object {
+        private fun showWelcomeMessage(context: Context) {
+            val dialog = AlertDialog.Builder(context)
+                .setTitle(context.getString(R.string.welcome))
+                .setMessage(context.getString(R.string.welcome_message))
+                .setPositiveButton("OK") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+
+            dialog.show()
+        }
+
         fun fillServicesList(context: Context, spinner: Spinner) {
             val servicesList = mutableListOf<String>()
 
@@ -110,22 +142,43 @@ class Implementation private constructor() {
             }
         }
 
-        fun setMasterPassword(context: Context, password: String) : Boolean {
-            val unicodeMP = Implementation.stringToUnicodeInt16Array(password)
+        fun init(context: Context) : Boolean {
+            val filesDirPath = context.filesDir.absolutePath
+            val result = KeysaverStatus.fromCode(impl.keysaverInit(filesDirPath))
+            if (result.isSuccess()) return true
 
-            val result = impl.keysaverSetMasterKey(unicodeMP)
-            if (0 != result) {
+            if (result.isError()) {
                 Toast.makeText(context,
-                    KeysaverError.fromCode(result).getDescription(context),
+                    result.getDescription(context),
+                    Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            if (KeysaverStatus.M_CONFIG_NOT_FOUND == result) {
+                showWelcomeMessage(context)
+                return true
+            }
+
+            Toast.makeText(
+                context,
+                context.getString(R.string.unknown_error),
+                Toast.LENGTH_SHORT
+            ).show()
+            return false
+        }
+
+        fun setMasterPassword(context: Context, password: String) : Boolean {
+            // TODO: validate master password
+
+            val result = KeysaverStatus.fromCode(impl.keysaverSetMasterPassword(password))
+            if (!result.isSuccess()) {
+                Toast.makeText(context,
+                    result.getDescription(context),
                     Toast.LENGTH_SHORT).show()
                 return false
             }
 
             return true
-        }
-
-        private fun stringToUnicodeInt16Array(input: String): ShortArray {
-            return input.map { it.code.toShort() }.toShortArray()
         }
 
         private val impl : Implementation = Implementation()

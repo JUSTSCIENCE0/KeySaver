@@ -36,7 +36,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 add_library(keysaver-core SHARED)
 
 set(IMPLEMENTATION
-    implementation.h)
+    implementation.hpp
+    implementation.cpp)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     target_sources(keysaver-core

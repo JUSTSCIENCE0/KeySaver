@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = EnterMasterKeyBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        Implementation.init(this)
     }
 
     override fun onResume() {
