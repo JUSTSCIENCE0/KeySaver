@@ -10,14 +10,7 @@
 #include <cstdint>
 
 namespace Keysaver {
-    using std::uint8_t;
-
-    static constexpr auto CONFIG_NAME = "/config.bin";
-
-    static bool m_isInited = false;
-    static bool m_isFirstUsing = false;
-
-    KeysaverStatus init(const std::string& configPath) {
+    KeysaverStatus Implementation::Init(const std::string& configPath) {
         const std::string configName = configPath + CONFIG_NAME;
 
         if (std::filesystem::exists(configName)) {
@@ -37,7 +30,7 @@ namespace Keysaver {
         }
     }
 
-    KeysaverStatus set_master_password(const std::string& masterPassword) {
+    KeysaverStatus Implementation::SetMasterPassword(const std::string& masterPassword) {
         if (!m_isInited) return KeysaverStatus::E_NOT_INITIALIZED;
 
         // TODO:
