@@ -20,7 +20,7 @@ elseif ((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES 
             # warnings options
             -Wall -Wextra -Wpedantic -Wcast-align -Wcast-qual
             -Wdisabled-optimization -Wformat=2 -Winit-self
-            -Wmissing-include-dirs -Wold-style-cast -Woverloaded-virtual
+            -Wmissing-include-dirs -Woverloaded-virtual
             -Wredundant-decls -Wshadow -Wsign-promo
             -Wstrict-overflow=5 -Wundef -Wno-unused -Wno-variadic-macros
             -Wno-parentheses -Wno-unused-parameter -fdiagnostics-show-option
@@ -40,6 +40,18 @@ set(IMPLEMENTATION
     implementation.cpp)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+    if (CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
+        set(OPENSSL_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/external/android_arm64-v8a/openssl/include)
+        set(OPENSSL_LIBRARIES ${CMAKE_SOURCE_DIR}/external/android_arm64-v8a/openssl/lib/libcrypto.a
+                              ${CMAKE_SOURCE_DIR}/external/android_arm64-v8a/openssl/lib/libssl.a)
+    elseif (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64")
+        set(OPENSSL_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/external/android_x86_64/openssl/include)
+        set(OPENSSL_LIBRARIES ${CMAKE_SOURCE_DIR}/external/android_x86_64/openssl/lib/libcrypto.a
+                              ${CMAKE_SOURCE_DIR}/external/android_x86_64/openssl/lib/libssl.a)
+    else ()
+        message(FATAL_ERROR "Unsupported CPU Architecture - ${CMAKE_SYSTEM_PROCESSOR}")
+    endif()
+
     target_sources(keysaver-core
         PUBLIC
             keysaver/interface.h
@@ -50,9 +62,15 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
             native-lib.cpp #TODO - remove it
     )
 
+    target_include_directories(keysaver-core
+        PRIVATE
+            ${OPENSSL_INCLUDE_DIR}
+    )
+
     target_link_libraries(keysaver-core
         PRIVATE
             android
+            ${OPENSSL_LIBRARIES}
     )
 endif()
 

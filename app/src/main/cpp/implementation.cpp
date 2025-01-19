@@ -5,11 +5,26 @@
 
 #include "implementation.hpp"
 
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+#include <openssl/rand.h>
+
 #include <filesystem>
 #include <vector>
 #include <cstdint>
 
 namespace Keysaver {
+    Implementation::Implementation() {
+        OpenSSL_add_all_algorithms();
+        SSL_load_error_strings();
+        RAND_poll();
+    }
+
+    Implementation::~Implementation() {
+        EVP_cleanup();
+        ERR_free_strings();
+    }
+
     KeysaverStatus Implementation::Init(const std::string& configPath) {
         const std::string configName = configPath + CONFIG_NAME;
 

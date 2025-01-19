@@ -11,12 +11,13 @@
 #include <cstdint>
 
 namespace Keysaver {
-    class Implementation {
+    class Implementation final {
     public:
         Implementation(const Implementation&) = delete;
         Implementation(Implementation&&) = delete;
         Implementation& operator=(const Implementation&) = delete;
         Implementation& operator=(Implementation&&) = delete;
+        ~Implementation();
 
         static Implementation& Get() {
             static Implementation impl;
@@ -27,7 +28,7 @@ namespace Keysaver {
         KeysaverStatus SetMasterPassword(const std::string& masterPassword);
 
     private:
-        Implementation() = default;
+        Implementation();
 
         using uint8_t = std::uint8_t;
 
