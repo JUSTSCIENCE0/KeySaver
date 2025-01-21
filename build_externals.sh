@@ -27,7 +27,7 @@ find_android_ndk() {
     PATH=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
 }
 
-download_sources() {
+download_sources_archive() {
     sources_url="$1"
     package_name="$2"
     package_archive="$externals_src"/"$package_name".tar.gz
@@ -35,6 +35,15 @@ download_sources() {
     wget -P "$externals_src" "$sources_url"
     tar -xzvf "$package_archive" -C "$externals_src"
     rm "$package_archive"
+}
+
+download_sources_git() {
+    git_url="$1"
+    git_version="$2"
+    
+    pushd "$externals_src"
+        git clone --branch "$git_version" --depth 1 --recurse-submodule "$git_url"
+    popd
 }
 
 build_openssl() {
@@ -45,6 +54,29 @@ build_openssl() {
     make
     make install_sw
     make clean
+}
+
+build_protobuf() {
+    arch="$1"
+    path="$2"
+    
+    protobuf_build_dir="$externals_src"/protobuf/build
+    mkdir "$protobuf_build_dir"
+    pushd "$protobuf_build_dir"
+        cmake -G "Unix Makefiles" \
+              -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK_ROOT"/build/cmake/android.toolchain.cmake \
+              -DCMAKE_MAKE_PROGRAM="$ANDROID_NDK_ROOT"/prebuilt/linux-x86_64/bin/make \
+              -DANDROID_ABI="$arch" \
+              -DANDROID_PLATFORM=android-24 \
+              -Dprotobuf_BUILD_TESTS=OFF \
+              -Dprotobuf_BUILD_PROTOC_BINARIES=OFF \
+              -DCMAKE_BUILD_TYPE=Release \
+              ..
+          
+        cmake --build . -- -j$(nproc)
+        cmake --install . --prefix "$path"/protobuf	
+    popd
+    rm -rf "$protobuf_build_dir"
 }
 
 if [ -z "$ndk_root_option" ]; then
@@ -67,10 +99,20 @@ mkdir "$externals_android_x86_64"
 openssl_package=openssl-3.4.0
 openssl_url=https://github.com/openssl/openssl/releases/download/"$openssl_package"/"$openssl_package".tar.gz
 openssl_dir="$externals_src"/"$openssl_package"
-download_sources "$openssl_url" "$openssl_package"
+download_sources_archive "$openssl_url" "$openssl_package"
 
 # build openssl
 pushd "$openssl_dir"
     build_openssl android-arm64 "$externals_android_arm64"
     build_openssl android-x86_64 "$externals_android_x86_64"
 popd
+
+# download protobuf
+protobuf_version=v29.3
+protobuf_url=https://github.com/protocolbuffers/protobuf.git
+download_sources_git "$protobuf_url" "$protobuf_version"
+
+# build protobuf
+build_protobuf arm64-v8a "$externals_android_arm64"
+build_protobuf x86_64    "$externals_android_x86_64"
+
