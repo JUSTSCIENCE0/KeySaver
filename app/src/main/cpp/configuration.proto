@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package Keysaver::Config;
+
+message Configuration {
+    string id_name   = 1;
+    uint32 length    = 2;
+    bool   use_upper = 3;
+    bool   use_lower = 4;
+    
+    enum AlphabetType {
+        LATIN_ENGLISH = 0;
+        CYRILLIC_RUSSIAN = 1;
+    }
+    
+    AlphabetType alphabet = 5;
+    
+    bool   use_special_chars   = 6;
+    uint32 special_chars_count = 7;
+    string special_charset     = 8;
+    bool   use_digits          = 9;
+    uint32 digits_amount       = 10;
+}
+
+message Service {
+    string url     = 1;
+    string name    = 2;
+    string conf_id = 3;
+}
+
+message ConfigurationsList {
+    repeated Configuration config = 1;
+}
+
+message ServicesList {
+    repeated Service = 1;
+}
+

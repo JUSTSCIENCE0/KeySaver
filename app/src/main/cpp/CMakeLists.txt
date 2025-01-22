@@ -44,10 +44,14 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
         set(OPENSSL_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/external/android_arm64-v8a/openssl/include)
         set(OPENSSL_LIBRARIES ${CMAKE_SOURCE_DIR}/external/android_arm64-v8a/openssl/lib/libcrypto.a
                               ${CMAKE_SOURCE_DIR}/external/android_arm64-v8a/openssl/lib/libssl.a)
+        set(PROTOBUF_LIBRARIES
+                ${CMAKE_SOURCE_DIR}/external/android_arm64-v8a/protobuf/lib/libprotobuf.a)
     elseif (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64")
         set(OPENSSL_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/external/android_x86_64/openssl/include)
         set(OPENSSL_LIBRARIES ${CMAKE_SOURCE_DIR}/external/android_x86_64/openssl/lib/libcrypto.a
                               ${CMAKE_SOURCE_DIR}/external/android_x86_64/openssl/lib/libssl.a)
+        set(PROTOBUF_LIBRARIES
+                ${CMAKE_SOURCE_DIR}/external/android_x86_64/protobuf/lib/libprotobuf.a)
     else ()
         message(FATAL_ERROR "Unsupported CPU Architecture - ${CMAKE_SYSTEM_PROCESSOR}")
     endif()
@@ -71,6 +75,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
         PRIVATE
             android
             ${OPENSSL_LIBRARIES}
+            ${PROTOBUF_LIBRARIES}
     )
 endif()
 
