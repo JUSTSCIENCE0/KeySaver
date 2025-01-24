@@ -26,18 +26,12 @@ elseif ((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES 
             -Wno-parentheses -Wno-unused-parameter -fdiagnostics-show-option
             -Werror
     )
-
-    # if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    #    add_compile_options( -Wno-gcc-compat )
-    # endif() # Clang
 endif() # GCC & Clang
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-add_library(keysaver-core SHARED)
 
 set(IMPLEMENTATION
     implementation.hpp
@@ -78,13 +72,16 @@ endif()
 set(EXTERNALS_DIR ${CMAKE_SOURCE_DIR}/external/${PLATFORM})
 
 # openssl
-set(OPENSSL_INCLUDE_DIR ${EXTERNALS_DIR}/openssl/include)
-set(OPENSSL_LIBRARIES   ${EXTERNALS_DIR}/openssl/lib/libcrypto.a
-                        ${EXTERNALS_DIR}/openssl/lib/libssl.a)
+set(OpenSSL_DIR ${EXTERNALS_DIR}/openssl/lib/cmake/OpenSSL)
+find_package(OpenSSL REQUIRED NO_MODULE)
 
 # protobuf
-set(PROTOBUF_INCLUDE_DIR ${EXTERNALS_DIR}/protobuf/include)
-set(PROTOBUF_LIBRARIES   ${EXTERNALS_DIR}/protobuf/lib)
+set(protobuf_DIR   ${EXTERNALS_DIR}/protobuf/lib/cmake/protobuf)
+set(absl_DIR       ${EXTERNALS_DIR}/protobuf/lib/cmake/absl)
+set(utf8_range_DIR ${EXTERNALS_DIR}/protobuf/lib/cmake/utf8_range)
+find_package(protobuf REQUIRED NO_MODULE)
+
+add_library(keysaver-core SHARED)
 
 target_sources(keysaver-core
     PUBLIC
@@ -93,21 +90,10 @@ target_sources(keysaver-core
         ${IMPLEMENTATION}
 )
 
-include_directories(${PROTOBUF_INCLUDE_DIR})
-
-target_include_directories(keysaver-core
-    PRIVATE
-        ${OPENSSL_INCLUDE_DIR}
-)
-
-target_link_directories(keysaver-core
-    PRIVATE
-        ${PROTOBUF_LIBRARIES}
-)
-
 target_link_libraries(keysaver-core
     PRIVATE
         android
-        protobuf
-        ${OPENSSL_LIBRARIES}
+        protobuf::libprotobuf
+        OpenSSL::SSL
+        OpenSSL::Crypto
 )
