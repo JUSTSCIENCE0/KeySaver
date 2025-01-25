@@ -33,6 +33,16 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+set(PROTOC_EXECUTABLE ${CMAKE_SOURCE_DIR}/external/linux_x86_64/protobuf/bin/protoc)
+add_custom_command(
+        OUTPUT ${CMAKE_SOURCE_DIR}/configuration.pb.cc
+               ${CMAKE_SOURCE_DIR}/configuration.pb.h
+        COMMAND ${PROTOC_EXECUTABLE}
+        ARGS --cpp_out=${CMAKE_SOURCE_DIR}
+             --proto_path=${CMAKE_SOURCE_DIR}
+             configuration.proto
+)
+
 set(IMPLEMENTATION
     implementation.hpp
     implementation.cpp
