@@ -6,6 +6,9 @@
 #pragma once
 
 #include "keysaver/interface.h"
+#include "configuration.pb.h"
+
+#include <openssl/types.h>
 
 #include <string>
 #include <cstdint>
@@ -28,13 +31,30 @@ namespace Keysaver {
         KeysaverStatus SetMasterPassword(const std::string& masterPassword);
 
     private:
-        Implementation();
-
+        // types
         using uint8_t = std::uint8_t;
+        enum class HASH_USAGE { E_ENCRYPTION, E_SALT };
 
-        static constexpr auto CONFIG_NAME = "/config.bin";
+        // methods
+        Implementation() = default;
+        KeysaverStatus CalculateHash(const std::string& masterPassword, HASH_USAGE usage);
 
+        // consts
+        static constexpr auto   CONFIG_NAME = "/config.bin";
+        static constexpr size_t MIN_PASSWORD_LEN = 8;
+        static constexpr size_t HASH_SIZE = 32;
+
+        // flags
         bool m_isInited = false;
         bool m_isFirstUsing = false;
+
+        //members
+        std::array<uint8_t, HASH_SIZE> m_encryption_hash{};
+        std::array<uint8_t, HASH_SIZE> m_salt_hash{};
+
+        //openssl
+        EVP_MD_CTX* m_ossl_ctx = nullptr;
+
+        KeysaverConfig::Config m_config{};
     };
 }

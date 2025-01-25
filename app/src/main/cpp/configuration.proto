@@ -36,3 +36,8 @@ message ServicesList {
     repeated Service services = 1;
 }
 
+message Config {
+    ConfigurationsList configurations = 1;
+    ServicesList       services       = 2;
+}
+

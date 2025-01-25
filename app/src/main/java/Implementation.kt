@@ -19,10 +19,8 @@ enum class KeysaverStatus(val code: Int) {
     M_CONFIG_NOT_FOUND(1),
 
     // Errors
-    E_NOT_IMPLEMENTED(-1),
-    E_NOT_INITIALIZED(-2),
-    TOO_SHORT_MASTER_PASSWORD(-3),
-    INVALID_MASTER_PASSWORD(-4),
+    E_INVALID_MASTER_PASSWORD(-1),
+    E_TOO_SHORT_MASTER_PASSWORD(-2),
 
     UNKNOWN(Int.MAX_VALUE);
 
@@ -35,8 +33,8 @@ enum class KeysaverStatus(val code: Int) {
     fun getDescription(context: Context): String {
         return when (this) {
             S_OK -> "ok"
-            TOO_SHORT_MASTER_PASSWORD -> context.getString(R.string.short_master_password)
-            INVALID_MASTER_PASSWORD -> context.getString(R.string.invalid_master_password)
+            E_TOO_SHORT_MASTER_PASSWORD -> context.getString(R.string.short_master_password)
+            E_INVALID_MASTER_PASSWORD -> context.getString(R.string.invalid_master_password)
             else -> context.getString(R.string.unknown_error)
         }
     }

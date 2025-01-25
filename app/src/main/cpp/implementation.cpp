@@ -5,57 +5,97 @@
 
 #include "implementation.hpp"
 
-#include <openssl/ssl.h>
-#include <openssl/err.h>
-#include <openssl/rand.h>
+#include <openssl/evp.h>
 
 #include <filesystem>
 #include <vector>
 #include <cstdint>
 
 namespace Keysaver {
-    Implementation::Implementation() {
-        OpenSSL_add_all_algorithms();
-        SSL_load_error_strings();
-        RAND_poll();
-    }
-
     Implementation::~Implementation() {
-        EVP_cleanup();
-        ERR_free_strings();
+        if (m_ossl_ctx)
+            EVP_MD_CTX_free(m_ossl_ctx);
+        m_ossl_ctx = nullptr;
     }
 
     KeysaverStatus Implementation::Init(const std::string& configPath) {
         const std::string configName = configPath + CONFIG_NAME;
+
+        m_ossl_ctx = EVP_MD_CTX_new();
+        if (!m_ossl_ctx) return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
+        m_isInited = true;
 
         if (std::filesystem::exists(configName)) {
             // TODO:
             //   open & read encrypted config
             //   check if it isn't empty or corrupted
 
-            m_isInited = true;
             return KeysaverStatus::S_OK;
         }
         else {
             // TODO: create empty unencrypted config
 
             m_isFirstUsing = true;
-            m_isInited = true;
             return KeysaverStatus::M_CONFIG_NOT_FOUND;
         }
     }
 
     KeysaverStatus Implementation::SetMasterPassword(const std::string& masterPassword) {
         if (!m_isInited) return KeysaverStatus::E_NOT_INITIALIZED;
+        if (masterPassword.length() < MIN_PASSWORD_LEN)
+            return KeysaverStatus::E_TOO_SHORT_MASTER_PASSWORD;
+
+        KeysaverStatus code = KeysaverStatus::S_OK;
+        code = CalculateHash(masterPassword, HASH_USAGE::E_ENCRYPTION);
+        if (is_keysaver_error(code)) return code;
+        code = CalculateHash(masterPassword, HASH_USAGE::E_SALT);
+        if (is_keysaver_error(code)) return code;
 
         // TODO:
-        //  calculate password hashes
         //  if not m_isFirstUsing
         //    decrypt config
         //    validate config
         //  else
         //    encrypt empty unencrypted config
         //    save encrypted config
+
+        return code;
+    }
+
+    KeysaverStatus Implementation::CalculateHash(
+            const std::string& masterPassword,
+            HASH_USAGE usage) {
+        uint8_t* hash_pntr = nullptr;
+        const EVP_MD* md   = nullptr;
+        switch (usage) {
+            case HASH_USAGE::E_ENCRYPTION:
+                hash_pntr = m_encryption_hash.data();
+                md = EVP_sha3_256();
+                break;
+            case HASH_USAGE::E_SALT:
+                hash_pntr = m_salt_hash.data();
+                md = EVP_blake2s256();
+                break;
+            default:
+                assert(!"unexpected behavior");
+                break;
+        }
+
+        if (!md) return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
+
+        if (EVP_DigestInit_ex(m_ossl_ctx, md, nullptr) != 1)
+            return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
+
+        if (EVP_DigestUpdate(
+                m_ossl_ctx,
+                masterPassword.data(),
+                masterPassword.size()) != 1)
+            return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
+
+        unsigned int hash_len = 0;
+        if (EVP_DigestFinal_ex(m_ossl_ctx, hash_pntr, &hash_len) != 1)
+            return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
+        assert(hash_len == HASH_SIZE);
 
         return KeysaverStatus::S_OK;
     }
