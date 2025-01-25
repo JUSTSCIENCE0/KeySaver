@@ -52,8 +52,12 @@ enum class KeysaverStatus(val code: Int) {
 }
 
 class Implementation private constructor() {
+    private class IntWrapper(var value: Int)
+
     private external fun keysaverInit(configPath: String) : Int
     private external fun keysaverSetMasterPassword(masterPassword: String): Int
+    private external fun keysaverGetServicesCount(servicesCount: IntWrapper): Int
+    private external fun keysaverGetServicesList(servicesList: Array<String?>): Int
 
     companion object {
         private fun showWelcomeMessage(context: Context) {
@@ -69,14 +73,32 @@ class Implementation private constructor() {
         }
 
         fun fillServicesList(context: Context, spinner: Spinner) {
-            val servicesList = mutableListOf<String>()
+            val servicesCount = IntWrapper(0)
+            var result = KeysaverStatus.fromCode(impl.keysaverGetServicesCount(servicesCount))
+            if (result.isError()) {
+                Toast.makeText(context,
+                    result.getDescription(context),
+                    Toast.LENGTH_SHORT).show()
+                servicesCount.value = 0
+            }
 
-            // TODO: fill list from db
-            servicesList.add("google.com")
-            servicesList.add("yandex.ru")
+            var servicesList = arrayOfNulls<String>(servicesCount.value + 1)
+
+            if (servicesCount.value > 0) {
+                result = KeysaverStatus.fromCode(impl.keysaverGetServicesList(servicesList))
+                if (result.isError()) {
+                    Toast.makeText(
+                        context,
+                        result.getDescription(context),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    servicesCount.value = 0
+                    servicesList = arrayOfNulls<String>(1)
+                }
+            }
 
             val addOptionText = context.getString(R.string.add_smth)
-            servicesList.add(addOptionText)
+            servicesList[servicesCount.value] = addOptionText
 
             val serviceAdapter = ArrayAdapter(
                 context,

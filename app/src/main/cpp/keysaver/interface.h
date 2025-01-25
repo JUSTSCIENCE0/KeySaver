@@ -40,3 +40,6 @@ static inline bool is_keysaver_success(KeysaverStatus code) {
 
 KEYSAVER_API(keysaverInit, jstring configPath);
 KEYSAVER_API(keysaverSetMasterPassword, jstring masterPassword);
+
+KEYSAVER_API(keysaverGetServicesCount, jobject servicesCount);
+KEYSAVER_API(keysaverGetServicesList,  jobjectArray servicesList);
