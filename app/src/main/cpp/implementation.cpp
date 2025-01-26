@@ -36,7 +36,7 @@ namespace Keysaver {
             // TODO: create empty unencrypted config
 
             m_isFirstUsing = true;
-            return KeysaverStatus::M_CONFIG_NOT_FOUND;
+            return KeysaverStatus::M_DATABASE_NOT_FOUND;
         }
     }
 
@@ -62,6 +62,24 @@ namespace Keysaver {
         return code;
     }
 
+    KeysaverStatus Implementation::AddService(const KeysaverConfig::Service& service) {
+        if (IsServiceExists(service.name()))
+            return KeysaverStatus::E_SERVICE_ALREADY_EXISTS;
+
+        if (IsServiceUrlExists(service.url()))
+            return KeysaverStatus::E_SERVICE_URL_ALREADY_EXISTS;
+
+        if (IsConfigExists(service.conf_id()))
+            return KeysaverStatus::E_CONFIG_NOT_EXISTS;
+
+        auto new_service = m_db.add_services();
+        *new_service = service;
+
+        // TODO: rewrite db
+
+        return KeysaverStatus::S_OK;
+    }
+
     KeysaverStatus Implementation::GetServicesCount(size_t* count) const {
         if (!count) return KeysaverStatus::E_INVALID_ARG;
 
@@ -72,7 +90,7 @@ namespace Keysaver {
     KeysaverStatus Implementation::GetServicesList(std::list<std::string>* serviceNames) const {
         if (!serviceNames) return KeysaverStatus::E_INVALID_ARG;
 
-        for (auto& service: m_db.services()) {
+        for (const auto& service: m_db.services()) {
             serviceNames->push_back(service.name());
         }
 
@@ -90,8 +108,8 @@ namespace Keysaver {
             std::list<std::string>* configNames) const {
         if (!configNames) return KeysaverStatus::E_INVALID_ARG;
 
-        configNames->emplace_back("Default");
-        for (auto& config: m_db.configurations()) {
+        configNames->emplace_back(DEFAULT_CONFIG_NAME);
+        for (const auto& config: m_db.configurations()) {
             configNames->push_back(config.id_name());
         }
 
@@ -134,5 +152,50 @@ namespace Keysaver {
         assert(hash_len == HASH_SIZE);
 
         return KeysaverStatus::S_OK;
+    }
+
+    KeysaverStatus Implementation::IsServiceExists(const std::string& serviceName) const {
+        const auto& services = m_db.services();
+
+        auto result = std::find_if(
+                services.begin(),
+                services.end(),
+                [&serviceName](const auto& service){
+                    return service.name() == serviceName;
+                });
+
+        return (result != services.end()) ?
+            KeysaverStatus::S_IS_FOUND :
+            KeysaverStatus::E_SERVICE_NOT_EXISTS;
+    }
+
+    KeysaverStatus Implementation::IsServiceUrlExists(const std::string& serviceUrl) const {
+        const auto& services = m_db.services();
+
+        auto result = std::find_if(
+                services.begin(),
+                services.end(),
+                [&serviceUrl](const auto& service){
+                    return service.url() == serviceUrl;
+                });
+
+        return (result != services.end()) ?
+               KeysaverStatus::S_IS_FOUND :
+               KeysaverStatus::E_SERVICE_NOT_EXISTS;
+    }
+
+    KeysaverStatus Implementation::IsConfigExists(const std::string& configName) const {
+        const auto& configs = m_db.configurations();
+
+        auto result = std::find_if(
+                configs.begin(),
+                configs.end(),
+                [&configName](const auto& config){
+                   return config.id_name() == configName;
+                });
+
+        return (result != configs.end()) ?
+               KeysaverStatus::S_IS_FOUND :
+               KeysaverStatus::E_CONFIG_NOT_EXISTS;
     }
 }

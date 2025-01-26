@@ -31,6 +31,7 @@ namespace Keysaver {
         KeysaverStatus Init(const std::string& configPath);
 
         KeysaverStatus SetMasterPassword(const std::string& masterPassword);
+        KeysaverStatus AddService(const KeysaverConfig::Service& service);
 
         KeysaverStatus GetServicesCount(size_t* count) const;
         KeysaverStatus GetServicesList(std::list<std::string>* serviceNames) const;
@@ -45,11 +46,15 @@ namespace Keysaver {
         // methods
         Implementation() = default;
         KeysaverStatus CalculateHash(const std::string& masterPassword, HASH_USAGE usage);
+        KeysaverStatus IsServiceExists(const std::string& serviceName) const;
+        KeysaverStatus IsServiceUrlExists(const std::string& serviceUrl) const;
+        KeysaverStatus IsConfigExists(const std::string& configName) const;
 
         // consts
-        static constexpr auto   CONFIG_NAME = "/config.bin";
-        static constexpr size_t MIN_PASSWORD_LEN = 8;
-        static constexpr size_t HASH_SIZE = 32;
+        static constexpr auto        CONFIG_NAME = "/config.bin";
+        static constexpr size_t      MIN_PASSWORD_LEN = 8;
+        static constexpr size_t      HASH_SIZE = 32;
+        static constexpr std::string DEFAULT_CONFIG_NAME = "Default";
 
         // flags
         bool m_isInited = false;

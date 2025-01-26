@@ -19,13 +19,51 @@ KEYSAVER_API(keysaverSetMasterPassword, jstring masterPassword){
     return ks_impl.SetMasterPassword(c_master_password);
 }
 
+KEYSAVER_API(keysaverAddService, jobject service) {
+    auto serviceClass = j_env->GetObjectClass(service);
+    auto serviceUrlField = j_env->GetFieldID(
+            serviceClass,
+            "url",
+            "Ljava/lang/String;");
+    auto serviceNameField = j_env->GetFieldID(
+            serviceClass,
+            "name",
+            "Ljava/lang/String;");
+    auto serviceConfigField = j_env->GetFieldID(
+            serviceClass,
+            "conf_id",
+            "Ljava/lang/String;");
+
+    auto j_url = static_cast<jstring>(
+            j_env->GetObjectField(service, serviceUrlField));
+    auto j_name = static_cast<jstring>(
+            j_env->GetObjectField(service, serviceNameField));
+    auto j_conf_id = static_cast<jstring>(
+            j_env->GetObjectField(service, serviceConfigField));
+    if (!j_url || !j_name || !j_conf_id)
+        return KeysaverStatus::E_INVALID_ARG;
+
+    auto c_url = j_env->GetStringUTFChars(j_url, nullptr);
+    auto c_name = j_env->GetStringUTFChars(j_name, nullptr);
+    auto c_conf_id = j_env->GetStringUTFChars(j_conf_id, nullptr);
+    if (!c_url || !c_name || !c_conf_id)
+        return KeysaverStatus::E_INVALID_ARG;
+
+    KeysaverConfig::Service servConf;
+    servConf.set_url(c_url);
+    servConf.set_name(c_name);
+    servConf.set_conf_id(c_conf_id);
+
+    return ks_impl.AddService(servConf);
+}
+
 KEYSAVER_API(keysaverGetServicesCount, jobject servicesCount) {
     size_t serv_cnt = 0;
     auto code = ks_impl.GetServicesCount(&serv_cnt);
     if (is_keysaver_error(code)) return code;
 
-    jclass wrapperClass = j_env->GetObjectClass(servicesCount);
-    jfieldID valueField = j_env->GetFieldID(wrapperClass, "value", "I");
+    auto wrapperClass = j_env->GetObjectClass(servicesCount);
+    auto valueField = j_env->GetFieldID(wrapperClass, "value", "I");
     j_env->SetIntField(
             servicesCount,
             valueField,
@@ -56,8 +94,8 @@ KEYSAVER_API(keysaverGetConfigurationsCount, jobject configurationsCount) {
     auto code = ks_impl.GetConfigurationsCount(&conf_cnt);
     if (is_keysaver_error(code)) return code;
 
-    jclass wrapperClass = j_env->GetObjectClass(configurationsCount);
-    jfieldID valueField = j_env->GetFieldID(wrapperClass, "value", "I");
+    auto wrapperClass = j_env->GetObjectClass(configurationsCount);
+    auto valueField = j_env->GetFieldID(wrapperClass, "value", "I");
     j_env->SetIntField(
         configurationsCount,
             valueField,

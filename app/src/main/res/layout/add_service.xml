@@ -27,11 +27,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
         android:text="@string/service_url"
-        app:layout_constraintBottom_toTopOf="@+id/editTextText3"
+        app:layout_constraintBottom_toTopOf="@+id/service_url_add"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
-        android:id="@+id/editTextText3"
+        android:id="@+id/service_url_add"
         style="@style/InputFieldStyle"
         android:layout_width="0dp"
         android:layout_height="45dp"
@@ -53,11 +53,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
         android:text="@string/service_display_name"
-        app:layout_constraintBottom_toTopOf="@+id/editTextText4"
+        app:layout_constraintBottom_toTopOf="@+id/service_display_name_add"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
-        android:id="@+id/editTextText4"
+        android:id="@+id/service_display_name_add"
         style="@style/InputFieldStyle"
         android:layout_width="0dp"
         android:layout_height="35dp"
@@ -80,7 +80,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/configuration"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText4" />
+        app:layout_constraintTop_toBottomOf="@+id/service_display_name_add" />
 
     <Spinner
         android:id="@+id/configuration_spinner_add"
@@ -96,7 +96,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/cancel_add"
         style="@style/ButtonStyle"
         android:layout_width="0dp"
         android:layout_height="48dp"
@@ -107,12 +107,12 @@
         android:onClick="onCancel"
         android:text="@string/cancel"
         android:textColor="@color/color_text"
-        app:layout_constraintEnd_toStartOf="@+id/button6"
+        app:layout_constraintEnd_toStartOf="@+id/confirm_add"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/configuration_spinner_add" />
 
     <Button
-        android:id="@+id/button6"
+        android:id="@+id/confirm_add"
         style="@style/ButtonStyle"
         android:layout_width="0dp"
         android:layout_height="48dp"
@@ -120,8 +120,8 @@
         android:layout_marginEnd="16dp"
         android:onClick="onConfirm"
         android:text="@string/confirm"
-        app:layout_constraintBottom_toBottomOf="@+id/button5"
+        app:layout_constraintBottom_toBottomOf="@+id/cancel_add"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button5" />
+        app:layout_constraintStart_toEndOf="@+id/cancel_add" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

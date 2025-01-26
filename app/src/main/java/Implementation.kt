@@ -16,7 +16,7 @@ enum class KeysaverStatus(val code: Int) {
     S_OK(0),
 
     // Messages
-    M_CONFIG_NOT_FOUND(1),
+    M_DATABASE_NOT_FOUND(1),
 
     // Errors
     E_INVALID_MASTER_PASSWORD(-1),
@@ -195,7 +195,7 @@ class Implementation private constructor() {
                 return false
             }
 
-            if (KeysaverStatus.M_CONFIG_NOT_FOUND == result) {
+            if (KeysaverStatus.M_DATABASE_NOT_FOUND == result) {
                 showWelcomeMessage(context)
                 return true
             }
