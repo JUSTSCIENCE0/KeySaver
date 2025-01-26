@@ -21,6 +21,9 @@ enum class KeysaverStatus(val code: Int) {
     // Errors
     E_INVALID_MASTER_PASSWORD(-1),
     E_TOO_SHORT_MASTER_PASSWORD(-2),
+    E_SERVICE_ALREADY_EXISTS(-3),
+    E_SERVICE_URL_ALREADY_EXISTS(-4),
+    E_CONFIG_ALREADY_EXISTS(-5),
 
     UNKNOWN(Int.MAX_VALUE);
 
@@ -35,6 +38,9 @@ enum class KeysaverStatus(val code: Int) {
             S_OK -> "ok"
             E_TOO_SHORT_MASTER_PASSWORD -> context.getString(R.string.short_master_password)
             E_INVALID_MASTER_PASSWORD -> context.getString(R.string.invalid_master_password)
+            E_SERVICE_ALREADY_EXISTS -> context.getString(R.string.service_already_exists)
+            E_SERVICE_URL_ALREADY_EXISTS -> context.getString(R.string.service_url_already_exists)
+            E_CONFIG_ALREADY_EXISTS -> context.getString(R.string.config_already_exists)
             else -> context.getString(R.string.unknown_error)
         }
     }
@@ -51,6 +57,11 @@ enum class KeysaverStatus(val code: Int) {
     }
 }
 
+class Service(
+    var url:     String,
+    var name:    String,
+    var conf_id: String)
+
 class Implementation private constructor() {
     private class IntWrapper(var value: Int)
 
@@ -60,6 +71,7 @@ class Implementation private constructor() {
     private external fun keysaverGetServicesList(servicesList: Array<String?>): Int
     private external fun keysaverGetConfigurationsCount(configurationsCount: IntWrapper): Int
     private external fun keysaverGetConfigurationsList(configurationsList: Array<String?>): Int
+    private external fun keysaverAddService(service: Service): Int
 
     companion object {
         private fun showWelcomeMessage(context: Context) {
@@ -212,6 +224,18 @@ class Implementation private constructor() {
             // TODO: validate master password
 
             val result = KeysaverStatus.fromCode(impl.keysaverSetMasterPassword(password))
+            if (!result.isSuccess()) {
+                Toast.makeText(context,
+                    result.getDescription(context),
+                    Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            return true
+        }
+
+        fun addService(context: Context, service: Service) : Boolean {
+            val result = KeysaverStatus.fromCode(impl.keysaverAddService(service))
             if (!result.isSuccess()) {
                 Toast.makeText(context,
                     result.getDescription(context),

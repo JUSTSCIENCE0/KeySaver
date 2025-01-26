@@ -2,6 +2,7 @@ package com.science.keysaver
 
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.Spinner
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -43,8 +44,17 @@ class AddService : AppCompatActivity() {
     }
 
     fun onConfirm(view: View?) {
-        // TODO - implementation
+        val urlEditText:  EditText = findViewById(R.id.service_url_add)
+        val nameEditText: EditText = findViewById(R.id.service_display_name_add)
+        val confSpinner:  Spinner  = findViewById(R.id.configuration_spinner_add)
 
-        finish()
+        val service = Service(
+            urlEditText.text.toString(),
+            nameEditText.text.toString(),
+            confSpinner.selectedItem.toString()
+        )
+
+        if (Implementation.addService(this, service))
+            finish()
     }
 }

@@ -63,13 +63,13 @@ namespace Keysaver {
     }
 
     KeysaverStatus Implementation::AddService(const KeysaverConfig::Service& service) {
-        if (IsServiceExists(service.name()))
+        if (IsServiceExists(service.name()) == KeysaverStatus::S_IS_FOUND)
             return KeysaverStatus::E_SERVICE_ALREADY_EXISTS;
 
-        if (IsServiceUrlExists(service.url()))
+        if (IsServiceUrlExists(service.url()) == KeysaverStatus::S_IS_FOUND)
             return KeysaverStatus::E_SERVICE_URL_ALREADY_EXISTS;
 
-        if (IsConfigExists(service.conf_id()))
+        if (IsConfigExists(service.conf_id()) == KeysaverStatus::S_IS_FOUND)
             return KeysaverStatus::E_CONFIG_NOT_EXISTS;
 
         auto new_service = m_db.add_services();

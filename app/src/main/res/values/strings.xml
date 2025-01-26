@@ -34,4 +34,7 @@
     <string name="unknown_error">Unexpected internal error</string>
     <string name="welcome">Welcome!</string>
     <string name="welcome_message">It seems you are using the Keysaver application for the first time. To get started, create and enter a master password. All new passwords will be generated based on it, and configurations will be encrypted. The minimum length of the master password is 8 characters. The master password cannot be recovered, so make sure to remember it well!</string>
+    <string name="service_already_exists">A service with this name has already been saved earlier</string>
+    <string name="service_url_already_exists">A service with this URL has already been saved earlier</string>
+    <string name="config_already_exists">A configuration with this name already exists</string>
 </resources>
