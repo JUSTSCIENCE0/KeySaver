@@ -79,6 +79,25 @@ namespace Keysaver {
         return KeysaverStatus::S_OK;
     }
 
+    KeysaverStatus Implementation::GetConfigurationsCount(size_t* count) const {
+        if (!count) return KeysaverStatus::E_INVALID_ARG;
+
+        *count = m_db.configurations_size() + 1;
+        return KeysaverStatus::S_OK;
+    }
+
+    KeysaverStatus Implementation::GetConfigurationsList(
+            std::list<std::string>* configNames) const {
+        if (!configNames) return KeysaverStatus::E_INVALID_ARG;
+
+        configNames->emplace_back("Default");
+        for (auto& config: m_db.configurations()) {
+            configNames->push_back(config.id_name());
+        }
+
+        return KeysaverStatus::S_OK;
+    }
+
     KeysaverStatus Implementation::CalculateHash(
             const std::string& masterPassword,
             HASH_USAGE usage) {

@@ -50,3 +50,35 @@ KEYSAVER_API(keysaverGetServicesList, jobjectArray servicesList) {
 
     return code;
 }
+
+KEYSAVER_API(keysaverGetConfigurationsCount, jobject configurationsCount) {
+    size_t conf_cnt = 0;
+    auto code = ks_impl.GetConfigurationsCount(&conf_cnt);
+    if (is_keysaver_error(code)) return code;
+
+    jclass wrapperClass = j_env->GetObjectClass(configurationsCount);
+    jfieldID valueField = j_env->GetFieldID(wrapperClass, "value", "I");
+    j_env->SetIntField(
+        configurationsCount,
+            valueField,
+            static_cast<int>(conf_cnt));
+
+    return code;
+}
+
+KEYSAVER_API(keysaverGetConfigurationsList, jobjectArray configurationsList) {
+    std::list<std::string> c_conf_list;
+    auto code = ks_impl.GetConfigurationsList(&c_conf_list);
+    if (is_keysaver_error(code)) return code;
+
+    jsize index = 0;
+    for (auto& config: c_conf_list) {
+        jstring str = j_env->NewStringUTF(config.c_str());
+        j_env->SetObjectArrayElement(configurationsList, index, str);
+        j_env->DeleteLocalRef(str);
+
+        index++;
+    }
+
+    return code;
+}

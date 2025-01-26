@@ -58,6 +58,8 @@ class Implementation private constructor() {
     private external fun keysaverSetMasterPassword(masterPassword: String): Int
     private external fun keysaverGetServicesCount(servicesCount: IntWrapper): Int
     private external fun keysaverGetServicesList(servicesList: Array<String?>): Int
+    private external fun keysaverGetConfigurationsCount(configurationsCount: IntWrapper): Int
+    private external fun keysaverGetConfigurationsList(configurationsList: Array<String?>): Int
 
     companion object {
         private fun showWelcomeMessage(context: Context) {
@@ -109,15 +111,34 @@ class Implementation private constructor() {
         }
 
         fun fillConfigurationsList(context: Context, spinner: Spinner) {
-            val configurationsList = mutableListOf<String>()
+            val configurationsCount = IntWrapper(0)
+            var result = KeysaverStatus.fromCode(
+                impl.keysaverGetConfigurationsCount(configurationsCount))
+            if (result.isError()) {
+                Toast.makeText(context,
+                    result.getDescription(context),
+                    Toast.LENGTH_SHORT).show()
+                configurationsCount.value = 0
+            }
 
-            // TODO: fill list from db
-            configurationsList.add("Default")
-            configurationsList.add("conf1")
-            configurationsList.add("cons2")
+            var configurationsList = arrayOfNulls<String>(configurationsCount.value + 1)
+
+            if (configurationsCount.value > 0) {
+                result = KeysaverStatus.fromCode(
+                    impl.keysaverGetConfigurationsList(configurationsList))
+                if (result.isError()) {
+                    Toast.makeText(
+                        context,
+                        result.getDescription(context),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    configurationsCount.value = 0
+                    configurationsList = arrayOfNulls<String>(1)
+                }
+            }
 
             val addOptionText = context.getString(R.string.add_smth)
-            configurationsList.add(addOptionText)
+            configurationsList[configurationsCount.value] = addOptionText
 
             val configurationAdapter = ArrayAdapter(
                 context,
