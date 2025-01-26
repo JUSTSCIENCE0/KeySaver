@@ -28,16 +28,8 @@ message Service {
     string conf_id = 3;
 }
 
-message ConfigurationsList {
-    repeated Configuration configs = 1;
-}
-
-message ServicesList {
-    repeated Service services = 1;
-}
-
-message Config {
-    ConfigurationsList configurations = 1;
-    ServicesList       services       = 2;
+message DataBase {
+    repeated Configuration configurations = 1;
+    repeated Service       services       = 2;
 }
 

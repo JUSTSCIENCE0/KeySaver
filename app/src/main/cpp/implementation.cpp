@@ -45,7 +45,7 @@ namespace Keysaver {
         if (masterPassword.length() < MIN_PASSWORD_LEN)
             return KeysaverStatus::E_TOO_SHORT_MASTER_PASSWORD;
 
-        KeysaverStatus code = KeysaverStatus::S_OK;
+        auto code = KeysaverStatus::S_OK;
         code = CalculateHash(masterPassword, HASH_USAGE::E_ENCRYPTION);
         if (is_keysaver_error(code)) return code;
         code = CalculateHash(masterPassword, HASH_USAGE::E_SALT);
@@ -60,6 +60,23 @@ namespace Keysaver {
         //    save encrypted config
 
         return code;
+    }
+
+    KeysaverStatus Implementation::GetServicesCount(size_t* count) const {
+        if (!count) return KeysaverStatus::E_INVALID_ARG;
+
+        *count = m_db.services_size();
+        return KeysaverStatus::S_OK;
+    }
+
+    KeysaverStatus Implementation::GetServicesList(std::list<std::string>* serviceNames) const {
+        if (!serviceNames) return KeysaverStatus::E_INVALID_ARG;
+
+        for (auto& service: m_db.services()) {
+            serviceNames->push_back(service.name());
+        }
+
+        return KeysaverStatus::S_OK;
     }
 
     KeysaverStatus Implementation::CalculateHash(

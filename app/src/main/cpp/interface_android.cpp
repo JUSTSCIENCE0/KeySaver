@@ -20,15 +20,24 @@ KEYSAVER_API(keysaverSetMasterPassword, jstring masterPassword){
 }
 
 KEYSAVER_API(keysaverGetServicesCount, jobject servicesCount) {
+    size_t serv_cnt = 0;
+    auto code = ks_impl.GetServicesCount(&serv_cnt);
+    if (is_keysaver_error(code)) return code;
+
     jclass wrapperClass = j_env->GetObjectClass(servicesCount);
     jfieldID valueField = j_env->GetFieldID(wrapperClass, "value", "I");
-    j_env->SetIntField(servicesCount, valueField, 0);
+    j_env->SetIntField(
+            servicesCount,
+            valueField,
+            static_cast<int>(serv_cnt));
 
-    return KeysaverStatus::S_OK;
+    return code;
 }
 
 KEYSAVER_API(keysaverGetServicesList, jobjectArray servicesList) {
-    std::vector<std::string> c_services_list = {"Hello", "World", "From", "C++"};
+    std::list<std::string> c_services_list;
+    auto code = ks_impl.GetServicesList(&c_services_list);
+    if (is_keysaver_error(code)) return code;
 
     jsize index = 0;
     for (auto& service: c_services_list) {
@@ -39,5 +48,5 @@ KEYSAVER_API(keysaverGetServicesList, jobjectArray servicesList) {
         index++;
     }
 
-    return KeysaverStatus::S_OK;
+    return code;
 }

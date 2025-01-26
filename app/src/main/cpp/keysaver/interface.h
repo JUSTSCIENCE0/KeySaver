@@ -28,6 +28,7 @@ enum KeysaverStatus {
     E_NOT_IMPLEMENTED       = -1000,
     E_NOT_INITIALIZED       = -1001,
     E_INTERNAL_OPENSSL_FAIL = -1002,
+    E_INVALID_ARG           = -1003,
 };
 
 static inline bool is_keysaver_error(KeysaverStatus code) {

@@ -10,6 +10,7 @@
 
 #include <openssl/types.h>
 
+#include <list>
 #include <string>
 #include <cstdint>
 
@@ -28,7 +29,11 @@ namespace Keysaver {
         }
 
         KeysaverStatus Init(const std::string& configPath);
+
         KeysaverStatus SetMasterPassword(const std::string& masterPassword);
+
+        KeysaverStatus GetServicesCount(size_t* count) const;
+        KeysaverStatus GetServicesList(std::list<std::string>* serviceNames) const;
 
     private:
         // types
@@ -55,6 +60,6 @@ namespace Keysaver {
         //openssl
         EVP_MD_CTX* m_ossl_ctx = nullptr;
 
-        KeysaverConfig::Config m_config{};
+        KeysaverConfig::DataBase m_db{};
     };
 }
