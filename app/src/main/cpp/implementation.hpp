@@ -46,6 +46,8 @@ namespace Keysaver {
         // methods
         Implementation() = default;
         KeysaverStatus CalculateHash(const std::string& masterPassword, HASH_USAGE usage);
+        KeysaverStatus ReadDB();
+        KeysaverStatus RewriteDB() const;
         KeysaverStatus IsServiceExists(const std::string& serviceName) const;
         KeysaverStatus IsServiceUrlExists(const std::string& serviceUrl) const;
         KeysaverStatus IsConfigExists(const std::string& configName) const;
@@ -61,12 +63,12 @@ namespace Keysaver {
         bool m_isFirstUsing = false;
 
         //members
+        KeysaverConfig::DataBase m_db{};
         std::array<uint8_t, HASH_SIZE> m_encryption_hash{};
         std::array<uint8_t, HASH_SIZE> m_salt_hash{};
+        std::filesystem::path m_db_path{};
 
         //openssl
         EVP_MD_CTX* m_ossl_ctx = nullptr;
-
-        KeysaverConfig::DataBase m_db{};
     };
 }

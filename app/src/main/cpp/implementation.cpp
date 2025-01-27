@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <vector>
 #include <cstdint>
+#include <fstream>
 
 namespace Keysaver {
     Implementation::~Implementation() {
@@ -19,25 +20,16 @@ namespace Keysaver {
     }
 
     KeysaverStatus Implementation::Init(const std::string& configPath) {
-        const std::string configName = configPath + CONFIG_NAME;
+        m_db_path = configPath + CONFIG_NAME;
 
         m_ossl_ctx = EVP_MD_CTX_new();
         if (!m_ossl_ctx) return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
         m_isInited = true;
 
-        if (std::filesystem::exists(configName)) {
-            // TODO:
-            //   open & read encrypted config
-            //   check if it isn't empty or corrupted
-
-            return KeysaverStatus::S_OK;
-        }
-        else {
-            // TODO: create empty unencrypted config
-
-            m_isFirstUsing = true;
+        if (!std::filesystem::exists(m_db_path))
             return KeysaverStatus::M_DATABASE_NOT_FOUND;
-        }
+
+        return KeysaverStatus::S_OK;
     }
 
     KeysaverStatus Implementation::SetMasterPassword(const std::string& masterPassword) {
@@ -51,13 +43,10 @@ namespace Keysaver {
         code = CalculateHash(masterPassword, HASH_USAGE::E_SALT);
         if (is_keysaver_error(code)) return code;
 
-        // TODO:
-        //  if not m_isFirstUsing
-        //    decrypt config
-        //    validate config
-        //  else
-        //    encrypt empty unencrypted config
-        //    save encrypted config
+        if (std::filesystem::exists(m_db_path)) {
+            code = ReadDB();
+            if (is_keysaver_error(code)) return code;
+        }
 
         return code;
     }
@@ -75,9 +64,7 @@ namespace Keysaver {
         auto new_service = m_db.add_services();
         *new_service = service;
 
-        // TODO: rewrite db
-
-        return KeysaverStatus::S_OK;
+        return RewriteDB();
     }
 
     KeysaverStatus Implementation::GetServicesCount(size_t* count) const {
@@ -150,6 +137,52 @@ namespace Keysaver {
         if (EVP_DigestFinal_ex(m_ossl_ctx, hash_pntr, &hash_len) != 1)
             return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
         assert(hash_len == HASH_SIZE);
+
+        return KeysaverStatus::S_OK;
+    }
+
+    KeysaverStatus Implementation::ReadDB() {
+        std::ifstream db_file(m_db_path, std::ios::binary | std::ios::ate);
+        if (!db_file) return KeysaverStatus::E_DB_READ_ERROR;
+
+        auto db_size = db_file.tellg();
+        if (!db_size) return KeysaverStatus::E_DB_CORRUPTED;
+        std::vector<uint8_t> binary_db(db_size);
+
+        db_file.seekg(0, std::ios::beg);
+        if (!db_file.read(reinterpret_cast<char *>(binary_db.data()), db_size))
+            return KeysaverStatus::E_DB_READ_ERROR;
+
+        db_file.close();
+
+        // TODO:
+        //  decrypt binary_db
+        //  check checksum
+
+        if (!m_db.ParseFromArray(binary_db.data(), static_cast<int>(binary_db.size())))
+            return KeysaverStatus::E_DB_CORRUPTED;
+
+        return KeysaverStatus::S_OK;
+    }
+
+    KeysaverStatus Implementation::RewriteDB() const {
+        std::vector<uint8_t> binary_db(m_db.ByteSizeLong());
+        if (!m_db.SerializeToArray(binary_db.data(), static_cast<int>(binary_db.size())))
+            return KeysaverStatus::E_DB_CORRUPTED;
+
+        // TODO:
+        //  calculate & write checksum
+        //  encrypt binary_db
+
+        std::ofstream db_file(m_db_path, std::ios::binary);
+        if (!db_file) return KeysaverStatus::E_DB_WRITE_ERROR;
+
+        if (!db_file.write(
+                reinterpret_cast<const char *>(binary_db.data()),
+                binary_db.size()))
+            return KeysaverStatus::E_DB_WRITE_ERROR;
+
+        db_file.close();
 
         return KeysaverStatus::S_OK;
     }

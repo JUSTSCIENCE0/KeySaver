@@ -35,6 +35,9 @@ enum KeysaverStatus {
     E_INVALID_ARG           = -1003,
     E_SERVICE_NOT_EXISTS    = -1004,
     E_CONFIG_NOT_EXISTS     = -1005,
+    E_DB_WRITE_ERROR        = -1006,
+    E_DB_READ_ERROR         = -1007,
+    E_DB_CORRUPTED          = -1008,
 };
 
 static inline bool is_keysaver_error(KeysaverStatus code) {
