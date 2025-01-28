@@ -48,6 +48,8 @@ set(IMPLEMENTATION
     engine.cpp
     db_manager.hpp
     db_manager.cpp
+    crypto_provider.hpp
+    crypto_provider.cpp
 
     # protobuf generated
     configuration.pb.cc
