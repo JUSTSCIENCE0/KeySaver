@@ -46,6 +46,8 @@ add_custom_command(
 set(IMPLEMENTATION
     engine.hpp
     engine.cpp
+    db_manager.hpp
+    db_manager.cpp
 
     # protobuf generated
     configuration.pb.cc
