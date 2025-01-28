@@ -15,16 +15,16 @@
 #include <cstdint>
 
 namespace Keysaver {
-    class Implementation final {
+    class Engine final {
     public:
-        Implementation(const Implementation&) = delete;
-        Implementation(Implementation&&) = delete;
-        Implementation& operator=(const Implementation&) = delete;
-        Implementation& operator=(Implementation&&) = delete;
-        ~Implementation();
+        Engine(const Engine&) = delete;
+        Engine(Engine&&) = delete;
+        Engine& operator=(const Engine&) = delete;
+        Engine& operator=(Engine&&) = delete;
+        ~Engine();
 
-        static Implementation& Get() {
-            static Implementation impl;
+        static Engine& Get() {
+            static Engine impl;
             return impl;
         }
 
@@ -44,7 +44,7 @@ namespace Keysaver {
         enum class HASH_USAGE { E_ENCRYPTION, E_SALT };
 
         // methods
-        Implementation() = default;
+        Engine() = default;
         KeysaverStatus CalculateHash(const std::string& masterPassword, HASH_USAGE usage);
         KeysaverStatus ReadDB();
         KeysaverStatus RewriteDB() const;

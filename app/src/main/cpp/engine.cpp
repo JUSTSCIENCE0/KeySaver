@@ -3,7 +3,7 @@
 //
 // License: MIT
 
-#include "implementation.hpp"
+#include "engine.hpp"
 
 #include <openssl/evp.h>
 
@@ -13,13 +13,13 @@
 #include <fstream>
 
 namespace Keysaver {
-    Implementation::~Implementation() {
+    Engine::~Engine() {
         if (m_ossl_ctx)
             EVP_MD_CTX_free(m_ossl_ctx);
         m_ossl_ctx = nullptr;
     }
 
-    KeysaverStatus Implementation::Init(const std::string& configPath) {
+    KeysaverStatus Engine::Init(const std::string& configPath) {
         m_db_path = configPath + CONFIG_NAME;
 
         m_ossl_ctx = EVP_MD_CTX_new();
@@ -32,7 +32,7 @@ namespace Keysaver {
         return KeysaverStatus::S_OK;
     }
 
-    KeysaverStatus Implementation::SetMasterPassword(const std::string& masterPassword) {
+    KeysaverStatus Engine::SetMasterPassword(const std::string& masterPassword) {
         if (!m_isInited) return KeysaverStatus::E_NOT_INITIALIZED;
         if (masterPassword.length() < MIN_PASSWORD_LEN)
             return KeysaverStatus::E_TOO_SHORT_MASTER_PASSWORD;
@@ -51,7 +51,7 @@ namespace Keysaver {
         return code;
     }
 
-    KeysaverStatus Implementation::AddService(const KeysaverConfig::Service& service) {
+    KeysaverStatus Engine::AddService(const KeysaverConfig::Service& service) {
         if (IsServiceExists(service.name()) == KeysaverStatus::S_IS_FOUND)
             return KeysaverStatus::E_SERVICE_ALREADY_EXISTS;
 
@@ -67,14 +67,14 @@ namespace Keysaver {
         return RewriteDB();
     }
 
-    KeysaverStatus Implementation::GetServicesCount(size_t* count) const {
+    KeysaverStatus Engine::GetServicesCount(size_t* count) const {
         if (!count) return KeysaverStatus::E_INVALID_ARG;
 
         *count = m_db.services_size();
         return KeysaverStatus::S_OK;
     }
 
-    KeysaverStatus Implementation::GetServicesList(std::list<std::string>* serviceNames) const {
+    KeysaverStatus Engine::GetServicesList(std::list<std::string>* serviceNames) const {
         if (!serviceNames) return KeysaverStatus::E_INVALID_ARG;
 
         for (const auto& service: m_db.services()) {
@@ -84,14 +84,14 @@ namespace Keysaver {
         return KeysaverStatus::S_OK;
     }
 
-    KeysaverStatus Implementation::GetConfigurationsCount(size_t* count) const {
+    KeysaverStatus Engine::GetConfigurationsCount(size_t* count) const {
         if (!count) return KeysaverStatus::E_INVALID_ARG;
 
         *count = m_db.configurations_size() + 1;
         return KeysaverStatus::S_OK;
     }
 
-    KeysaverStatus Implementation::GetConfigurationsList(
+    KeysaverStatus Engine::GetConfigurationsList(
             std::list<std::string>* configNames) const {
         if (!configNames) return KeysaverStatus::E_INVALID_ARG;
 
@@ -103,7 +103,7 @@ namespace Keysaver {
         return KeysaverStatus::S_OK;
     }
 
-    KeysaverStatus Implementation::CalculateHash(
+    KeysaverStatus Engine::CalculateHash(
             const std::string& masterPassword,
             HASH_USAGE usage) {
         uint8_t* hash_pntr = nullptr;
@@ -141,7 +141,7 @@ namespace Keysaver {
         return KeysaverStatus::S_OK;
     }
 
-    KeysaverStatus Implementation::ReadDB() {
+    KeysaverStatus Engine::ReadDB() {
         std::ifstream db_file(m_db_path, std::ios::binary | std::ios::ate);
         if (!db_file) return KeysaverStatus::E_DB_READ_ERROR;
 
@@ -165,7 +165,7 @@ namespace Keysaver {
         return KeysaverStatus::S_OK;
     }
 
-    KeysaverStatus Implementation::RewriteDB() const {
+    KeysaverStatus Engine::RewriteDB() const {
         std::vector<uint8_t> binary_db(m_db.ByteSizeLong());
         if (!m_db.SerializeToArray(binary_db.data(), static_cast<int>(binary_db.size())))
             return KeysaverStatus::E_DB_CORRUPTED;
@@ -187,7 +187,7 @@ namespace Keysaver {
         return KeysaverStatus::S_OK;
     }
 
-    KeysaverStatus Implementation::IsServiceExists(const std::string& serviceName) const {
+    KeysaverStatus Engine::IsServiceExists(const std::string& serviceName) const {
         const auto& services = m_db.services();
 
         auto result = std::find_if(
@@ -202,7 +202,7 @@ namespace Keysaver {
             KeysaverStatus::E_SERVICE_NOT_EXISTS;
     }
 
-    KeysaverStatus Implementation::IsServiceUrlExists(const std::string& serviceUrl) const {
+    KeysaverStatus Engine::IsServiceUrlExists(const std::string& serviceUrl) const {
         const auto& services = m_db.services();
 
         auto result = std::find_if(
@@ -217,7 +217,7 @@ namespace Keysaver {
                KeysaverStatus::E_SERVICE_NOT_EXISTS;
     }
 
-    KeysaverStatus Implementation::IsConfigExists(const std::string& configName) const {
+    KeysaverStatus Engine::IsConfigExists(const std::string& configName) const {
         const auto& configs = m_db.configurations();
 
         auto result = std::find_if(

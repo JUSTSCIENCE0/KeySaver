@@ -3,10 +3,10 @@
 //
 // License: MIT
 
-#include "implementation.hpp"
+#include "engine.hpp"
 
-static Keysaver::Implementation& ks_impl =
-        Keysaver::Implementation::Get();
+static Keysaver::Engine& ks_impl =
+        Keysaver::Engine::Get();
 
 KEYSAVER_API(keysaverInit, jstring configPath) {
     auto c_config_path = j_env->GetStringUTFChars(configPath, nullptr);
