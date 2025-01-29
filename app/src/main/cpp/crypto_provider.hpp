@@ -20,9 +20,9 @@ namespace Keysaver {
         enum class HashAlgorithm { SHA3_256, BLAKE2_256 };
 
         // ctors/dtor
-        static CryptoProvider* Get() {
+        static CryptoProvider& Get() {
             static CryptoProvider cp;
-            return &cp;
+            return cp;
         }
         ~CryptoProvider();
 

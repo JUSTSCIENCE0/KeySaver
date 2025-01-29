@@ -64,7 +64,7 @@ namespace Keysaver {
         KeysaverConfig::DataBase m_proto_db{};
         std::filesystem::path    m_db_path{};
         EncryptionKey            m_encryption_key{};
-        CryptoProvider*          m_crypto = CryptoProvider::Get();
+        CryptoProvider&          m_crypto = CryptoProvider::Get();
     };
 } // Keysaver
 
