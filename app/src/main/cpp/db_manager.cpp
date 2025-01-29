@@ -8,7 +8,9 @@
 
 namespace Keysaver {
     DBManager::DBManager(const std::string& pathToDB) :
-        m_db_path(pathToDB + DB_NAME) {}
+        m_db_path(pathToDB + DB_NAME) {
+        assert(!pathToDB.empty());
+    }
 
     DBManager::~DBManager() {
         Flush();
@@ -85,6 +87,8 @@ namespace Keysaver {
     }
 
     KeysaverStatus DBManager::Read() {
+        if (!IsFileExists()) return KeysaverStatus::S_OK;
+
         std::ifstream db_file(m_db_path, std::ios::binary | std::ios::ate);
         if (!db_file) return KeysaverStatus::E_DB_READ_ERROR;
 

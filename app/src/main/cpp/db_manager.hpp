@@ -19,7 +19,8 @@ namespace Keysaver {
     class DBManager final {
     public:
         // consts
-        static constexpr size_t ENCRYPTION_KEY_SIZE = 32;
+        static constexpr size_t      ENCRYPTION_KEY_SIZE = 32;
+        static constexpr std::string DEFAULT_CONFIG_NAME = "Default";
 
         // types
         using EncryptionKey = std::array<uint8_t, ENCRYPTION_KEY_SIZE>;
@@ -54,7 +55,6 @@ namespace Keysaver {
 
         // consts
         static constexpr auto        DB_NAME = "/database.bin";
-        static constexpr std::string DEFAULT_CONFIG_NAME = "Default";
 
         // methods
         KeysaverStatus Read();

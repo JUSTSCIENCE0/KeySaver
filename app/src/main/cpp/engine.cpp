@@ -13,71 +13,58 @@
 #include <fstream>
 
 namespace Keysaver {
-    Engine::~Engine() {
-        if (m_ossl_ctx)
-            EVP_MD_CTX_free(m_ossl_ctx);
-        m_ossl_ctx = nullptr;
-    }
-
-    KeysaverStatus Engine::Init(const std::string& configPath) {
-        m_db_path = configPath + CONFIG_NAME;
-
-        m_ossl_ctx = EVP_MD_CTX_new();
-        if (!m_ossl_ctx) return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
-        m_isInited = true;
-
-        if (!std::filesystem::exists(m_db_path))
-            return KeysaverStatus::M_DATABASE_NOT_FOUND;
-
-        return KeysaverStatus::S_OK;
-    }
-
     KeysaverStatus Engine::SetMasterPassword(const std::string& masterPassword) {
-        if (!m_isInited) return KeysaverStatus::E_NOT_INITIALIZED;
         if (masterPassword.length() < MIN_PASSWORD_LEN)
             return KeysaverStatus::E_TOO_SHORT_MASTER_PASSWORD;
 
-        auto code = KeysaverStatus::S_OK;
-        code = CalculateHash(masterPassword, HASH_USAGE::E_ENCRYPTION);
-        if (is_keysaver_error(code)) return code;
-        code = CalculateHash(masterPassword, HASH_USAGE::E_SALT);
+        DBManager::EncryptionKey key{};
+        if (!m_crypto.CalculateHash(
+                masterPassword.data(),
+                masterPassword.size(),
+                CryptoProvider::HashAlgorithm::SHA3_256,
+                &key))
+            return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
+
+        auto code = m_db.SetEncryptionKey(key);
         if (is_keysaver_error(code)) return code;
 
-        if (std::filesystem::exists(m_db_path)) {
-            code = ReadDB();
-            if (is_keysaver_error(code)) return code;
-        }
+        if (!m_crypto.CalculateHash(
+                masterPassword.data(),
+                masterPassword.size(),
+                CryptoProvider::HashAlgorithm::BLAKE2_256,
+                &m_salt_hash))
+            return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
         return code;
     }
 
     KeysaverStatus Engine::AddService(const KeysaverConfig::Service& service) {
-        if (IsServiceExists(service.name()) == KeysaverStatus::S_IS_FOUND)
+        if (m_db.IsServiceExists(service.name()))
             return KeysaverStatus::E_SERVICE_ALREADY_EXISTS;
 
-        if (IsServiceUrlExists(service.url()) == KeysaverStatus::S_IS_FOUND)
+        if (m_db.IsServiceUrlExists(service.url()))
             return KeysaverStatus::E_SERVICE_URL_ALREADY_EXISTS;
 
-        if (IsConfigExists(service.conf_id()) == KeysaverStatus::S_IS_FOUND)
+        if (m_db.IsConfigExists(service.conf_id()))
             return KeysaverStatus::E_CONFIG_NOT_EXISTS;
 
-        auto new_service = m_db.add_services();
+        auto new_service = m_db.Patch().add_services();
         *new_service = service;
 
-        return RewriteDB();
+        return m_db.Flush(); // TODO: flush only when it needed
     }
 
     KeysaverStatus Engine::GetServicesCount(size_t* count) const {
         if (!count) return KeysaverStatus::E_INVALID_ARG;
 
-        *count = m_db.services_size();
+        *count = m_db.Get().services_size();
         return KeysaverStatus::S_OK;
     }
 
     KeysaverStatus Engine::GetServicesList(std::list<std::string>* serviceNames) const {
         if (!serviceNames) return KeysaverStatus::E_INVALID_ARG;
 
-        for (const auto& service: m_db.services()) {
+        for (const auto& service: m_db.Get().services()) {
             serviceNames->push_back(service.name());
         }
 
@@ -87,7 +74,7 @@ namespace Keysaver {
     KeysaverStatus Engine::GetConfigurationsCount(size_t* count) const {
         if (!count) return KeysaverStatus::E_INVALID_ARG;
 
-        *count = m_db.configurations_size() + 1;
+        *count = m_db.Get().configurations_size() + 1;
         return KeysaverStatus::S_OK;
     }
 
@@ -95,140 +82,11 @@ namespace Keysaver {
             std::list<std::string>* configNames) const {
         if (!configNames) return KeysaverStatus::E_INVALID_ARG;
 
-        configNames->emplace_back(DEFAULT_CONFIG_NAME);
-        for (const auto& config: m_db.configurations()) {
+        configNames->emplace_back(DBManager::DEFAULT_CONFIG_NAME);
+        for (const auto& config: m_db.Get().configurations()) {
             configNames->push_back(config.id_name());
         }
 
         return KeysaverStatus::S_OK;
-    }
-
-    KeysaverStatus Engine::CalculateHash(
-            const std::string& masterPassword,
-            HASH_USAGE usage) {
-        uint8_t* hash_pntr = nullptr;
-        const EVP_MD* md   = nullptr;
-        switch (usage) {
-            case HASH_USAGE::E_ENCRYPTION:
-                hash_pntr = m_encryption_hash.data();
-                md = EVP_sha3_256();
-                break;
-            case HASH_USAGE::E_SALT:
-                hash_pntr = m_salt_hash.data();
-                md = EVP_blake2s256();
-                break;
-            default:
-                assert(!"unexpected behavior");
-                break;
-        }
-
-        if (!md) return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
-
-        if (EVP_DigestInit_ex(m_ossl_ctx, md, nullptr) != 1)
-            return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
-
-        if (EVP_DigestUpdate(
-                m_ossl_ctx,
-                masterPassword.data(),
-                masterPassword.size()) != 1)
-            return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
-
-        unsigned int hash_len = 0;
-        if (EVP_DigestFinal_ex(m_ossl_ctx, hash_pntr, &hash_len) != 1)
-            return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
-        assert(hash_len == HASH_SIZE);
-
-        return KeysaverStatus::S_OK;
-    }
-
-    KeysaverStatus Engine::ReadDB() {
-        std::ifstream db_file(m_db_path, std::ios::binary | std::ios::ate);
-        if (!db_file) return KeysaverStatus::E_DB_READ_ERROR;
-
-        auto db_size = db_file.tellg();
-        if (!db_size) return KeysaverStatus::E_DB_CORRUPTED;
-        std::vector<uint8_t> binary_db(db_size);
-
-        db_file.seekg(0, std::ios::beg);
-        if (!db_file.read(reinterpret_cast<char *>(binary_db.data()), db_size))
-            return KeysaverStatus::E_DB_READ_ERROR;
-
-        db_file.close();
-
-        // TODO:
-        //  decrypt binary_db
-        //  check checksum
-
-        if (!m_db.ParseFromArray(binary_db.data(), static_cast<int>(binary_db.size())))
-            return KeysaverStatus::E_DB_CORRUPTED;
-
-        return KeysaverStatus::S_OK;
-    }
-
-    KeysaverStatus Engine::RewriteDB() const {
-        std::vector<uint8_t> binary_db(m_db.ByteSizeLong());
-        if (!m_db.SerializeToArray(binary_db.data(), static_cast<int>(binary_db.size())))
-            return KeysaverStatus::E_DB_CORRUPTED;
-
-        // TODO:
-        //  calculate & write checksum
-        //  encrypt binary_db
-
-        std::ofstream db_file(m_db_path, std::ios::binary);
-        if (!db_file) return KeysaverStatus::E_DB_WRITE_ERROR;
-
-        if (!db_file.write(
-                reinterpret_cast<const char *>(binary_db.data()),
-                binary_db.size()))
-            return KeysaverStatus::E_DB_WRITE_ERROR;
-
-        db_file.close();
-
-        return KeysaverStatus::S_OK;
-    }
-
-    KeysaverStatus Engine::IsServiceExists(const std::string& serviceName) const {
-        const auto& services = m_db.services();
-
-        auto result = std::find_if(
-                services.begin(),
-                services.end(),
-                [&serviceName](const auto& service){
-                    return service.name() == serviceName;
-                });
-
-        return (result != services.end()) ?
-            KeysaverStatus::S_IS_FOUND :
-            KeysaverStatus::E_SERVICE_NOT_EXISTS;
-    }
-
-    KeysaverStatus Engine::IsServiceUrlExists(const std::string& serviceUrl) const {
-        const auto& services = m_db.services();
-
-        auto result = std::find_if(
-                services.begin(),
-                services.end(),
-                [&serviceUrl](const auto& service){
-                    return service.url() == serviceUrl;
-                });
-
-        return (result != services.end()) ?
-               KeysaverStatus::S_IS_FOUND :
-               KeysaverStatus::E_SERVICE_NOT_EXISTS;
-    }
-
-    KeysaverStatus Engine::IsConfigExists(const std::string& configName) const {
-        const auto& configs = m_db.configurations();
-
-        auto result = std::find_if(
-                configs.begin(),
-                configs.end(),
-                [&configName](const auto& config){
-                   return config.id_name() == configName;
-                });
-
-        return (result != configs.end()) ?
-               KeysaverStatus::S_IS_FOUND :
-               KeysaverStatus::E_CONFIG_NOT_EXISTS;
     }
 }

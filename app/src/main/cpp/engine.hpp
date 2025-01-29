@@ -6,9 +6,9 @@
 #pragma once
 
 #include "keysaver/interface.h"
-#include "configuration.pb.h"
 
-#include <openssl/types.h>
+#include "db_manager.hpp"
+#include "crypto_provider.hpp"
 
 #include <list>
 #include <string>
@@ -21,54 +21,41 @@ namespace Keysaver {
         Engine(Engine&&) = delete;
         Engine& operator=(const Engine&) = delete;
         Engine& operator=(Engine&&) = delete;
-        ~Engine();
+        ~Engine() = default;
 
-        static Engine& Get() {
-            static Engine impl;
+        static Engine& Get(const std::string& pathToDB) {
+            static Engine impl(pathToDB);
             return impl;
         }
-
-        KeysaverStatus Init(const std::string& configPath);
 
         KeysaverStatus SetMasterPassword(const std::string& masterPassword);
         KeysaverStatus AddService(const KeysaverConfig::Service& service);
 
+        KeysaverStatus FirstUsage() const {
+            return m_db.IsFileExists() ?
+                    KeysaverStatus::S_OK :
+                    KeysaverStatus::M_DATABASE_NOT_FOUND;
+        }
         KeysaverStatus GetServicesCount(size_t* count) const;
         KeysaverStatus GetServicesList(std::list<std::string>* serviceNames) const;
         KeysaverStatus GetConfigurationsCount(size_t* count) const;
         KeysaverStatus GetConfigurationsList(std::list<std::string>* configNames) const;
 
     private:
+        explicit Engine(const std::string& pathToDB):
+            m_db(pathToDB) {}
+
         // types
         using uint8_t = std::uint8_t;
         enum class HASH_USAGE { E_ENCRYPTION, E_SALT };
 
-        // methods
-        Engine() = default;
-        KeysaverStatus CalculateHash(const std::string& masterPassword, HASH_USAGE usage);
-        KeysaverStatus ReadDB();
-        KeysaverStatus RewriteDB() const;
-        KeysaverStatus IsServiceExists(const std::string& serviceName) const;
-        KeysaverStatus IsServiceUrlExists(const std::string& serviceUrl) const;
-        KeysaverStatus IsConfigExists(const std::string& configName) const;
-
         // consts
-        static constexpr auto        CONFIG_NAME = "/config.bin";
         static constexpr size_t      MIN_PASSWORD_LEN = 8;
-        static constexpr size_t      HASH_SIZE = 32;
-        static constexpr std::string DEFAULT_CONFIG_NAME = "Default";
-
-        // flags
-        bool m_isInited = false;
-        bool m_isFirstUsing = false;
 
         //members
-        KeysaverConfig::DataBase m_db{};
-        std::array<uint8_t, HASH_SIZE> m_encryption_hash{};
-        std::array<uint8_t, HASH_SIZE> m_salt_hash{};
-        std::filesystem::path m_db_path{};
+        DBManager       m_db;
+        CryptoProvider& m_crypto = CryptoProvider::Get();
 
-        //openssl
-        EVP_MD_CTX* m_ossl_ctx = nullptr;
+        std::array<uint8_t, CryptoProvider::HASH_SIZE> m_salt_hash{};
     };
 }
