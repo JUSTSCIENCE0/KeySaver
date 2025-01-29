@@ -13,11 +13,17 @@ namespace Keysaver {
 
     class CryptoProvider final {
     public:
+        // consts
+        static constexpr size_t HASH_SIZE = 32;
+
         // types
         enum class HashAlgorithm { SHA3_256, BLAKE2_256 };
 
         // ctors/dtor
-        CryptoProvider();
+        static CryptoProvider* Get() {
+            static CryptoProvider cp;
+            return &cp;
+        }
         ~CryptoProvider();
 
         CryptoProvider(const CryptoProvider&) = delete;
@@ -26,10 +32,11 @@ namespace Keysaver {
         CryptoProvider operator=(CryptoProvider&&) = delete;
 
         // interface
-        KeysaverStatus CalculateHash(
-                const void* data, size_t size, HashAlgorithm alg, void* output);
+        bool CalculateHash(const void* data, size_t size, HashAlgorithm alg, void* output);
 
     private:
+        CryptoProvider();
+
         // members
         EVP_MD_CTX* m_ossl_ctx = nullptr;
     };
