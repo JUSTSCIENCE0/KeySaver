@@ -7,7 +7,13 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
+import android.widget.Toast
+import androidx.constraintlayout.widget.Group
+import androidx.lifecycle.lifecycleScope
 import com.science.keysaver.databinding.EnterMasterKeyBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,9 +52,29 @@ class MainActivity : AppCompatActivity() {
         val mpInput : EditText = findViewById(R.id.master_password)
         val masterPassword = mpInput.text.toString()
 
-        if (Implementation.setMasterPassword(this, masterPassword)) {
-            setContentView(R.layout.get_password)
-            prepareGetPassword()
+        val loadBar : Group = findViewById(R.id.wait_db)
+        val functional : Group = findViewById(R.id.first_layout_functional)
+
+        loadBar.visibility = View.VISIBLE
+        functional.visibility = View.INVISIBLE
+
+        var result : KeysaverStatus;
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                result = Implementation.setMasterPassword(masterPassword)
+            }
+
+            if (!result.isSuccess()) {
+                Toast.makeText(this@MainActivity,
+                    result.getDescription(this@MainActivity),
+                    Toast.LENGTH_SHORT).show()
+            }
+            else {
+                setContentView(R.layout.get_password)
+                prepareGetPassword()
+            }
+            loadBar.visibility = View.INVISIBLE
+            functional.visibility = View.VISIBLE
         }
     }
 

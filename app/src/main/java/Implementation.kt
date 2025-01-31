@@ -220,18 +220,10 @@ class Implementation private constructor() {
             return false
         }
 
-        fun setMasterPassword(context: Context, password: String) : Boolean {
+        fun setMasterPassword(password: String) : KeysaverStatus {
             // TODO: validate master password
 
-            val result = KeysaverStatus.fromCode(impl.keysaverSetMasterPassword(password))
-            if (!result.isSuccess()) {
-                Toast.makeText(context,
-                    result.getDescription(context),
-                    Toast.LENGTH_SHORT).show()
-                return false
-            }
-
-            return true
+            return KeysaverStatus.fromCode(impl.keysaverSetMasterPassword(password))
         }
 
         fun addService(context: Context, service: Service) : Boolean {

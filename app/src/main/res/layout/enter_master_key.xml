@@ -60,4 +60,46 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/master_password" />
+
+    <TextView
+        android:id="@+id/wait_for_db"
+        style="@style/TextNormal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/wait_for_db"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/wait_for_db_bar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:indeterminateTint="@color/black"
+        android:progressBackgroundTint="@color/black"
+        android:progressTint="@color/black"
+        android:secondaryProgressTint="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wait_for_db" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/wait_db"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:constraint_referenced_ids="wait_for_db,wait_for_db_bar" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/first_layout_functional"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="ib_master_key_help,master_password_label,master_password,master_password_confirm" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
