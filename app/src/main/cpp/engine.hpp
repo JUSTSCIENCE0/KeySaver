@@ -30,6 +30,7 @@ namespace Keysaver {
 
         KeysaverStatus SetMasterPassword(const std::string& masterPassword);
         KeysaverStatus AddService(const KeysaverConfig::Service& service);
+        KeysaverStatus SyncDatabase() const;
 
         KeysaverStatus FirstUsage() const {
             return m_db.IsFileExists() ?

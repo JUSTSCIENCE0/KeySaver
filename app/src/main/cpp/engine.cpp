@@ -38,6 +38,10 @@ namespace Keysaver {
         return code;
     }
 
+    KeysaverStatus Engine::SyncDatabase() const {
+        return m_db.Flush();
+    }
+
     KeysaverStatus Engine::AddService(const KeysaverConfig::Service& service) {
         if (m_db.IsServiceExists(service.name()))
             return KeysaverStatus::E_SERVICE_ALREADY_EXISTS;
@@ -51,7 +55,7 @@ namespace Keysaver {
         auto new_service = m_db.Patch().add_services();
         *new_service = service;
 
-        return m_db.Flush(); // TODO: flush only when it needed
+        return KeysaverStatus::S_OK;
     }
 
     KeysaverStatus Engine::GetServicesCount(size_t* count) const {

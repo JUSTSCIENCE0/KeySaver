@@ -52,8 +52,10 @@ KEYSAVER_API(keysaverInit, jstring configPath);
 
 KEYSAVER_API(keysaverSetMasterPassword, jstring masterPassword);
 KEYSAVER_API(keysaverAddService,        jobject service);
+KEYSAVER_API(keysaverSyncDatabase);
 
 KEYSAVER_API(keysaverGetServicesCount,       jobject      servicesCount);
 KEYSAVER_API(keysaverGetServicesList,        jobjectArray servicesList);
 KEYSAVER_API(keysaverGetConfigurationsCount, jobject      configurationsCount);
 KEYSAVER_API(keysaverGetConfigurationsList,  jobjectArray configurationsList);
+
