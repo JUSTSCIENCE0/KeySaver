@@ -48,7 +48,7 @@ class AddService : AppCompatActivity() {
         val nameEditText: EditText = findViewById(R.id.service_display_name_add)
         val confSpinner:  Spinner  = findViewById(R.id.configuration_spinner_add)
 
-        val service = Service(
+        val service = ServiceDescr(
             urlEditText.text.toString(),
             nameEditText.text.toString(),
             confSpinner.selectedItem.toString()

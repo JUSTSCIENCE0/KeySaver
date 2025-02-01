@@ -73,7 +73,7 @@ KEYSAVER_API(keysaverAddService, jobject service) {
 KEYSAVER_API(keysaverSyncDatabase) {
     if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
 
-    return KeysaverStatus::E_NOT_IMPLEMENTED;
+    return ks_impl->SyncDatabase();
 }
 
 KEYSAVER_API(keysaverGetServicesCount, jobject servicesCount) {
