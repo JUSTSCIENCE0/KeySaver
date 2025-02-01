@@ -13,6 +13,7 @@
 #include <list>
 #include <string>
 #include <cstdint>
+#include <shared_mutex>
 
 namespace Keysaver {
     class Engine final {
@@ -54,7 +55,9 @@ namespace Keysaver {
         static constexpr size_t      MIN_PASSWORD_LEN = 8;
 
         //members
-        DBManager       m_db;
+        mutable std::shared_mutex m_db_mutex{};
+        DBManager                 m_db;
+
         CryptoProvider& m_crypto = CryptoProvider::Get();
 
         std::array<uint8_t, CryptoProvider::HASH_SIZE> m_salt_hash{};
