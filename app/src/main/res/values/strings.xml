@@ -38,4 +38,5 @@
     <string name="service_url_already_exists">A service with this URL has already been saved earlier</string>
     <string name="config_already_exists">A configuration with this name already exists</string>
     <string name="wait_for_db">Decrypting the database. Please wait</string>
+    <string name="service_deleted_successfull">The service has been successfully deleted</string>
 </resources>

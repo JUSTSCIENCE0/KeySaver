@@ -66,6 +66,18 @@ namespace Keysaver {
         return KeysaverStatus::S_OK;
     }
 
+    KeysaverStatus Engine::DeleteService(const std::string& serviceName) {
+        std::unique_lock lock(m_db_mutex);
+
+        int servIndex = m_db.GetServiceIndex(serviceName);
+        if (servIndex < 0) return KeysaverStatus::E_SERVICE_NOT_EXISTS;
+
+        m_db.Patch().mutable_services()->DeleteSubrange(servIndex, 1);
+
+        assert(!m_db.IsServiceExists(serviceName));
+        return KeysaverStatus::S_OK;
+    }
+
     KeysaverStatus Engine::GetServicesCount(size_t* count) const {
         if (!count) return KeysaverStatus::E_INVALID_ARG;
 

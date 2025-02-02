@@ -77,13 +77,21 @@ class SetupService : AppCompatActivity() {
         builder.setMessage(getString(R.string.want_continue))
 
         builder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
-            Toast.makeText(this, "Вы выбрали 'Да'", Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
-            finish()
+            if (Implementation.deleteService(this@SetupService, m_service.toString())) {
+                Toast.makeText(
+                    this,
+                    getString(R.string.service_deleted_successfull),
+                    Toast.LENGTH_SHORT
+                ).show()
+                dialog.dismiss()
+                finish()
+            }
+            else {
+                dialog.dismiss()
+            }
         }
 
         builder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
-            Toast.makeText(this, "Вы выбрали 'Нет'", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
 

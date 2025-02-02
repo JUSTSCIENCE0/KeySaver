@@ -29,6 +29,16 @@ namespace Keysaver {
         return (result != services.end()) ? result.operator->() : nullptr;
     }
 
+    int DBManager::GetServiceIndex(const std::string& serviceName) const {
+        const auto& services = m_proto_db.services();
+
+        for (int i = 0; i < services.size(); i++) {
+            if (services.Get(i).name() == serviceName) return i;
+        }
+
+        return -1;
+    }
+
     bool DBManager::IsServiceExists(const std::string& serviceName) const {
         return (GetService(serviceName) != nullptr);
     }

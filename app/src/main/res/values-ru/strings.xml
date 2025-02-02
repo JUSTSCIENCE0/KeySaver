@@ -38,4 +38,5 @@
     <string name="service_url_already_exists">Сервис с таким URL уже был сохранен ранее</string>
     <string name="config_already_exists">Конфигурация с таким именем уже существует</string>
     <string name="wait_for_db">Выполняется расшифровка базы данных. Пожалуйста, подождите</string>
+    <string name="service_deleted_successfull">Сервис успешно удален</string>
 </resources>

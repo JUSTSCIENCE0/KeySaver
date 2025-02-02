@@ -78,6 +78,14 @@ KEYSAVER_API(keysaverAddService, jobject service) {
     return ks_impl->AddService(servConf);
 }
 
+KEYSAVER_API(keysaverDeleteService, jstring serviceName) {
+    if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
+
+    auto c_service_name =
+            j_env->GetStringUTFChars(serviceName, nullptr);
+    return ks_impl->DeleteService(c_service_name);
+}
+
 KEYSAVER_API(keysaverSyncDatabase) {
     if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
 

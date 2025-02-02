@@ -121,6 +121,7 @@ class Implementation private constructor() {
     private external fun keysaverGetConfigurationsCount(configurationsCount: IntWrapper): Int
     private external fun keysaverGetConfigurationsList(configurationsList: Array<String?>): Int
     private external fun keysaverAddService(service: ServiceDescr): Int
+    private external fun keysaverDeleteService(serviceName: String): Int
     private external fun keysaverSyncDatabase(): Int
 
     companion object {
@@ -163,6 +164,15 @@ class Implementation private constructor() {
             }
 
             return configurationsList
+        }
+
+        private fun updateDBAsync(context: Context) {
+            val serviceIntent = Intent(context, BackgroundDBUpdate::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(serviceIntent)
+            } else {
+                context.startService(serviceIntent)
+            }
         }
 
         fun fillServicesList(context: Context, spinner: Spinner) {
@@ -297,14 +307,20 @@ class Implementation private constructor() {
                 return false
             }
 
-            // async update DB file
-            val serviceIntent = Intent(context, BackgroundDBUpdate::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(serviceIntent)
-            } else {
-                context.startService(serviceIntent)
+            updateDBAsync(context)
+            return true
+        }
+
+        fun deleteService(context: Context, serviceName: String) : Boolean {
+            val result = KeysaverStatus.fromCode(impl.keysaverDeleteService(serviceName))
+            if (!result.isSuccess()) {
+                Toast.makeText(context,
+                    result.getDescription(context),
+                    Toast.LENGTH_SHORT).show()
+                return false
             }
 
+            updateDBAsync(context)
             return true
         }
 
