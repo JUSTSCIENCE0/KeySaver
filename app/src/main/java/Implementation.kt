@@ -81,6 +81,13 @@ class BackgroundDBUpdate : Service() {
 
     override fun onBind(intent: Intent?): IBinder? { return null }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+
+        Implementation.close()
+        stopSelf()
+    }
+
     private fun createNotification(): Notification {
         val channelId = "keysaver_db_update"
         val manager = getSystemService(NotificationManager::class.java)
@@ -105,7 +112,8 @@ class ServiceDescr(
 class Implementation private constructor() {
     private class IntWrapper(var value: Int)
 
-    private external fun keysaverInit(configPath: String) : Int
+    private external fun keysaverInit(configPath: String): Int
+    private external fun keysaverClose(): Int
     private external fun keysaverSetMasterPassword(masterPassword: String): Int
     private external fun keysaverGetServicesCount(servicesCount: IntWrapper): Int
     private external fun keysaverGetServicesList(servicesList: Array<String?>): Int
@@ -260,6 +268,8 @@ class Implementation private constructor() {
             ).show()
             return false
         }
+
+        fun close() { impl.keysaverClose() }
 
         fun setMasterPassword(password: String) : KeysaverStatus {
             // TODO: validate master password

@@ -43,6 +43,8 @@ namespace Keysaver {
         KeysaverStatus GetConfigurationsCount(size_t* count) const;
         KeysaverStatus GetConfigurationsList(std::list<std::string>* configNames) const;
 
+        KeysaverStatus Invalidate();
+
     private:
         explicit Engine(const std::string& pathToDB):
             m_db(pathToDB) {}

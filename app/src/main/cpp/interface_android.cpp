@@ -22,6 +22,14 @@ KEYSAVER_API(keysaverInit, jstring configPath) {
     return ks_impl->FirstUsage();
 }
 
+KEYSAVER_API(keysaverClose) {
+    if (!ks_impl) return KeysaverStatus::S_OK;
+
+    ks_impl->Invalidate();
+    ks_impl = nullptr;
+    return KeysaverStatus::S_OK;
+}
+
 KEYSAVER_API(keysaverSetMasterPassword, jstring masterPassword){
     if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
 
