@@ -120,6 +120,40 @@ KEYSAVER_API(keysaverGetServicesList, jobjectArray servicesList) {
     return code;
 }
 
+KEYSAVER_API(keysaverGetService, jstring serviceName, jobject service) {
+    if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
+
+    auto c_service_name = j_env->GetStringUTFChars(serviceName, nullptr);
+
+    auto serviceClass = j_env->GetObjectClass(service);
+    auto serviceNameField = j_env->GetFieldID(
+            serviceClass,
+            "name",
+            "Ljava/lang/String;");
+    auto serviceConfigField = j_env->GetFieldID(
+            serviceClass,
+            "conf_id",
+            "Ljava/lang/String;");
+
+    if (!serviceNameField || !serviceConfigField)
+        return KeysaverStatus::E_INVALID_ARG;
+
+    const KeysaverConfig::Service* c_service = nullptr;
+    auto code = ks_impl->GetService(c_service_name, &c_service);
+    if (is_keysaver_error(code)) return code;
+
+    j_env->SetObjectField(
+            service,
+            serviceNameField,
+            j_env->NewStringUTF(c_service->name().c_str()));
+    j_env->SetObjectField(
+            service,
+            serviceConfigField,
+            j_env->NewStringUTF(c_service->conf_id().c_str()));
+
+    return code;
+}
+
 KEYSAVER_API(keysaverGetConfigurationsCount, jobject configurationsCount) {
     if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
 

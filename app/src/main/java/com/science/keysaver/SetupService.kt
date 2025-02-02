@@ -34,9 +34,21 @@ class SetupService : AppCompatActivity() {
         )
 
         m_service = intent.getStringExtra("service")
-        // TODO: read service config from db
+        val serviceDescr = Implementation.getService(this, m_service.toString())
+        if (serviceDescr == null) {
+            finish()
+            return
+        }
+
+        val confIndex = Implementation.getConfigurationIndex(this, serviceDescr.conf_id)
+        if (confIndex < 0) {
+            finish()
+            return
+        }
+
         val serviceNameTB : EditText = findViewById(R.id.setup_service_name)
         serviceNameTB.setText(m_service)
+        configurationSpinner.setSelection(confIndex)
     }
 
     override fun onResume() {

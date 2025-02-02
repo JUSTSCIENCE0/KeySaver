@@ -16,7 +16,7 @@ namespace Keysaver {
         Flush();
     }
 
-    bool DBManager::IsServiceExists(const std::string& serviceName) const {
+    const KeysaverConfig::Service* DBManager::GetService(const std::string& serviceName) const {
         const auto& services = m_proto_db.services();
 
         auto result = std::find_if(
@@ -26,7 +26,11 @@ namespace Keysaver {
                     return service.name() == serviceName;
                 });
 
-        return (result != services.end());
+        return (result != services.end()) ? result.operator->() : nullptr;
+    }
+
+    bool DBManager::IsServiceExists(const std::string& serviceName) const {
+        return (GetService(serviceName) != nullptr);
     }
 
     bool DBManager::IsServiceUrlExists(const std::string& serviceUrl) const {

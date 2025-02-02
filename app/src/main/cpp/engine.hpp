@@ -40,6 +40,8 @@ namespace Keysaver {
         }
         KeysaverStatus GetServicesCount(size_t* count) const;
         KeysaverStatus GetServicesList(std::list<std::string>* serviceNames) const;
+        KeysaverStatus GetService(const std::string& serviceName,
+                                  const KeysaverConfig::Service** service) const;
         KeysaverStatus GetConfigurationsCount(size_t* count) const;
         KeysaverStatus GetConfigurationsList(std::list<std::string>* configNames) const;
 

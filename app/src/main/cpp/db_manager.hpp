@@ -40,6 +40,8 @@ namespace Keysaver {
         bool IsServiceUrlExists(const std::string& serviceUrl) const;
         bool IsConfigExists(const std::string& configName) const;
 
+        const KeysaverConfig::Service* GetService(const std::string& serviceName) const;
+
         KeysaverStatus SetEncryptionKey(const EncryptionKey& key);
         KeysaverStatus Flush() const;
 

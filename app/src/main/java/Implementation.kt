@@ -117,6 +117,7 @@ class Implementation private constructor() {
     private external fun keysaverSetMasterPassword(masterPassword: String): Int
     private external fun keysaverGetServicesCount(servicesCount: IntWrapper): Int
     private external fun keysaverGetServicesList(servicesList: Array<String?>): Int
+    private external fun keysaverGetService(serviceName: String, service: ServiceDescr): Int
     private external fun keysaverGetConfigurationsCount(configurationsCount: IntWrapper): Int
     private external fun keysaverGetConfigurationsList(configurationsList: Array<String?>): Int
     private external fun keysaverAddService(service: ServiceDescr): Int
@@ -133,6 +134,35 @@ class Implementation private constructor() {
                 .create()
 
             dialog.show()
+        }
+
+        private fun readConfigurationsList(context: Context) : Array<String?> {
+            val configurationsCount = IntWrapper(0)
+            var result = KeysaverStatus.fromCode(
+                impl.keysaverGetConfigurationsCount(configurationsCount))
+            if (result.isError()) {
+                Toast.makeText(context,
+                    result.getDescription(context),
+                    Toast.LENGTH_SHORT).show()
+                return arrayOfNulls<String>(1)
+            }
+
+            val configurationsList = arrayOfNulls<String>(configurationsCount.value + 1)
+
+            if (configurationsCount.value > 0) {
+                result = KeysaverStatus.fromCode(
+                    impl.keysaverGetConfigurationsList(configurationsList))
+                if (result.isError()) {
+                    Toast.makeText(
+                        context,
+                        result.getDescription(context),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return arrayOfNulls<String>(1)
+                }
+            }
+
+            return configurationsList
         }
 
         fun fillServicesList(context: Context, spinner: Spinner) {
@@ -172,34 +202,10 @@ class Implementation private constructor() {
         }
 
         fun fillConfigurationsList(context: Context, spinner: Spinner) {
-            val configurationsCount = IntWrapper(0)
-            var result = KeysaverStatus.fromCode(
-                impl.keysaverGetConfigurationsCount(configurationsCount))
-            if (result.isError()) {
-                Toast.makeText(context,
-                    result.getDescription(context),
-                    Toast.LENGTH_SHORT).show()
-                configurationsCount.value = 0
-            }
-
-            var configurationsList = arrayOfNulls<String>(configurationsCount.value + 1)
-
-            if (configurationsCount.value > 0) {
-                result = KeysaverStatus.fromCode(
-                    impl.keysaverGetConfigurationsList(configurationsList))
-                if (result.isError()) {
-                    Toast.makeText(
-                        context,
-                        result.getDescription(context),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    configurationsCount.value = 0
-                    configurationsList = arrayOfNulls<String>(1)
-                }
-            }
+            val configurationsList = readConfigurationsList(context)
 
             val addOptionText = context.getString(R.string.add_smth)
-            configurationsList[configurationsCount.value] = addOptionText
+            configurationsList[configurationsList.size - 1] = addOptionText
 
             val configurationAdapter = ArrayAdapter(
                 context,
@@ -207,6 +213,11 @@ class Implementation private constructor() {
                 configurationsList)
             configurationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinner.adapter = configurationAdapter
+        }
+
+        fun getConfigurationIndex(context: Context, confName: String) : Int {
+            val configurationsList = readConfigurationsList(context)
+            return configurationsList.indexOf(confName)
         }
 
         fun <T : Any> setupItemSelection(
@@ -295,6 +306,20 @@ class Implementation private constructor() {
             }
 
             return true
+        }
+
+        fun getService(context: Context, serviceName: String) : ServiceDescr? {
+            val resultService = ServiceDescr("", "", "")
+            val result = KeysaverStatus.fromCode(
+                impl.keysaverGetService(serviceName, resultService))
+            if (!result.isSuccess()) {
+                Toast.makeText(context,
+                    result.getDescription(context),
+                    Toast.LENGTH_SHORT).show()
+                return null
+            }
+
+            return resultService
         }
 
         fun syncDB() : KeysaverStatus {

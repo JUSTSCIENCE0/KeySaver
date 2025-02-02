@@ -85,6 +85,19 @@ namespace Keysaver {
         return KeysaverStatus::S_OK;
     }
 
+    KeysaverStatus Engine::GetService(const std::string& serviceName,
+                                      const KeysaverConfig::Service** service) const {
+        if (!service) return KeysaverStatus::E_INVALID_ARG;
+
+        std::shared_lock lock(m_db_mutex);
+        auto result = m_db.GetService(serviceName);
+        if (!result) return KeysaverStatus::E_SERVICE_NOT_EXISTS;
+
+        *service = result;
+
+        return KeysaverStatus::S_OK;
+    }
+
     KeysaverStatus Engine::GetConfigurationsCount(size_t* count) const {
         if (!count) return KeysaverStatus::E_INVALID_ARG;
 
