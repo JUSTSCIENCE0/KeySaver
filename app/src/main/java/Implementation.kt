@@ -71,12 +71,8 @@ class BackgroundDBUpdate : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Thread {
-            Implementation.syncDB()
-            stopSelf()
-        }.start()
-
-        return START_NOT_STICKY
+        super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? { return null }
@@ -84,6 +80,7 @@ class BackgroundDBUpdate : Service() {
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
 
+        Implementation.syncDB()
         Implementation.close()
         stopSelf()
     }

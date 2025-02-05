@@ -48,6 +48,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        Implementation.syncDB()
+        Implementation.close()
+    }
+
     fun onConfirmMasterPassword(view: View?) {
         val mpInput : EditText = findViewById(R.id.master_password)
         val masterPassword = mpInput.text.toString()
