@@ -46,6 +46,8 @@ namespace Keysaver {
         KeysaverStatus SetEncryptionKey(const EncryptionKey& key);
         KeysaverStatus Flush() const;
 
+        void Invalidate();
+
         const KeysaverConfig::DataBase& Get() const { return m_proto_db; }
         KeysaverConfig::DataBase& Patch() {
             m_is_db_modified = true;

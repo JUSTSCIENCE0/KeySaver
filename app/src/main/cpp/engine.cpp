@@ -135,11 +135,7 @@ namespace Keysaver {
         std::unique_lock lock(m_db_mutex);
 
         std::memset(m_salt_hash.data(), 0, CryptoProvider::HASH_SIZE);
-        DBManager::EncryptionKey key{};
-        m_db.SetEncryptionKey(key);
-
-        m_db.Patch().clear_configurations();
-        m_db.Patch().clear_services();
+        m_db.Invalidate();
 
         return KeysaverStatus::S_OK;
     }

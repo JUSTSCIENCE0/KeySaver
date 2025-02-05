@@ -127,4 +127,10 @@ namespace Keysaver {
         m_is_db_modified = false;
         return KeysaverStatus::S_OK;
     }
+
+    void DBManager::Invalidate() {
+        std::memset(m_encryption_key.data(), 0, ENCRYPTION_KEY_SIZE);
+        m_proto_db.clear_configurations();
+        m_proto_db.clear_services();
+    }
 } // Keysaver
