@@ -7,6 +7,43 @@
 
 static Keysaver::Engine* ks_impl = nullptr;
 
+KeysaverStatus jobj_to_service(
+        JNIEnv* j_env, jobject jservice, KeysaverConfig::Service* cservice) {
+    auto serviceClass = j_env->GetObjectClass(jservice);
+    auto serviceUrlField = j_env->GetFieldID(
+            serviceClass,
+            "url",
+            "Ljava/lang/String;");
+    auto serviceNameField = j_env->GetFieldID(
+            serviceClass,
+            "name",
+            "Ljava/lang/String;");
+    auto serviceConfigField = j_env->GetFieldID(
+            serviceClass,
+            "conf_id",
+            "Ljava/lang/String;");
+
+    auto j_url = static_cast<jstring>(
+            j_env->GetObjectField(jservice, serviceUrlField));
+    auto j_name = static_cast<jstring>(
+            j_env->GetObjectField(jservice, serviceNameField));
+    auto j_conf_id = static_cast<jstring>(
+            j_env->GetObjectField(jservice, serviceConfigField));
+    if (!j_url || !j_name || !j_conf_id)
+        return KeysaverStatus::E_INVALID_ARG;
+
+    auto c_url = j_env->GetStringUTFChars(j_url, nullptr);
+    auto c_name = j_env->GetStringUTFChars(j_name, nullptr);
+    auto c_conf_id = j_env->GetStringUTFChars(j_conf_id, nullptr);
+    if (!c_url || !c_name || !c_conf_id)
+        return KeysaverStatus::E_INVALID_ARG;
+
+    cservice->set_url(c_url);
+    cservice->set_name(c_name);
+    cservice->set_conf_id(c_conf_id);
+    return KeysaverStatus::S_OK;
+}
+
 KEYSAVER_API(keysaverInit, jstring configPath) {
     auto c_config_path = j_env->GetStringUTFChars(configPath, nullptr);
     try {
@@ -41,39 +78,9 @@ KEYSAVER_API(keysaverSetMasterPassword, jstring masterPassword){
 KEYSAVER_API(keysaverAddService, jobject service) {
     if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
 
-    auto serviceClass = j_env->GetObjectClass(service);
-    auto serviceUrlField = j_env->GetFieldID(
-            serviceClass,
-            "url",
-            "Ljava/lang/String;");
-    auto serviceNameField = j_env->GetFieldID(
-            serviceClass,
-            "name",
-            "Ljava/lang/String;");
-    auto serviceConfigField = j_env->GetFieldID(
-            serviceClass,
-            "conf_id",
-            "Ljava/lang/String;");
-
-    auto j_url = static_cast<jstring>(
-            j_env->GetObjectField(service, serviceUrlField));
-    auto j_name = static_cast<jstring>(
-            j_env->GetObjectField(service, serviceNameField));
-    auto j_conf_id = static_cast<jstring>(
-            j_env->GetObjectField(service, serviceConfigField));
-    if (!j_url || !j_name || !j_conf_id)
-        return KeysaverStatus::E_INVALID_ARG;
-
-    auto c_url = j_env->GetStringUTFChars(j_url, nullptr);
-    auto c_name = j_env->GetStringUTFChars(j_name, nullptr);
-    auto c_conf_id = j_env->GetStringUTFChars(j_conf_id, nullptr);
-    if (!c_url || !c_name || !c_conf_id)
-        return KeysaverStatus::E_INVALID_ARG;
-
     KeysaverConfig::Service servConf;
-    servConf.set_url(c_url);
-    servConf.set_name(c_name);
-    servConf.set_conf_id(c_conf_id);
+    auto code = jobj_to_service(j_env, service, &servConf);
+    if (is_keysaver_error(code)) return code;
 
     return ks_impl->AddService(servConf);
 }
@@ -84,6 +91,18 @@ KEYSAVER_API(keysaverDeleteService, jstring serviceName) {
     auto c_service_name =
             j_env->GetStringUTFChars(serviceName, nullptr);
     return ks_impl->DeleteService(c_service_name);
+}
+
+KEYSAVER_API(keysaverEditService,       jstring oldServiceName,
+             jobject newService) {
+    if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
+
+    auto c_service_name = j_env->GetStringUTFChars(oldServiceName, nullptr);
+    KeysaverConfig::Service servConf;
+    auto code = jobj_to_service(j_env, newService, &servConf);
+    if (is_keysaver_error(code)) return code;
+
+    return ks_impl->EditService(c_service_name, servConf);
 }
 
 KEYSAVER_API(keysaverSyncDatabase) {

@@ -57,6 +57,8 @@ namespace Keysaver {
     }
 
     bool DBManager::IsConfigExists(const std::string& configName) const {
+        if (configName == DEFAULT_CONFIG_NAME) return true;
+
         const auto& configs = m_proto_db.configurations();
 
         auto result = std::find_if(

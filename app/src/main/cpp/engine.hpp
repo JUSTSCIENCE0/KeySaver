@@ -32,6 +32,8 @@ namespace Keysaver {
         KeysaverStatus SetMasterPassword(const std::string& masterPassword);
         KeysaverStatus AddService(const KeysaverConfig::Service& service);
         KeysaverStatus DeleteService(const std::string& serviceName);
+        KeysaverStatus EditService(const std::string& serviceName,
+                                   const KeysaverConfig::Service& service);
         KeysaverStatus SyncDatabase() const;
 
         KeysaverStatus FirstUsage() const {

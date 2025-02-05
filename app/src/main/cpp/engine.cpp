@@ -53,7 +53,7 @@ namespace Keysaver {
             if (m_db.IsServiceUrlExists(service.url()))
                 return KeysaverStatus::E_SERVICE_URL_ALREADY_EXISTS;
 
-            if (m_db.IsConfigExists(service.conf_id()))
+            if (!m_db.IsConfigExists(service.conf_id()))
                 return KeysaverStatus::E_CONFIG_NOT_EXISTS;
         }
 
@@ -61,6 +61,34 @@ namespace Keysaver {
             std::unique_lock lock(m_db_mutex);
             auto new_service = m_db.Patch().add_services();
             *new_service = service;
+        }
+
+        return KeysaverStatus::S_OK;
+    }
+
+    KeysaverStatus Engine::EditService(const std::string& serviceName,
+                               const KeysaverConfig::Service& newService) {
+        std::unique_lock lock(m_db_mutex);
+
+        int serviceID = m_db.GetServiceIndex(serviceName);
+        if (serviceID < 0) return KeysaverStatus::E_SERVICE_NOT_EXISTS;
+
+        // check new config
+        if (!m_db.IsConfigExists(newService.conf_id()))
+            return KeysaverStatus::E_CONFIG_NOT_EXISTS;
+
+        // check & patch name
+        if (serviceName != newService.name()) {
+            if (m_db.IsServiceExists(newService.name()))
+                return KeysaverStatus::E_SERVICE_ALREADY_EXISTS;
+
+            m_db.Patch().mutable_services(serviceID)->set_name(newService.name());
+        }
+
+        // patch config
+        auto oldServiceConfig = m_db.Get().services(serviceID).conf_id();
+        if (oldServiceConfig != newService.conf_id()) {
+            m_db.Patch().mutable_services(serviceID)->set_conf_id(newService.conf_id());
         }
 
         return KeysaverStatus::S_OK;

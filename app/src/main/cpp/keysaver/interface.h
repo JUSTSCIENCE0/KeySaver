@@ -54,8 +54,8 @@ KEYSAVER_API(keysaverClose);
 KEYSAVER_API(keysaverSetMasterPassword, jstring masterPassword);
 KEYSAVER_API(keysaverAddService,        jobject service);
 KEYSAVER_API(keysaverDeleteService,     jstring serviceName);
-//KEYSAVER_API(keysaverEditService,       jstring oldServiceName,
-//                                        jobject newService);
+KEYSAVER_API(keysaverEditService,       jstring oldServiceName,
+                                        jobject newService);
 KEYSAVER_API(keysaverSyncDatabase);
 
 KEYSAVER_API(keysaverGetServicesCount,       jobject      servicesCount);

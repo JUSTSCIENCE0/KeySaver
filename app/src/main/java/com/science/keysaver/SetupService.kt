@@ -65,9 +65,38 @@ class SetupService : AppCompatActivity() {
     }
 
     fun onConfirm(view: View?) {
-        // TODO - implementation
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.warning))
+        builder.setMessage(getString(R.string.want_continue))
 
-        finish()
+        builder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            val serviceDescr = ServiceDescr("", "", "");
+            val serviceNameTB : EditText = findViewById(R.id.setup_service_name)
+            val configurationSpinner: Spinner = findViewById(R.id.configuration_spinner_setup)
+            serviceDescr.name = serviceNameTB.text.toString()
+            serviceDescr.conf_id = configurationSpinner.selectedItem.toString()
+
+            if (Implementation.editService(
+                    this@SetupService, m_service.toString(), serviceDescr)) {
+                Toast.makeText(
+                    this,
+                    getString(R.string.service_updated_successfull),
+                    Toast.LENGTH_SHORT
+                ).show()
+                dialog.dismiss()
+                finish()
+            }
+            else {
+                dialog.dismiss()
+            }
+        }
+
+        builder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
     }
 
     fun onDelete(view: View?) {

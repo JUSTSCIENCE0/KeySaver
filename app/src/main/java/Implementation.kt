@@ -119,6 +119,7 @@ class Implementation private constructor() {
     private external fun keysaverGetConfigurationsList(configurationsList: Array<String?>): Int
     private external fun keysaverAddService(service: ServiceDescr): Int
     private external fun keysaverDeleteService(serviceName: String): Int
+    private external fun keysaverEditService(oldServiceName: String, newService: ServiceDescr): Int
     private external fun keysaverSyncDatabase(): Int
 
     companion object {
@@ -310,6 +311,19 @@ class Implementation private constructor() {
 
         fun deleteService(context: Context, serviceName: String) : Boolean {
             val result = KeysaverStatus.fromCode(impl.keysaverDeleteService(serviceName))
+            if (!result.isSuccess()) {
+                Toast.makeText(context,
+                    result.getDescription(context),
+                    Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            updateDBAsync(context)
+            return true
+        }
+
+        fun editService(context: Context, serviceName: String, newService: ServiceDescr) : Boolean {
+            val result = KeysaverStatus.fromCode(impl.keysaverEditService(serviceName, newService))
             if (!result.isSuccess()) {
                 Toast.makeText(context,
                     result.getDescription(context),
