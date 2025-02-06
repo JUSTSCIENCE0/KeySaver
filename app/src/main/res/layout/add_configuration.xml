@@ -37,11 +37,11 @@
             android:layout_marginStart="16dp"
             android:layout_marginBottom="8dp"
             android:text="@string/configuration_name"
-            app:layout_constraintBottom_toTopOf="@+id/editTextText5"
+            app:layout_constraintBottom_toTopOf="@+id/add_configuration_name"
             app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
-            android:id="@+id/editTextText5"
+            android:id="@+id/add_configuration_name"
             style="@style/InputFieldStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -64,11 +64,11 @@
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
             android:text="@string/password_length"
-            app:layout_constraintBottom_toTopOf="@+id/editTextNumber"
+            app:layout_constraintBottom_toTopOf="@+id/add_configuration_password_length"
             app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
-            android:id="@+id/editTextNumber"
+            android:id="@+id/add_configuration_password_length"
             style="@style/InputFieldStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -89,11 +89,11 @@
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
             android:text="@string/character_set"
-            app:layout_constraintBottom_toTopOf="@+id/switch1"
+            app:layout_constraintBottom_toTopOf="@+id/add_configuration_upper_case"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch1"
+            android:id="@+id/add_configuration_upper_case"
             style="@style/TextNormal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -103,13 +103,13 @@
             android:checked="true"
             android:text="@string/use_upper_case"
             android:thumb="@drawable/switch_thumb"
-            app:layout_constraintBottom_toTopOf="@+id/switch2"
+            app:layout_constraintBottom_toTopOf="@+id/add_configuration_lower_case"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:track="@drawable/switch_track" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch2"
+            android:id="@+id/add_configuration_lower_case"
             style="@style/TextNormal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -132,23 +132,23 @@
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
             android:text="@string/alphabet"
-            app:layout_constraintBottom_toTopOf="@+id/spinner"
+            app:layout_constraintBottom_toTopOf="@+id/add_configuration_alphabets"
             app:layout_constraintStart_toStartOf="parent" />
 
         <Spinner
-            android:id="@+id/spinner"
+            android:id="@+id/add_configuration_alphabets"
             style="@style/InputFieldStyle"
             android:layout_width="0dp"
             android:layout_height="39dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/switch3"
+            app:layout_constraintBottom_toTopOf="@+id/add_configuration_add_specset"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch3"
+            android:id="@+id/add_configuration_add_specset"
             style="@style/TextNormal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -171,11 +171,11 @@
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
             android:text="@string/special_characters_count"
-            app:layout_constraintBottom_toTopOf="@+id/editTextNumber2"
+            app:layout_constraintBottom_toTopOf="@+id/add_configuration_spec_count"
             app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
-            android:id="@+id/editTextNumber2"
+            android:id="@+id/add_configuration_spec_count"
             style="@style/InputFieldStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -196,11 +196,11 @@
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
             android:text="@string/special_characters_set"
-            app:layout_constraintBottom_toTopOf="@+id/editTextText6"
+            app:layout_constraintBottom_toTopOf="@+id/add_configuration_specset"
             app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
-            android:id="@+id/editTextText6"
+            android:id="@+id/add_configuration_specset"
             style="@style/InputFieldStyle"
             android:layout_width="0dp"
             android:layout_height="43dp"
@@ -210,12 +210,12 @@
             android:ems="10"
             android:inputType="text"
             android:text="@string/default_characters_set"
-            app:layout_constraintBottom_toTopOf="@+id/switch4"
+            app:layout_constraintBottom_toTopOf="@+id/add_configuration_add_digits"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch4"
+            android:id="@+id/add_configuration_add_digits"
             style="@style/TextNormal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -238,11 +238,11 @@
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
             android:text="@string/digits_count"
-            app:layout_constraintBottom_toTopOf="@+id/editTextNumber3"
+            app:layout_constraintBottom_toTopOf="@+id/add_configuration_digits_count"
             app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
-            android:id="@+id/editTextNumber3"
+            android:id="@+id/add_configuration_digits_count"
             style="@style/InputFieldStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

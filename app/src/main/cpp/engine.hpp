@@ -14,10 +14,13 @@
 #include <string>
 #include <cstdint>
 #include <shared_mutex>
+#include <string_view>
 
 namespace Keysaver {
     class Engine final {
     public:
+
+        // ctors & dtor
         Engine(const Engine&) = delete;
         Engine(Engine&&) = delete;
         Engine& operator=(const Engine&) = delete;
@@ -29,6 +32,12 @@ namespace Keysaver {
             return impl;
         }
 
+        // consts
+        static constexpr std::array<std::u8string_view, 2> SUPPORTED_ALPHABETS = {
+                u8"Latin (English, US)", u8"Кириллица (Русский, Россия)"
+        };
+
+        // methods
         KeysaverStatus SetMasterPassword(const std::string& masterPassword);
         KeysaverStatus AddService(const KeysaverConfig::Service& service);
         KeysaverStatus DeleteService(const std::string& serviceName);

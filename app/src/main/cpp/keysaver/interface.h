@@ -64,4 +64,6 @@ KEYSAVER_API(keysaverGetService,             jstring      serviceName,
                                              jobject      service);
 KEYSAVER_API(keysaverGetConfigurationsCount, jobject      configurationsCount);
 KEYSAVER_API(keysaverGetConfigurationsList,  jobjectArray configurationsList);
+KEYSAVER_API(keysaverGetAlphabetsCount,      jobject      alphabetsCount);
+KEYSAVER_API(keysaverGetAlphabetsList,       jobjectArray alphabetsList);
 

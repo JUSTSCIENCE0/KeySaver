@@ -216,3 +216,33 @@ KEYSAVER_API(keysaverGetConfigurationsList, jobjectArray configurationsList) {
 
     return code;
 }
+
+KEYSAVER_API(keysaverGetAlphabetsCount, jobject alphabetsCount) {
+    if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
+
+    size_t alphabets_cnt = Keysaver::Engine::SUPPORTED_ALPHABETS.size();
+
+    auto wrapperClass = j_env->GetObjectClass(alphabetsCount);
+    auto valueField = j_env->GetFieldID(wrapperClass, "value", "I");
+    j_env->SetIntField(
+            alphabetsCount,
+            valueField,
+    static_cast<int>(alphabets_cnt));
+
+    return KeysaverStatus::S_OK;
+}
+
+KEYSAVER_API(keysaverGetAlphabetsList, jobjectArray alphabetsList) {
+    if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
+
+    jsize index = 0;
+    for (auto& alphabet: Keysaver::Engine::SUPPORTED_ALPHABETS) {
+        jstring str = j_env->NewStringUTF(reinterpret_cast<const char*>(alphabet.data()));
+        j_env->SetObjectArrayElement(alphabetsList, index, str);
+        j_env->DeleteLocalRef(str);
+
+        index++;
+    }
+
+    return KeysaverStatus::S_OK;
+}

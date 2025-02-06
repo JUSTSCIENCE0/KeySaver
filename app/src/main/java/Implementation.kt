@@ -117,6 +117,8 @@ class Implementation private constructor() {
     private external fun keysaverGetService(serviceName: String, service: ServiceDescr): Int
     private external fun keysaverGetConfigurationsCount(configurationsCount: IntWrapper): Int
     private external fun keysaverGetConfigurationsList(configurationsList: Array<String?>): Int
+    private external fun keysaverGetAlphabetsCount(alphabetsCount: IntWrapper): Int
+    private external fun keysaverGetAlphabetsList(alphabetsList: Array<String?>): Int
     private external fun keysaverAddService(service: ServiceDescr): Int
     private external fun keysaverDeleteService(serviceName: String): Int
     private external fun keysaverEditService(oldServiceName: String, newService: ServiceDescr): Int
@@ -221,6 +223,37 @@ class Implementation private constructor() {
                 configurationsList)
             configurationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinner.adapter = configurationAdapter
+        }
+
+        fun fillAlphabetsList(context: Context, spinner: Spinner) {
+            val alphabetsCount = IntWrapper(0)
+            var result = KeysaverStatus.fromCode(impl.keysaverGetAlphabetsCount(alphabetsCount))
+            if (result.isError()) {
+                Toast.makeText(context,
+                    result.getDescription(context),
+                    Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val alphabetsList = arrayOfNulls<String>(alphabetsCount.value)
+
+            if (alphabetsCount.value > 0) {
+                result = KeysaverStatus.fromCode(impl.keysaverGetAlphabetsList(alphabetsList))
+                if (result.isError()) {
+                    Toast.makeText(
+                        context,
+                        result.getDescription(context),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
+                }
+            }
+            val alphabetsAdapter = ArrayAdapter(
+                context,
+                android.R.layout.simple_spinner_item,
+                alphabetsList)
+            alphabetsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinner.adapter = alphabetsAdapter
         }
 
         fun getConfigurationIndex(context: Context, confName: String) : Int {

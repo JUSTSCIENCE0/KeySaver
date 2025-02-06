@@ -2,6 +2,7 @@ package com.science.keysaver
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Spinner
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -17,6 +18,9 @@ class AddConfiguration : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val alphabetsSpinner: Spinner = findViewById(R.id.add_configuration_alphabets)
+        Implementation.fillAlphabetsList(this, alphabetsSpinner)
     }
 
     fun onCancel(view: View?) {
