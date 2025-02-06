@@ -71,8 +71,8 @@ namespace Keysaver {
         static constexpr size_t      MIN_PASSWORD_LEN = 8;
 
         //members
-        mutable std::shared_mutex m_db_mutex{};
-        DBManager                 m_db;
+        mutable std::mutex m_db_mutex{};
+        DBManager          m_db;
 
         CryptoProvider& m_crypto = CryptoProvider::Get();
 
