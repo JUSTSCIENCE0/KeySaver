@@ -27,6 +27,9 @@ enum KeysaverStatus {
     E_SERVICE_ALREADY_EXISTS     = -3,
     E_SERVICE_URL_ALREADY_EXISTS = -4,
     E_CONFIG_ALREADY_EXISTS      = -5,
+    E_INVALID_PASSWORD_LENGTH    = -6,
+    E_INVALID_SPECIAL_CHAR_COUNT = -7,
+    E_INVALID_DIGITS_AMOUNT      = -8,
 
     // Internal Errors
     E_NOT_IMPLEMENTED       = -1000,
@@ -38,6 +41,7 @@ enum KeysaverStatus {
     E_DB_WRITE_ERROR        = -1006,
     E_DB_READ_ERROR         = -1007,
     E_DB_CORRUPTED          = -1008,
+    E_UNSUPPORTED_ALPHABET  = -1009,
 };
 
 static inline bool is_keysaver_error(KeysaverStatus code) {

@@ -100,6 +100,32 @@ namespace Keysaver {
         return KeysaverStatus::S_OK;
     }
 
+    KeysaverStatus Engine::AddConfiguration(const KeysaverConfig::Configuration& config) {
+        // validate config
+        if (config.length() < MIN_PASSWORD_LEN ||
+            config.length() > MAX_PASSWORD_LEN)
+            return KeysaverStatus::E_INVALID_PASSWORD_LENGTH;
+
+        if (size_t(config.alphabet()) >= SUPPORTED_ALPHABETS.size())
+            return KeysaverStatus::E_UNSUPPORTED_ALPHABET;
+
+        if (config.special_chars_count() > config.length() / 4)
+            return KeysaverStatus::E_INVALID_SPECIAL_CHAR_COUNT;
+
+        if (config.digits_amount() > config.length() / 4)
+            return KeysaverStatus::E_INVALID_DIGITS_AMOUNT;
+
+        if (m_db.IsConfigExists(config.id_name()))
+            return KeysaverStatus::E_SERVICE_ALREADY_EXISTS;
+
+        // add config
+        std::scoped_lock lock(m_db_mutex);
+        auto new_config = m_db.Patch().add_configurations();
+        *new_config = config;
+
+        return KeysaverStatus::S_OK;
+    }
+
     KeysaverStatus Engine::GetServicesCount(size_t* count) const {
         if (!count) return KeysaverStatus::E_INVALID_ARG;
 

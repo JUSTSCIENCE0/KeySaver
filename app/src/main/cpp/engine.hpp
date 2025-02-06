@@ -43,6 +43,7 @@ namespace Keysaver {
         KeysaverStatus DeleteService(const std::string& serviceName);
         KeysaverStatus EditService(const std::string& serviceName,
                                    const KeysaverConfig::Service& service);
+        KeysaverStatus AddConfiguration(const KeysaverConfig::Configuration& config);
         KeysaverStatus SyncDatabase() const;
 
         KeysaverStatus FirstUsage() const {
@@ -68,7 +69,8 @@ namespace Keysaver {
         enum class HASH_USAGE { E_ENCRYPTION, E_SALT };
 
         // consts
-        static constexpr size_t      MIN_PASSWORD_LEN = 8;
+        static constexpr size_t MIN_PASSWORD_LEN = 8;
+        static constexpr size_t MAX_PASSWORD_LEN = 30;
 
         //members
         mutable std::mutex m_db_mutex{};
