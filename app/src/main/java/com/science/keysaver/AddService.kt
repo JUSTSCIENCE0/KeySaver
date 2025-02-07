@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -47,6 +48,13 @@ class AddService : AppCompatActivity() {
         val urlEditText:  EditText = findViewById(R.id.service_url_add)
         val nameEditText: EditText = findViewById(R.id.service_display_name_add)
         val confSpinner:  Spinner  = findViewById(R.id.configuration_spinner_add)
+
+        if (isEmpty(urlEditText) || isEmpty(nameEditText)) {
+            Toast.makeText(this,
+                getString(R.string.required_field_empty),
+                Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val service = ServiceDescr(
             urlEditText.text.toString(),
