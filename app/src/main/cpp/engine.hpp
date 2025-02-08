@@ -58,6 +58,8 @@ namespace Keysaver {
         KeysaverStatus GetConfigurationsCount(size_t* count) const;
         KeysaverStatus GetConfigurationsList(std::list<std::string>* configNames) const;
 
+        //KeysaverStatus GeneratePassword(const std::string& serviceName, size_t saltNumber) const;
+
         KeysaverStatus Invalidate();
 
     private:
@@ -66,7 +68,6 @@ namespace Keysaver {
 
         // types
         using uint8_t = std::uint8_t;
-        enum class HASH_USAGE { E_ENCRYPTION, E_SALT };
 
         // consts
         static constexpr size_t MIN_PASSWORD_LEN = 8;
@@ -76,8 +77,8 @@ namespace Keysaver {
         mutable std::mutex m_db_mutex{};
         DBManager          m_db;
 
-        CryptoProvider& m_crypto = CryptoProvider::Get();
+        HashProvider m_hasher{};
 
-        std::array<uint8_t, CryptoProvider::HASH_SIZE> m_salt_hash{};
+        std::array<uint8_t, HashProvider::HASH_SIZE> m_salt_hash{};
     };
 }

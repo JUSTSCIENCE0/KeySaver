@@ -18,17 +18,17 @@ namespace Keysaver {
             return KeysaverStatus::E_TOO_SHORT_MASTER_PASSWORD;
 
         DBManager::EncryptionKey key{};
-        if (!m_crypto.CalculateHash(
+        if (!m_hasher.CalculateHash(
                 masterPassword.data(),
                 masterPassword.size(),
-                CryptoProvider::HashAlgorithm::SHA3_256,
+                HashProvider::HashAlgorithm::SHA3_256,
                 &key))
             return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
-        if (!m_crypto.CalculateHash(
+        if (!m_hasher.CalculateHash(
                 masterPassword.data(),
                 masterPassword.size(),
-                CryptoProvider::HashAlgorithm::BLAKE2_256,
+                HashProvider::HashAlgorithm::BLAKE2_256,
                 &m_salt_hash))
             return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
@@ -178,7 +178,7 @@ namespace Keysaver {
     }
 
     KeysaverStatus Engine::Invalidate() {
-        std::memset(m_salt_hash.data(), 0, CryptoProvider::HASH_SIZE);
+        std::memset(m_salt_hash.data(), 0, HashProvider::HASH_SIZE);
 
         std::scoped_lock lock(m_db_mutex);
         m_db.Invalidate();
