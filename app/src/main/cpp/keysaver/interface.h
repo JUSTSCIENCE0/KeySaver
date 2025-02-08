@@ -43,6 +43,7 @@ enum KeysaverStatus {
     E_DB_READ_ERROR         = -1007,
     E_DB_CORRUPTED          = -1008,
     E_UNSUPPORTED_ALPHABET  = -1009,
+    E_UNEXPECTED_EXCEPTION  = -1010,
 };
 
 static inline bool is_keysaver_error(KeysaverStatus code) {

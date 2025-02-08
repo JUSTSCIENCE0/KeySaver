@@ -143,7 +143,7 @@ KEYSAVER_API(keysaverInit, jstring configPath) {
         return code;
     }
     catch (...) {
-        return KeysaverStatus::E_NOT_INITIALIZED;
+        return KeysaverStatus::E_UNEXPECTED_EXCEPTION;
     }
 
     return ks_impl->FirstUsage();
