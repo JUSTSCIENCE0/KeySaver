@@ -48,7 +48,10 @@ class SetupService : AppCompatActivity() {
 
         val serviceNameTB : EditText = findViewById(R.id.setup_service_name)
         serviceNameTB.setText(m_service)
-        configurationSpinner.setSelection(confIndex)
+
+        configurationSpinner.post {
+            configurationSpinner.setSelection(confIndex)
+        }
     }
 
     override fun onResume() {
