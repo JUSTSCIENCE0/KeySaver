@@ -30,6 +30,7 @@ enum KeysaverStatus {
     E_INVALID_PASSWORD_LENGTH    = -6,
     E_INVALID_SPECIAL_CHAR_COUNT = -7,
     E_INVALID_DIGITS_AMOUNT      = -8,
+    E_WITHOUT_ANY_CASE           = -9,
 
     // Internal Errors
     E_NOT_IMPLEMENTED       = -1000,
@@ -60,6 +61,7 @@ KEYSAVER_API(keysaverAddService,        jobject service);
 KEYSAVER_API(keysaverDeleteService,     jstring serviceName);
 KEYSAVER_API(keysaverEditService,       jstring oldServiceName,
                                         jobject newService);
+KEYSAVER_API(keysaverAddConfiguration,  jobject confDescr);
 KEYSAVER_API(keysaverSyncDatabase);
 
 KEYSAVER_API(keysaverGetServicesCount,       jobject      servicesCount);

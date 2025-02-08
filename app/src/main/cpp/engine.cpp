@@ -115,11 +115,14 @@ namespace Keysaver {
         if (config.digits_amount() > config.length() / 4)
             return KeysaverStatus::E_INVALID_DIGITS_AMOUNT;
 
+        if (!config.use_lower() && !config.use_upper())
+            return KeysaverStatus::E_WITHOUT_ANY_CASE;
+
+        std::scoped_lock lock(m_db_mutex);
         if (m_db.IsConfigExists(config.id_name()))
             return KeysaverStatus::E_SERVICE_ALREADY_EXISTS;
 
         // add config
-        std::scoped_lock lock(m_db_mutex);
         auto new_config = m_db.Patch().add_configurations();
         *new_config = config;
 

@@ -11,6 +11,7 @@ import android.os.IBinder
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.Toast
@@ -64,6 +65,10 @@ enum class KeysaverStatus(val code: Int) {
     }
 }
 
+fun isEmpty(textBox: EditText) : Boolean {
+    return textBox.text.toString().trim().isEmpty()
+}
+
 class BackgroundDBUpdate : Service() {
     override fun onCreate() {
         super.onCreate()
@@ -106,6 +111,19 @@ class ServiceDescr(
     var name:    String,
     var conf_id: String)
 
+class ConfigurationDescr(
+    var conf_id:             String,
+    var length:              Int,
+    var use_upper:           Boolean,
+    var use_lower:           Boolean,
+    var alphabet:            String,
+    var use_special_chars:   Boolean,
+    var special_chars_count: Int,
+    var special_charset:     String,
+    var use_digits:          Boolean,
+    var digits_amount:       Int
+)
+
 class Implementation private constructor() {
     private class IntWrapper(var value: Int)
 
@@ -122,6 +140,7 @@ class Implementation private constructor() {
     private external fun keysaverAddService(service: ServiceDescr): Int
     private external fun keysaverDeleteService(serviceName: String): Int
     private external fun keysaverEditService(oldServiceName: String, newService: ServiceDescr): Int
+    private external fun keysaverAddConfiguration(confDescr: ConfigurationDescr): Int
     private external fun keysaverSyncDatabase(): Int
 
     companion object {
@@ -357,6 +376,19 @@ class Implementation private constructor() {
 
         fun editService(context: Context, serviceName: String, newService: ServiceDescr) : Boolean {
             val result = KeysaverStatus.fromCode(impl.keysaverEditService(serviceName, newService))
+            if (!result.isSuccess()) {
+                Toast.makeText(context,
+                    result.getDescription(context),
+                    Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            updateDBAsync(context)
+            return true
+        }
+
+        fun addConfiguration(context: Context, config: ConfigurationDescr) : Boolean {
+            val result = KeysaverStatus.fromCode(impl.keysaverAddConfiguration(config))
             if (!result.isSuccess()) {
                 Toast.makeText(context,
                     result.getDescription(context),

@@ -9,7 +9,11 @@ static Keysaver::Engine* ks_impl = nullptr;
 
 KeysaverStatus jobj_to_service(
         JNIEnv* j_env, jobject jservice, KeysaverConfig::Service* cservice) {
+    if (!cservice) return KeysaverStatus::E_INVALID_ARG;
+
     auto serviceClass = j_env->GetObjectClass(jservice);
+    if (!serviceClass) return KeysaverStatus::E_INVALID_ARG;
+
     auto serviceUrlField = j_env->GetFieldID(
             serviceClass,
             "url",
@@ -22,6 +26,11 @@ KeysaverStatus jobj_to_service(
             serviceClass,
             "conf_id",
             "Ljava/lang/String;");
+
+    if (!serviceUrlField ||
+        !serviceNameField ||
+        !serviceConfigField)
+        return KeysaverStatus::E_INVALID_ARG;
 
     auto j_url = static_cast<jstring>(
             j_env->GetObjectField(jservice, serviceUrlField));
@@ -41,6 +50,87 @@ KeysaverStatus jobj_to_service(
     cservice->set_url(c_url);
     cservice->set_name(c_name);
     cservice->set_conf_id(c_conf_id);
+    return KeysaverStatus::S_OK;
+}
+
+KeysaverStatus jobj_to_config(
+        JNIEnv* j_env, jobject jconfig, KeysaverConfig::Configuration* cconfig) {
+    if (!cconfig) return KeysaverStatus::E_INVALID_ARG;
+
+    auto configClass = j_env->GetObjectClass(jconfig);
+    if (!configClass) return KeysaverStatus::E_INVALID_ARG;
+
+    auto conf_idField = j_env->GetFieldID(
+            configClass, "conf_id", "Ljava/lang/String;");
+    auto lengthField = j_env->GetFieldID(
+            configClass, "length", "I");
+    auto use_upperField = j_env->GetFieldID(
+            configClass, "use_upper", "Z");
+    auto use_lowerField = j_env->GetFieldID(
+            configClass, "use_lower", "Z");
+    auto alphabetField = j_env->GetFieldID(
+            configClass, "alphabet", "Ljava/lang/String;");
+    auto use_special_charsField = j_env->GetFieldID(
+            configClass, "use_special_chars", "Z");
+    auto special_chars_countField = j_env->GetFieldID(
+            configClass, "special_chars_count", "I");
+    auto special_charsetField = j_env->GetFieldID(
+            configClass, "special_charset", "Ljava/lang/String;");
+    auto use_digitsField = j_env->GetFieldID(
+            configClass, "use_digits", "Z");
+    auto digits_amountField = j_env->GetFieldID(
+            configClass, "digits_amount", "I");
+
+    if (!conf_idField || !lengthField || !use_upperField || !use_lowerField ||
+        !alphabetField || !use_special_charsField || !special_chars_countField ||
+        !special_charsetField || !use_digitsField || !digits_amountField)
+        return KeysaverStatus::E_INVALID_ARG;
+
+    auto j_conf_id = static_cast<jstring>(
+            j_env->GetObjectField(jconfig, conf_idField));
+    auto j_length = j_env->GetIntField(jconfig, lengthField);
+    auto j_use_upper = j_env->GetBooleanField(jconfig, use_upperField);
+    auto j_use_lower = j_env->GetBooleanField(jconfig, use_lowerField);
+    auto j_alphabet = static_cast<jstring>(
+            j_env->GetObjectField(jconfig, alphabetField));
+    auto j_use_special_chars =
+            j_env->GetBooleanField(jconfig, use_special_charsField);
+    auto j_special_chars_count =
+            j_env->GetIntField(jconfig, special_chars_countField);
+    auto j_special_charset = static_cast<jstring>(
+            j_env->GetObjectField(jconfig, special_charsetField));
+    auto j_use_digits =
+            j_env->GetBooleanField(jconfig, use_digitsField);
+    auto j_digits_amount =
+            j_env->GetIntField(jconfig, digits_amountField);
+
+    auto c_conf_id = j_env->GetStringUTFChars(j_conf_id, nullptr);
+    auto c_alphabet = j_env->GetStringUTFChars(j_alphabet, nullptr);
+    auto c_special_charset=
+            j_env->GetStringUTFChars(j_special_charset, nullptr);
+    if (!c_conf_id || !c_alphabet || !c_special_charset) return KeysaverStatus::E_INVALID_ARG;
+
+    std::u8string alphabetName{reinterpret_cast<const char8_t*>(c_alphabet)};
+    auto alph_itr = std::find(
+                              Keysaver::Engine::SUPPORTED_ALPHABETS.begin(),
+                              Keysaver::Engine::SUPPORTED_ALPHABETS.end(),
+                              alphabetName);
+    if (Keysaver::Engine::SUPPORTED_ALPHABETS.end() == alph_itr)
+        return KeysaverStatus::E_UNSUPPORTED_ALPHABET;
+    auto alphabetIndex =
+            std::distance(Keysaver::Engine::SUPPORTED_ALPHABETS.begin(), alph_itr);
+
+    cconfig->set_id_name(c_conf_id);
+    cconfig->set_length(j_length);
+    cconfig->set_use_upper(j_use_upper);
+    cconfig->set_use_lower(j_use_lower);
+    cconfig->set_alphabet(KeysaverConfig::Configuration_AlphabetType(alphabetIndex));
+    cconfig->set_use_special_chars(j_use_special_chars);
+    cconfig->set_special_chars_count(j_special_chars_count);
+    cconfig->set_special_charset(c_special_charset);
+    cconfig->set_use_digits(j_use_digits);
+    cconfig->set_digits_amount(j_digits_amount);
+
     return KeysaverStatus::S_OK;
 }
 
@@ -103,6 +193,16 @@ KEYSAVER_API(keysaverEditService,       jstring oldServiceName,
     if (is_keysaver_error(code)) return code;
 
     return ks_impl->EditService(c_service_name, servConf);
+}
+
+KEYSAVER_API(keysaverAddConfiguration,  jobject confDescr) {
+    if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
+
+    KeysaverConfig::Configuration config;
+    auto code = jobj_to_config(j_env, confDescr, &config);
+    if (is_keysaver_error(code)) return code;
+
+    return ks_impl->AddConfiguration(config);
 }
 
 KEYSAVER_API(keysaverSyncDatabase) {
