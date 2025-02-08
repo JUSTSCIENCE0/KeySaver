@@ -21,6 +21,7 @@ namespace Keysaver {
         // consts
         static constexpr size_t      ENCRYPTION_KEY_SIZE = 32;
         static constexpr std::string DEFAULT_CONFIG_NAME = "Default";
+        static constexpr int         INVALID_INDEX = -1;
 
         // types
         using EncryptionKey = std::array<uint8_t, ENCRYPTION_KEY_SIZE>;
@@ -43,6 +44,8 @@ namespace Keysaver {
         const KeysaverConfig::Service* GetService(const std::string& serviceName) const;
         int GetServiceIndex(const std::string& serviceName) const;
 
+        int GetConfigurationIndex(const std::string& configName) const;
+
         KeysaverStatus SetEncryptionKey(const EncryptionKey& key);
         KeysaverStatus Flush() const;
 
@@ -59,7 +62,7 @@ namespace Keysaver {
         using uint8_t = std::uint8_t;
 
         // consts
-        static constexpr auto        DB_NAME = "/database.bin";
+        static constexpr auto DB_NAME = "/database.bin";
 
         // methods
         KeysaverStatus Read();

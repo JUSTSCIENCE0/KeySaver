@@ -13,6 +13,15 @@
 #include <fstream>
 
 namespace Keysaver {
+    KeysaverStatus ConstructPassword(
+            const KeysaverConfig::Configuration& config,
+            PRNGProvider& prng,
+            std::string* result) {
+        assert(result);
+
+        return KeysaverStatus::E_NOT_IMPLEMENTED;
+    }
+
     KeysaverStatus Engine::SetMasterPassword(const std::string& masterPassword) {
         if (masterPassword.length() < MIN_PASSWORD_LEN)
             return KeysaverStatus::E_TOO_SHORT_MASTER_PASSWORD;
@@ -29,7 +38,7 @@ namespace Keysaver {
                 masterPassword.data(),
                 masterPassword.size(),
                 HashProvider::HashAlgorithm::BLAKE2_256,
-                &m_salt_hash))
+                &m_prng_key))
             return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
         std::scoped_lock lock(m_db_mutex);
@@ -177,8 +186,36 @@ namespace Keysaver {
         return KeysaverStatus::S_OK;
     }
 
+    KeysaverStatus Engine::GeneratePassword(
+            const std::string& serviceName, size_t saltNumber, std::string* result) const {
+        if (saltNumber >= SALTS_COUNT || !result)
+            return KeysaverStatus::E_INVALID_ARG;
+
+        auto serviceIndex = m_db.GetServiceIndex(serviceName);
+        if (serviceIndex == DBManager::INVALID_INDEX)
+            return KeysaverStatus::E_SERVICE_NOT_EXISTS;
+
+        const auto& service = m_db.Get().services(serviceIndex);
+
+        auto confIndex = m_db.GetConfigurationIndex(service.conf_id());
+        if (confIndex == DBManager::INVALID_INDEX)
+            return KeysaverStatus::E_CONFIG_NOT_EXISTS;
+
+        const auto& config = m_db.Get().configurations(confIndex);
+
+        HashProvider::Hash init_vector{};
+        if (!m_hasher.CalculateHash(
+                service.url().data(), service.url().size(),
+                HashProvider::HashAlgorithm::SHA3_256,
+                init_vector.data(), int(saltNumber)))
+            return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
+
+        PRNGProvider prng(m_prng_key, init_vector);
+        return ConstructPassword(config, prng, result);
+    }
+
     KeysaverStatus Engine::Invalidate() {
-        std::memset(m_salt_hash.data(), 0, HashProvider::HASH_SIZE);
+        std::memset(m_prng_key.data(), 0, HashProvider::HASH_SIZE);
 
         std::scoped_lock lock(m_db_mutex);
         m_db.Invalidate();

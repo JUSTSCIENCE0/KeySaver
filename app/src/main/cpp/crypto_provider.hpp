@@ -12,6 +12,8 @@
 #include <array>
 
 namespace Keysaver {
+    constexpr int SALTS_COUNT = 9;
+
     class HashProvider final {
     public:
         // consts

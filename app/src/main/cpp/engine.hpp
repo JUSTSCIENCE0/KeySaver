@@ -58,7 +58,9 @@ namespace Keysaver {
         KeysaverStatus GetConfigurationsCount(size_t* count) const;
         KeysaverStatus GetConfigurationsList(std::list<std::string>* configNames) const;
 
-        //KeysaverStatus GeneratePassword(const std::string& serviceName, size_t saltNumber) const;
+        KeysaverStatus GeneratePassword(const std::string& serviceName,
+                                        size_t saltNumber,
+                                        std::string* result) const;
 
         KeysaverStatus Invalidate();
 
@@ -77,8 +79,8 @@ namespace Keysaver {
         mutable std::mutex m_db_mutex{};
         DBManager          m_db;
 
-        HashProvider m_hasher{};
+        mutable HashProvider m_hasher{};
 
-        std::array<uint8_t, HashProvider::HASH_SIZE> m_salt_hash{};
+        PRNGProvider::PRNGKey m_prng_key{};
     };
 }

@@ -36,7 +36,17 @@ namespace Keysaver {
             if (services.Get(i).name() == serviceName) return i;
         }
 
-        return -1;
+        return INVALID_INDEX;
+    }
+
+    int DBManager::GetConfigurationIndex(const std::string& configName) const {
+        const auto& configs = m_proto_db.configurations();
+
+        for (int i = 0; i < configs.size(); i++) {
+            if (configs.Get(i).id_name() == configName) return i;
+        }
+
+        return INVALID_INDEX;
     }
 
     bool DBManager::IsServiceExists(const std::string& serviceName) const {
@@ -58,17 +68,7 @@ namespace Keysaver {
 
     bool DBManager::IsConfigExists(const std::string& configName) const {
         if (configName == DEFAULT_CONFIG_NAME) return true;
-
-        const auto& configs = m_proto_db.configurations();
-
-        auto result = std::find_if(
-                configs.begin(),
-                configs.end(),
-                [&configName](const auto& config){
-                    return config.id_name() == configName;
-                });
-
-        return (result != configs.end());
+        return GetConfigurationIndex(configName) != INVALID_INDEX;
     }
 
     KeysaverStatus DBManager::SetEncryptionKey(const EncryptionKey& key) {
