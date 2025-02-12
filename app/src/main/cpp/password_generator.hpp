@@ -22,13 +22,28 @@ namespace Keysaver {
         };
 
         // interface
-        PRNGProvider::PRNGKey& PatchKey();
-        void Invalidate();
+        KeysaverStatus SetKey(const PRNGProvider::PRNGKey& key) {
+            return m_prng.SetKey(key) ? S_OK : E_INVALID_ORDER;
+        }
         KeysaverStatus ConstructPassword(const HashProvider::Hash& init_vector,
                                          const KeysaverConfig::Configuration& config,
                                          std::u8string* result) const;
+        void Invalidate() { m_prng.Invalidate(); }
+
     private:
+        // types
+        enum class SymbolType {
+            UPPERCASE_LETTER,
+            LOWERCASE_LETTER,
+            SPECIAL_CHAR,
+            DIGIT
+        };
+        using Mask = std::vector<SymbolType>;
+
+        // methods
+        KeysaverStatus MakeMask(const KeysaverConfig::Configuration& config, Mask* mask) const;
+
         // members
-        PRNGProvider::PRNGKey m_prng_key;
+        mutable PRNGProvider m_prng;
     };
 }

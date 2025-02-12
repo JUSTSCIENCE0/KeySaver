@@ -26,23 +26,27 @@ namespace Keysaver {
         if (masterPassword.length() < MIN_PASSWORD_LEN)
             return KeysaverStatus::E_TOO_SHORT_MASTER_PASSWORD;
 
-        DBManager::EncryptionKey key{};
+        DBManager::EncryptionKey db_key{};
         if (!m_hasher.CalculateHash(
                 masterPassword.data(),
                 masterPassword.size(),
                 HashProvider::HashAlgorithm::SHA3_256,
-                &key))
+                &db_key))
             return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
+        PRNGProvider::PRNGKey prng_key{};
         if (!m_hasher.CalculateHash(
                 masterPassword.data(),
                 masterPassword.size(),
                 HashProvider::HashAlgorithm::BLAKE2_256,
-                &m_generator.PatchKey()))
+                &prng_key))
             return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
+        auto code = m_generator.SetKey(prng_key);
+        if (is_keysaver_error(code)) return code;
+
         std::scoped_lock lock(m_db_mutex);
-        auto code = m_db.SetEncryptionKey(key);
+        code = m_db.SetEncryptionKey(db_key);
         if (is_keysaver_error(code)) return code;
 
         return code;
