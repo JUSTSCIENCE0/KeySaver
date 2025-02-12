@@ -8,6 +8,7 @@
 #include <openssl/evp.h>
 
 #include <cassert>
+#include <random>
 
 namespace Keysaver {
     constexpr uint8_t salts[SALTS_COUNT][HashProvider::HASH_SIZE] = {
@@ -79,7 +80,7 @@ namespace Keysaver {
         }
     }
 
-    PRNGProvider::PRNGIV HashToIV(const HashProvider::Hash& hash) {
+    static inline PRNGProvider::PRNGIV HashToIV(const HashProvider::Hash& hash) {
         static_assert(HashProvider::HASH_SIZE == PRNGProvider::PRNG_IV_SIZE * 2);
 
         PRNGProvider::PRNGIV result{};
@@ -128,7 +129,8 @@ namespace Keysaver {
         return true;
     }
 
-    PRNGProvider::PRNGProvider(const PRNGKey& key, const PRNGIV& iv) {
+    PRNGProvider::PRNGProvider(const PRNGKey& key, const PRNGIV& iv) :
+            m_key(key) {
         m_ossl_ctx = EVP_CIPHER_CTX_new();
         if (!m_ossl_ctx) throw KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
@@ -145,11 +147,31 @@ namespace Keysaver {
         }
     }
 
+    PRNGProvider::PRNGProvider(const PRNGKey& key) :
+            PRNGProvider(key, PRNGIV{}) {}
+
     PRNGProvider::PRNGProvider(const PRNGKey& key, const HashProvider::Hash& iv) :
             PRNGProvider(key, HashToIV(iv)) {}
 
     PRNGProvider::~PRNGProvider() {
         EVP_CIPHER_CTX_free(m_ossl_ctx);
+    }
+
+    bool PRNGProvider::changeIV(const PRNGIV& iv) {
+        int out_len = 0;
+        if (EVP_EncryptFinal_ex(m_ossl_ctx, m_buffer.data(), &out_len) != 1)
+            return false;
+
+        if (EVP_EncryptInit_ex(
+                m_ossl_ctx, EVP_aes_256_ofb(), nullptr,
+                m_key.data(), iv.data()) != 1)
+            return false;
+
+        return UpdateBlock();
+    }
+
+    bool PRNGProvider::changeIV(const HashProvider::Hash& iv) {
+        return changeIV(HashToIV(iv));
     }
 
     bool PRNGProvider::getByte(uint8_t* result) {
@@ -162,20 +184,40 @@ namespace Keysaver {
         return true;
     }
 
-    bool PRNGProvider::getInt(int* result, int module) {
-        uint8_t tmp_byte = 0;
-
-        for (size_t i = 0; i < sizeof(int); i++) {
-            *result <<= 8;
-            if (!getByte(&tmp_byte)) return false;
-            *result += tmp_byte;
+    bool PRNGProvider::getBytes(uint8_t* result, size_t count) {
+        for (size_t i = 0; i < count; i++) {
+            if (!getByte(result)) return false;
+            result++;
         }
 
-        if (!module) return true;
-
-        *result = std::abs(*result);
-        *result %= module;
         return true;
+    }
+
+    PRNGProvider::result_type PRNGProvider::operator()() {
+        result_type result = 0;
+        uint8_t tmp_byte = 0;
+
+        for (size_t i = 0; i < sizeof(result_type); i++) {
+            if (!getByte(&tmp_byte))
+                throw KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
+
+            result <<= 8;
+            result |= tmp_byte;
+        }
+
+        return result;
+    }
+
+    PRNGProvider::PRNGIV PRNGProvider::GenerateIV() {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<uint8_t> dist(0, 255);
+
+        PRNGIV result{};
+        for (auto& byte : result) {
+            byte = dist(gen);
+        }
+        return result;
     }
 
     bool PRNGProvider::UpdateBlock() {
