@@ -129,52 +129,45 @@ namespace Keysaver {
         return true;
     }
 
-    PRNGProvider::PRNGProvider(const PRNGKey& key, const PRNGIV& iv) :
-            m_key(key) {
+    PRNGProvider::PRNGProvider() {
         m_ossl_ctx = EVP_CIPHER_CTX_new();
         if (!m_ossl_ctx) throw KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
-
-        if (EVP_EncryptInit_ex(
-                m_ossl_ctx, EVP_aes_256_ofb(), nullptr,
-                key.data(), iv.data()) != 1) {
-            EVP_CIPHER_CTX_free(m_ossl_ctx);
-            throw KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
-        }
-
-        if (!UpdateBlock()) {
-            EVP_CIPHER_CTX_free(m_ossl_ctx);
-            throw KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
-        }
     }
-
-    PRNGProvider::PRNGProvider(const PRNGKey& key) :
-            PRNGProvider(key, PRNGIV{}) {}
-
-    PRNGProvider::PRNGProvider(const PRNGKey& key, const HashProvider::Hash& iv) :
-            PRNGProvider(key, HashToIV(iv)) {}
 
     PRNGProvider::~PRNGProvider() {
         EVP_CIPHER_CTX_free(m_ossl_ctx);
     }
 
-    bool PRNGProvider::changeIV(const PRNGIV& iv) {
-        int out_len = 0;
-        if (EVP_EncryptFinal_ex(m_ossl_ctx, m_buffer.data(), &out_len) != 1)
-            return false;
+    bool PRNGProvider::SetKey(const PRNGKey& key) {
+        if (m_is_cipher_inited) return false;
+
+        m_key = key;
+        return true;
+    }
+
+    bool PRNGProvider::ChangeIV(const PRNGIV& iv) {
+        if (m_is_cipher_inited) {
+            int out_len = 0;
+            if (EVP_EncryptFinal_ex(m_ossl_ctx, m_buffer.data(), &out_len) != 1)
+                return false;
+        }
 
         if (EVP_EncryptInit_ex(
                 m_ossl_ctx, EVP_aes_256_ofb(), nullptr,
                 m_key.data(), iv.data()) != 1)
             return false;
 
+        m_is_cipher_inited = true;
         return UpdateBlock();
     }
 
-    bool PRNGProvider::changeIV(const HashProvider::Hash& iv) {
-        return changeIV(HashToIV(iv));
+    bool PRNGProvider::ChangeIV(const HashProvider::Hash& iv) {
+        return ChangeIV(HashToIV(iv));
     }
 
-    bool PRNGProvider::getByte(uint8_t* result) {
+    bool PRNGProvider::GetByte(uint8_t* result) {
+        if (!m_is_cipher_inited) return false;
+
         *result = m_buffer[m_buffer_offset];
         m_buffer_offset++;
 
@@ -184,13 +177,22 @@ namespace Keysaver {
         return true;
     }
 
-    bool PRNGProvider::getBytes(uint8_t* result, size_t count) {
+    bool PRNGProvider::GetBytes(uint8_t* result, size_t count) {
         for (size_t i = 0; i < count; i++) {
-            if (!getByte(result)) return false;
+            if (!GetByte(result)) return false;
             result++;
         }
 
         return true;
+    }
+
+    void PRNGProvider::Invalidate() {
+        std::memset(m_key.data(), 0, m_key.size());
+
+        if (m_is_cipher_inited) {
+            int out_len = 0;
+            EVP_EncryptFinal_ex(m_ossl_ctx, m_buffer.data(), &out_len);
+        }
     }
 
     PRNGProvider::result_type PRNGProvider::operator()() {
@@ -198,7 +200,7 @@ namespace Keysaver {
         uint8_t tmp_byte = 0;
 
         for (size_t i = 0; i < sizeof(result_type); i++) {
-            if (!getByte(&tmp_byte))
+            if (!GetByte(&tmp_byte))
                 throw KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
             result <<= 8;

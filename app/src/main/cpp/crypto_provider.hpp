@@ -52,9 +52,7 @@ namespace Keysaver {
         using PRNGIV = std::array<uint8_t, PRNG_IV_SIZE>;
 
         // ctors/dtor
-        explicit PRNGProvider(const PRNGKey& key);
-        PRNGProvider(const PRNGKey& key, const PRNGIV& iv);
-        PRNGProvider(const PRNGKey& key, const HashProvider::Hash& iv);
+        PRNGProvider();
         PRNGProvider(const PRNGProvider&) = delete;
         PRNGProvider(PRNGProvider&&) = delete;
         PRNGProvider& operator=(const PRNGProvider&) = delete;
@@ -62,10 +60,12 @@ namespace Keysaver {
         ~PRNGProvider();
 
         // interface
-        bool changeIV(const PRNGIV& iv);
-        bool changeIV(const HashProvider::Hash& iv);
-        bool getByte(uint8_t* result);
-        bool getBytes(uint8_t* result, size_t count);
+        bool SetKey(const PRNGKey& key);
+        bool ChangeIV(const PRNGIV& iv);
+        bool ChangeIV(const HashProvider::Hash& iv);
+        bool GetByte(uint8_t* result);
+        bool GetBytes(uint8_t* result, size_t count);
+        void Invalidate();
 
         // std::uniform_random_bit_generator concept compatibility
         using result_type = uint32_t;
@@ -77,14 +77,19 @@ namespace Keysaver {
         // consts
         static constexpr size_t BLOCK_SIZE = 16;
 
+        // types
+        using Block = std::array<uint8_t, BLOCK_SIZE>;
+
         // methods
         static PRNGIV GenerateIV();
         bool UpdateBlock();
 
         // members
         EVP_CIPHER_CTX* m_ossl_ctx = nullptr;
-        std::array<uint8_t, BLOCK_SIZE> m_buffer{};
+
+        Block   m_buffer{};
         size_t  m_buffer_offset = 0;
         PRNGKey m_key{};
+        bool    m_is_cipher_inited = false;
     };
 } // Keysaver

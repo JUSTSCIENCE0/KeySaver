@@ -62,7 +62,7 @@ namespace Keysaver {
              const KeysaverConfig::Configuration& config,
              std::u8string* result) const {
         try {
-            PRNGProvider prng(m_prng_key, init_vector);
+            //PRNGProvider prng(m_prng_key, init_vector);
 
             return KeysaverStatus::E_NOT_IMPLEMENTED;
         }
