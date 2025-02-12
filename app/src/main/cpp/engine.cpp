@@ -38,7 +38,7 @@ namespace Keysaver {
                 masterPassword.data(),
                 masterPassword.size(),
                 HashProvider::HashAlgorithm::BLAKE2_256,
-                &m_prng_key))
+                &m_generator.PatchKey()))
             return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
         std::scoped_lock lock(m_db_mutex);
@@ -115,7 +115,7 @@ namespace Keysaver {
             config.length() > MAX_PASSWORD_LEN)
             return KeysaverStatus::E_INVALID_PASSWORD_LENGTH;
 
-        if (size_t(config.alphabet()) >= SUPPORTED_ALPHABETS.size())
+        if (size_t(config.alphabet()) >= m_generator.SUPPORTED_ALPHABETS.size())
             return KeysaverStatus::E_UNSUPPORTED_ALPHABET;
 
         if (config.special_chars_count() > config.length() / 4)
@@ -187,7 +187,7 @@ namespace Keysaver {
     }
 
     KeysaverStatus Engine::GeneratePassword(
-            const std::string& serviceName, size_t saltNumber, std::string* result) const {
+            const std::string& serviceName, size_t saltNumber, std::u8string* result) const {
         if (saltNumber >= SALTS_COUNT || !result)
             return KeysaverStatus::E_INVALID_ARG;
 
@@ -210,12 +210,11 @@ namespace Keysaver {
                 init_vector.data(), int(saltNumber)))
             return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
-        PRNGProvider prng(m_prng_key, init_vector);
-        return ConstructPassword(config, prng, result);
+        return m_generator.ConstructPassword(init_vector, config, result);
     }
 
     KeysaverStatus Engine::Invalidate() {
-        std::memset(m_prng_key.data(), 0, HashProvider::HASH_SIZE);
+        m_generator.Invalidate();
 
         std::scoped_lock lock(m_db_mutex);
         m_db.Invalidate();

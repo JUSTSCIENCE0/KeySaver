@@ -50,6 +50,8 @@ set(IMPLEMENTATION
     db_manager.cpp
     crypto_provider.hpp
     crypto_provider.cpp
+    password_generator.hpp
+    password_generator.cpp
 
     # protobuf generated
     configuration.pb.cc

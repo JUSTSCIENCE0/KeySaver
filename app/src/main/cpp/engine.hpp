@@ -9,6 +9,7 @@
 
 #include "db_manager.hpp"
 #include "crypto_provider.hpp"
+#include "password_generator.hpp"
 
 #include <list>
 #include <string>
@@ -31,11 +32,6 @@ namespace Keysaver {
             static Engine impl(pathToDB);
             return impl;
         }
-
-        // consts
-        static constexpr std::array<std::u8string_view, 2> SUPPORTED_ALPHABETS = {
-                u8"Latin (English, US)", u8"Кириллица (Русский, Россия)"
-        };
 
         // methods
         KeysaverStatus SetMasterPassword(const std::string& masterPassword);
@@ -60,7 +56,7 @@ namespace Keysaver {
 
         KeysaverStatus GeneratePassword(const std::string& serviceName,
                                         size_t saltNumber,
-                                        std::string* result) const;
+                                        std::u8string* result) const;
 
         KeysaverStatus Invalidate();
 
@@ -75,12 +71,11 @@ namespace Keysaver {
         static constexpr size_t MIN_PASSWORD_LEN = 8;
         static constexpr size_t MAX_PASSWORD_LEN = 30;
 
-        //members
+        // members
         mutable std::mutex m_db_mutex{};
         DBManager          m_db;
 
+        PasswordGenerator    m_generator{};
         mutable HashProvider m_hasher{};
-
-        PRNGProvider::PRNGKey m_prng_key{};
     };
 }

@@ -112,13 +112,13 @@ KeysaverStatus jobj_to_config(
 
     std::u8string alphabetName{reinterpret_cast<const char8_t*>(c_alphabet)};
     auto alph_itr = std::find(
-                              Keysaver::Engine::SUPPORTED_ALPHABETS.begin(),
-                              Keysaver::Engine::SUPPORTED_ALPHABETS.end(),
+                              Keysaver::PasswordGenerator::SUPPORTED_ALPHABETS.begin(),
+                              Keysaver::PasswordGenerator::SUPPORTED_ALPHABETS.end(),
                               alphabetName);
-    if (Keysaver::Engine::SUPPORTED_ALPHABETS.end() == alph_itr)
+    if (Keysaver::PasswordGenerator::SUPPORTED_ALPHABETS.end() == alph_itr)
         return KeysaverStatus::E_UNSUPPORTED_ALPHABET;
-    auto alphabetIndex =
-            std::distance(Keysaver::Engine::SUPPORTED_ALPHABETS.begin(), alph_itr);
+    auto alphabetIndex = std::distance(
+            Keysaver::PasswordGenerator::SUPPORTED_ALPHABETS.begin(), alph_itr);
 
     cconfig->set_id_name(c_conf_id);
     cconfig->set_length(j_length);
@@ -320,7 +320,7 @@ KEYSAVER_API(keysaverGetConfigurationsList, jobjectArray configurationsList) {
 KEYSAVER_API(keysaverGetAlphabetsCount, jobject alphabetsCount) {
     if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
 
-    size_t alphabets_cnt = Keysaver::Engine::SUPPORTED_ALPHABETS.size();
+    size_t alphabets_cnt = Keysaver::PasswordGenerator::SUPPORTED_ALPHABETS.size();
 
     auto wrapperClass = j_env->GetObjectClass(alphabetsCount);
     auto valueField = j_env->GetFieldID(wrapperClass, "value", "I");
@@ -336,7 +336,7 @@ KEYSAVER_API(keysaverGetAlphabetsList, jobjectArray alphabetsList) {
     if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
 
     jsize index = 0;
-    for (auto& alphabet: Keysaver::Engine::SUPPORTED_ALPHABETS) {
+    for (auto& alphabet: Keysaver::PasswordGenerator::SUPPORTED_ALPHABETS) {
         jstring str = j_env->NewStringUTF(reinterpret_cast<const char*>(alphabet.data()));
         j_env->SetObjectArrayElement(alphabetsList, index, str);
         j_env->DeleteLocalRef(str);
