@@ -27,7 +27,7 @@ namespace Keysaver {
         }
         KeysaverStatus ConstructPassword(const HashProvider::Hash& init_vector,
                                          const KeysaverConfig::Configuration& config,
-                                         std::u8string* result) const;
+                                         std::u8string* result);
         void Invalidate() { m_prng.Invalidate(); }
 
     private:
@@ -41,9 +41,9 @@ namespace Keysaver {
         using Mask = std::vector<SymbolType>;
 
         // methods
-        KeysaverStatus MakeMask(const KeysaverConfig::Configuration& config, Mask* mask) const;
+        KeysaverStatus MakeMask(const KeysaverConfig::Configuration& config, Mask* mask);
 
         // members
-        mutable PRNGProvider m_prng;
+        PRNGProvider m_prng;
     };
 }

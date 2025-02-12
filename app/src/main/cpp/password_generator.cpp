@@ -52,7 +52,7 @@ namespace Keysaver {
     };
 
     KeysaverStatus PasswordGenerator::MakeMask(
-            const KeysaverConfig::Configuration& config, Mask* mask) const {
+            const KeysaverConfig::Configuration& config, Mask* mask) {
         if (!mask || !mask->empty()) return KeysaverStatus::E_INVALID_ARG;
 
         uint8_t rnd_byte = 0;
@@ -97,7 +97,7 @@ namespace Keysaver {
     KeysaverStatus PasswordGenerator::ConstructPassword(
              const HashProvider::Hash& init_vector,
              const KeysaverConfig::Configuration& config,
-             std::u8string* result) const {
+             std::u8string* result) {
         m_prng.ChangeIV(init_vector);
 
         Mask mask{};

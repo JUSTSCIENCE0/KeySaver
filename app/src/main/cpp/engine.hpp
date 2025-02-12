@@ -56,7 +56,7 @@ namespace Keysaver {
 
         KeysaverStatus GeneratePassword(const std::string& serviceName,
                                         size_t saltNumber,
-                                        std::u8string* result) const;
+                                        std::u8string* result);
 
         KeysaverStatus Invalidate();
 

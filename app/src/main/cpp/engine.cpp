@@ -191,7 +191,7 @@ namespace Keysaver {
     }
 
     KeysaverStatus Engine::GeneratePassword(
-            const std::string& serviceName, size_t saltNumber, std::u8string* result) const {
+            const std::string& serviceName, size_t saltNumber, std::u8string* result) {
         if (saltNumber >= SALTS_COUNT || !result)
             return KeysaverStatus::E_INVALID_ARG;
 
