@@ -150,6 +150,7 @@ namespace Keysaver {
             int out_len = 0;
             if (EVP_EncryptFinal_ex(m_ossl_ctx, m_buffer.data(), &out_len) != 1)
                 return false;
+            std::memset(m_buffer.data(), 0, m_buffer.size());
         }
 
         if (EVP_EncryptInit_ex(
