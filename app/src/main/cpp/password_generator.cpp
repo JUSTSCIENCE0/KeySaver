@@ -94,6 +94,34 @@ namespace Keysaver {
         return KeysaverStatus::S_OK;
     }
 
+    KeysaverStatus PasswordGenerator::AddSymbol(
+            SymbolType type,
+            const KeysaverConfig::Configuration& config,
+            std::u8string* result) {
+        uint8_t rnd_byte = 0;
+        if (!m_prng.GetByte(&rnd_byte)) return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
+
+        // TODO: random select
+        switch (type) {
+        case SymbolType::UPPERCASE_LETTER:
+            *result += u8"A";
+            break;
+        case SymbolType::LOWERCASE_LETTER:
+            *result += u8"a";
+            break;
+        case SymbolType::SPECIAL_CHAR:
+            *result += u8"!";
+            break;
+        case SymbolType::DIGIT:
+            *result += u8"0";
+            break;
+        default:
+            return KeysaverStatus::E_INVALID_ARG;
+        }
+
+        return KeysaverStatus::S_OK;
+    }
+
     KeysaverStatus PasswordGenerator::ConstructPassword(
              const HashProvider::Hash& init_vector,
              const KeysaverConfig::Configuration& config,
@@ -104,7 +132,12 @@ namespace Keysaver {
         auto code = MakeMask(config, &mask);
         if (is_keysaver_error(code)) return code;
 
-        return KeysaverStatus::E_NOT_IMPLEMENTED;
+        for (const auto& symbol : mask) {
+            code = AddSymbol(symbol, config, result);
+            if (is_keysaver_error(code)) return code;
+        }
+
+        return code;
     }
 
 }

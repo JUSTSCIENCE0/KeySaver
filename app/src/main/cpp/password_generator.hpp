@@ -42,6 +42,9 @@ namespace Keysaver {
 
         // methods
         KeysaverStatus MakeMask(const KeysaverConfig::Configuration& config, Mask* mask);
+        KeysaverStatus AddSymbol(SymbolType type,
+                                 const KeysaverConfig::Configuration& config,
+                                 std::u8string* result);
 
         // members
         PRNGProvider m_prng;
