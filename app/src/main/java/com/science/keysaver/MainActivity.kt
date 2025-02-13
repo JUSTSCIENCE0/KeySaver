@@ -92,4 +92,27 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra("service", selectedService)
         startActivity(intent)
     }
+
+    fun onImageClick(view: View?) {
+        if (null == view) return
+        var imageNumber = -1
+
+        when (view.id) {
+            R.id.get_password_image_0 -> imageNumber = 0
+            R.id.get_password_image_1 -> imageNumber = 1
+            R.id.get_password_image_2 -> imageNumber = 2
+            R.id.get_password_image_3 -> imageNumber = 3
+            R.id.get_password_image_4 -> imageNumber = 4
+            R.id.get_password_image_5 -> imageNumber = 5
+            R.id.get_password_image_6 -> imageNumber = 6
+            R.id.get_password_image_7 -> imageNumber = 7
+            R.id.get_password_image_8 -> imageNumber = 8
+        }
+
+        val selectedService = findViewById<Spinner>(R.id.selected_service).selectedItem.toString()
+        val password = Implementation.generatePassword(this, selectedService, imageNumber)
+
+        val passwordEditText = findViewById<EditText>(R.id.get_password_result)
+        passwordEditText.setText(password)
+    }
 }

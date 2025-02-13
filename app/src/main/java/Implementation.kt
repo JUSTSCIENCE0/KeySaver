@@ -126,6 +126,7 @@ class ConfigurationDescr(
 
 class Implementation private constructor() {
     private class IntWrapper(var value: Int)
+    private class StringWrapper(var value: String);
 
     private external fun keysaverInit(configPath: String): Int
     private external fun keysaverClose(): Int
@@ -142,6 +143,8 @@ class Implementation private constructor() {
     private external fun keysaverEditService(oldServiceName: String, newService: ServiceDescr): Int
     private external fun keysaverAddConfiguration(confDescr: ConfigurationDescr): Int
     private external fun keysaverSyncDatabase(): Int
+    private external fun keysaverGeneratePassword(
+        serviceName: String, imageIndex: Int, result: StringWrapper): Int
 
     companion object {
         private fun showWelcomeMessage(context: Context) {
@@ -416,6 +419,21 @@ class Implementation private constructor() {
 
         fun syncDB() : KeysaverStatus {
             return KeysaverStatus.fromCode(impl.keysaverSyncDatabase())
+        }
+
+        fun generatePassword(context: Context, serviceName: String, imageIndex: Int) : String {
+            val result = StringWrapper("")
+
+            val code = KeysaverStatus.fromCode(
+                impl.keysaverGeneratePassword(serviceName, imageIndex, result))
+            if (!code.isSuccess()) {
+                Toast.makeText(context,
+                    code.getDescription(context),
+                    Toast.LENGTH_SHORT).show()
+                return "error"
+            }
+
+            return result.value
         }
 
         private val impl : Implementation = Implementation()

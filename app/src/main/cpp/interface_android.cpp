@@ -183,8 +183,7 @@ KEYSAVER_API(keysaverDeleteService, jstring serviceName) {
     return ks_impl->DeleteService(c_service_name);
 }
 
-KEYSAVER_API(keysaverEditService,       jstring oldServiceName,
-             jobject newService) {
+KEYSAVER_API(keysaverEditService, jstring oldServiceName, jobject newService) {
     if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
 
     auto c_service_name = j_env->GetStringUTFChars(oldServiceName, nullptr);
@@ -195,7 +194,7 @@ KEYSAVER_API(keysaverEditService,       jstring oldServiceName,
     return ks_impl->EditService(c_service_name, servConf);
 }
 
-KEYSAVER_API(keysaverAddConfiguration,  jobject confDescr) {
+KEYSAVER_API(keysaverAddConfiguration, jobject confDescr) {
     if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
 
     KeysaverConfig::Configuration config;
@@ -345,4 +344,29 @@ KEYSAVER_API(keysaverGetAlphabetsList, jobjectArray alphabetsList) {
     }
 
     return KeysaverStatus::S_OK;
+}
+
+KEYSAVER_API(keysaverGeneratePassword, jstring serviceName, jint imageIndex, jobject result) {
+    if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
+
+    auto c_service_name = j_env->GetStringUTFChars(serviceName, nullptr);
+    if (!c_service_name) return KeysaverStatus::E_INVALID_ARG;
+
+    jclass resultClass = j_env->GetObjectClass(result);
+    if (!resultClass) return KeysaverStatus::E_INVALID_ARG;
+    jfieldID resultField = j_env->GetFieldID(resultClass, "value", "Ljava/lang/String;");
+    if (!resultField) return KeysaverStatus::E_INVALID_ARG;
+
+    std::u8string cpp_result;
+    auto code = ks_impl->GeneratePassword(
+            c_service_name, imageIndex, &cpp_result);
+    if (is_keysaver_error(code)) return code;
+
+    j_env->SetObjectField(
+            result, resultField,
+            j_env->NewStringUTF(
+                    reinterpret_cast<const char*>(cpp_result.data())
+                )
+            );
+    return code;
 }
