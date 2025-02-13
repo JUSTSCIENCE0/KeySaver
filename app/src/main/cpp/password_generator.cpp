@@ -101,19 +101,33 @@ namespace Keysaver {
         uint8_t rnd_byte = 0;
         if (!m_prng.GetByte(&rnd_byte)) return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
+        const Alphabet* alphabet = nullptr;
+        switch (config.alphabet()) {
+        case KeysaverConfig::Configuration_AlphabetType_LATIN_ENGLISH:
+            alphabet = &(LETTERS[0]);
+            break;
+        case KeysaverConfig::Configuration_AlphabetType_CYRILLIC_RUSSIAN:
+            alphabet = &(LETTERS[1]);
+            break;
+        default:
+            return KeysaverStatus::E_NOT_IMPLEMENTED;
+        }
+
+        const auto& special_charset = config.special_charset();
+
         // TODO: random select
         switch (type) {
         case SymbolType::UPPERCASE_LETTER:
-            *result += u8"A";
+            *result += alphabet->upper_case[rnd_byte % alphabet->upper_case.size()];
             break;
         case SymbolType::LOWERCASE_LETTER:
-            *result += u8"a";
+            *result += alphabet->lower_case[rnd_byte % alphabet->lower_case.size()];
             break;
         case SymbolType::SPECIAL_CHAR:
-            *result += u8"!";
+            *result += special_charset[rnd_byte % special_charset.size()];
             break;
         case SymbolType::DIGIT:
-            *result += u8"0";
+            *result += std::to_string(rnd_byte % 10)[0];
             break;
         default:
             return KeysaverStatus::E_INVALID_ARG;
