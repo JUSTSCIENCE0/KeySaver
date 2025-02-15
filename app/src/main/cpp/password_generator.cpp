@@ -115,7 +115,6 @@ namespace Keysaver {
 
         const auto& special_charset = config.special_charset();
 
-        // TODO: random select
         switch (type) {
         case SymbolType::UPPERCASE_LETTER:
             *result += alphabet->upper_case[rnd_byte % alphabet->upper_case.size()];
