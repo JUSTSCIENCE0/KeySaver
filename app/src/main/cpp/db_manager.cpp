@@ -40,6 +40,8 @@ namespace Keysaver {
     }
 
     int DBManager::GetConfigurationIndex(const std::string& configName) const {
+        if (configName == DEFAULT_CONFIG_NAME) return DEFAULT_CONFIG_INDEX;
+
         const auto& configs = m_proto_db.configurations();
 
         for (int i = 0; i < configs.size(); i++) {

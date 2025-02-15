@@ -21,6 +21,7 @@ namespace Keysaver {
         // consts
         static constexpr size_t      ENCRYPTION_KEY_SIZE = 32;
         static constexpr std::string DEFAULT_CONFIG_NAME = "Default";
+        static constexpr int         DEFAULT_CONFIG_INDEX = std::numeric_limits<int>::min();
         static constexpr int         INVALID_INDEX = -1;
 
         // types
@@ -55,6 +56,21 @@ namespace Keysaver {
         KeysaverConfig::DataBase& Patch() {
             m_is_db_modified = true;
             return m_proto_db;
+        }
+
+        static KeysaverConfig::Configuration GetDefaultConfiguration() {
+            KeysaverConfig::Configuration defConfig;
+            defConfig.set_id_name(DEFAULT_CONFIG_NAME);
+            defConfig.set_length(16);
+            defConfig.set_use_upper(true);
+            defConfig.set_use_lower(true);
+            defConfig.set_alphabet(KeysaverConfig::Configuration_AlphabetType_LATIN_ENGLISH);
+            defConfig.set_use_special_chars(true);
+            defConfig.set_special_chars_count(2);
+            defConfig.set_special_charset(R"(!@#$%^&*()_-+=/?.,<>'";:[]{})");
+            defConfig.set_use_digits(true);
+            defConfig.set_digits_amount(2);
+            return defConfig;
         }
 
     private:

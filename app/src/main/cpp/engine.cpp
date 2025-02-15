@@ -205,7 +205,10 @@ namespace Keysaver {
         if (confIndex == DBManager::INVALID_INDEX)
             return KeysaverStatus::E_CONFIG_NOT_EXISTS;
 
-        const auto& config = m_db.Get().configurations(confIndex);
+        const KeysaverConfig::Configuration config =
+                (confIndex == DBManager::DEFAULT_CONFIG_INDEX) ?
+                DBManager::GetDefaultConfiguration() :
+                m_db.Get().configurations(confIndex);
 
         HashProvider::Hash init_vector{};
         if (!m_hasher.CalculateHash(
