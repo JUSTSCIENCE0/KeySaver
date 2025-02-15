@@ -26,12 +26,20 @@ namespace Keysaver {
         if (masterPassword.length() < MIN_PASSWORD_LEN)
             return KeysaverStatus::E_TOO_SHORT_MASTER_PASSWORD;
 
-        DBManager::EncryptionKey db_key{};
+        PRNGProvider::PRNGKey db_key{};
         if (!m_hasher.CalculateHash(
                 masterPassword.data(),
                 masterPassword.size(),
                 HashProvider::HashAlgorithm::SHA3_256,
                 &db_key))
+            return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
+
+        HashProvider::Hash db_iv{};
+        if (!m_hasher.CalculateHash(
+                masterPassword.data(),
+                masterPassword.size(),
+                HashProvider::HashAlgorithm::SHA_256,
+                &db_iv))
             return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
         PRNGProvider::PRNGKey prng_key{};
@@ -45,7 +53,7 @@ namespace Keysaver {
         auto code = m_generator.SetKey(prng_key);
         if (is_keysaver_error(code)) return code;
 
-        code = m_db.SetEncryptionKey(db_key);
+        code = m_db.SetEncryptionParams(db_key, db_iv);
         if (is_keysaver_error(code)) return code;
 
         return code;

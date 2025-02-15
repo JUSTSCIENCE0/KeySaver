@@ -20,7 +20,7 @@ namespace Keysaver {
         static constexpr size_t HASH_SIZE = 32;
 
         // types
-        enum class HashAlgorithm { SHA3_256, BLAKE2_256 };
+        enum class HashAlgorithm { SHA3_256, BLAKE2_256, SHA_256 };
         using Hash = std::array<uint8_t, HASH_SIZE>;
 
         // ctors/dtor

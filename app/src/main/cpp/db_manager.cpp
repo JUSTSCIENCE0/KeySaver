@@ -163,9 +163,20 @@ namespace Keysaver {
         return KeysaverStatus::S_OK;
     }
 
-    KeysaverStatus DBManager::SetEncryptionKey(const EncryptionKey& key) {
-        m_encryption_key = key;
-        return Read();
+    KeysaverStatus DBManager::SetEncryptionParams(
+            const PRNGProvider::PRNGKey& key,
+            const HashProvider::Hash& iv) {
+        if (!m_prng.SetKey(key))
+            return KeysaverStatus::E_INVALID_ORDER;
+        m_encryption_iv = iv;
+
+        auto code = Read();
+        if (is_keysaver_error(code)) {
+            Invalidate();
+            return code;
+        }
+
+        return KeysaverStatus::S_OK;
     }
 
     KeysaverStatus DBManager::Flush() const {
@@ -195,7 +206,9 @@ namespace Keysaver {
         binary_db.insert(
                 binary_db.end(), binary_db_hash.begin(), binary_db_hash.end());
 
-        // TODO: encrypt binary_db
+        // encrypt binary_db
+        if (!ApplyCipher(&binary_db))
+            return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
         {
             std::scoped_lock lock(m_db_file_mutex);
@@ -238,8 +251,9 @@ namespace Keysaver {
             db_file.close();
         }
 
-        // TODO:
-        //  decrypt binary_db
+        // decrypt binary_db
+        if (!ApplyCipher(&binary_db))
+            return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
         // check checksum
         HashProvider::Hash binary_db_hash{};
@@ -268,7 +282,8 @@ namespace Keysaver {
     }
 
     void DBManager::Invalidate() {
-        std::memset(m_encryption_key.data(), 0, ENCRYPTION_KEY_SIZE);
+        m_prng.Invalidate();
+        std::memset(m_encryption_iv.data(), 0, m_encryption_iv.size());
 
         std::scoped_lock lock(m_db_mutex);
         m_proto_db.clear_configurations();
@@ -315,5 +330,17 @@ namespace Keysaver {
                 });
 
         return (result != services.end());
+    }
+
+    bool DBManager::ApplyCipher(std::vector<uint8_t>* data) const {
+        m_prng.ChangeIV(m_encryption_iv);
+        for (auto& byte: *data) {
+            uint8_t tmp_byte = 0;
+            if (!m_prng.GetByte(&tmp_byte))
+                return false;
+            byte ^= tmp_byte;
+        }
+
+        return true;
     }
 } // Keysaver

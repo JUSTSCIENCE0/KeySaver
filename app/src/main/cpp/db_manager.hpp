@@ -20,11 +20,7 @@
 namespace Keysaver {
     class DBManager final {
     public:
-        // consts
-        static constexpr size_t      ENCRYPTION_KEY_SIZE = 32;
-
         // types
-        using EncryptionKey = std::array<uint8_t, ENCRYPTION_KEY_SIZE>;
         using ServicesNames = std::list<std::string>;
         using ConfigurationsNames = std::list<std::string>;
 
@@ -57,7 +53,9 @@ namespace Keysaver {
 
         KeysaverStatus AddConfiguration(const KeysaverConfig::Configuration& config);
 
-        KeysaverStatus SetEncryptionKey(const EncryptionKey& key);
+        KeysaverStatus SetEncryptionParams(
+                const PRNGProvider::PRNGKey& key,
+                const HashProvider::Hash& iv);
         KeysaverStatus Flush() const;
 
         void Invalidate();
@@ -78,6 +76,8 @@ namespace Keysaver {
         bool IsServiceUrlExists(const std::string& serviceUrl) const;
 
         KeysaverStatus Read();
+
+        bool ApplyCipher(std::vector<uint8_t>* data) const;
 
         static void GetDefaultConfiguration(KeysaverConfig::Configuration* defConfig) {
             defConfig->set_id_name(DEFAULT_CONFIG_NAME);
@@ -100,8 +100,9 @@ namespace Keysaver {
         mutable bool              m_is_db_modified = false;
         KeysaverConfig::DataBase  m_proto_db{};
 
-        EncryptionKey m_encryption_key{};
-        mutable HashProvider  m_hasher{};
+        mutable HashProvider m_hasher{};
+        mutable PRNGProvider m_prng{};
+        HashProvider::Hash   m_encryption_iv;
     };
 } // Keysaver
 

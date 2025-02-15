@@ -74,6 +74,8 @@ namespace Keysaver {
             return EVP_sha3_256();
         case HashProvider::HashAlgorithm::BLAKE2_256:
             return EVP_blake2s256();
+        case HashProvider::HashAlgorithm::SHA_256:
+            return EVP_sha256();
         default:
             assert(!"unexpected behavior");
             return nullptr;
