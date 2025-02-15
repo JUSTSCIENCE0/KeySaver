@@ -45,7 +45,6 @@ namespace Keysaver {
         auto code = m_generator.SetKey(prng_key);
         if (is_keysaver_error(code)) return code;
 
-        std::scoped_lock lock(m_db_mutex);
         code = m_db.SetEncryptionKey(db_key);
         if (is_keysaver_error(code)) return code;
 
@@ -53,7 +52,6 @@ namespace Keysaver {
     }
 
     KeysaverStatus Engine::SyncDatabase() const {
-        std::scoped_lock lock(m_db_mutex);
         return m_db.Flush();
     }
 
@@ -67,7 +65,6 @@ namespace Keysaver {
         if (!m_db.IsConfigExists(service.conf_id()))
             return KeysaverStatus::E_CONFIG_NOT_EXISTS;
 
-        std::scoped_lock lock(m_db_mutex);
         auto new_service = m_db.Patch().add_services();
         *new_service = service;
 
@@ -82,8 +79,6 @@ namespace Keysaver {
         // check new config
         if (!m_db.IsConfigExists(newService.conf_id()))
             return KeysaverStatus::E_CONFIG_NOT_EXISTS;
-
-        std::scoped_lock lock(m_db_mutex);
 
         // check & patch name
         if (serviceName != newService.name()) {
@@ -106,7 +101,6 @@ namespace Keysaver {
         int servIndex = m_db.GetServiceIndex(serviceName);
         if (servIndex < 0) return KeysaverStatus::E_SERVICE_NOT_EXISTS;
 
-        std::scoped_lock lock(m_db_mutex);
         m_db.Patch().mutable_services()->DeleteSubrange(servIndex, 1);
 
         assert(!m_db.IsServiceExists(serviceName));
@@ -119,7 +113,7 @@ namespace Keysaver {
             config.length() > MAX_PASSWORD_LEN)
             return KeysaverStatus::E_INVALID_PASSWORD_LENGTH;
 
-        if (size_t(config.alphabet()) >= m_generator.SUPPORTED_ALPHABETS.size())
+        if (size_t(config.alphabet()) >= Keysaver::PasswordGenerator::SUPPORTED_ALPHABETS.size())
             return KeysaverStatus::E_UNSUPPORTED_ALPHABET;
 
         if (config.special_chars_count() > config.length() / 4)
@@ -131,7 +125,6 @@ namespace Keysaver {
         if (!config.use_lower() && !config.use_upper())
             return KeysaverStatus::E_WITHOUT_ANY_CASE;
 
-        std::scoped_lock lock(m_db_mutex);
         if (m_db.IsConfigExists(config.id_name()))
             return KeysaverStatus::E_SERVICE_ALREADY_EXISTS;
 
@@ -222,10 +215,7 @@ namespace Keysaver {
 
     KeysaverStatus Engine::Invalidate() {
         m_generator.Invalidate();
-
-        std::scoped_lock lock(m_db_mutex);
         m_db.Invalidate();
-
         return KeysaverStatus::S_OK;
     }
 }

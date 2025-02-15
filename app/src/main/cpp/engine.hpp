@@ -72,9 +72,7 @@ namespace Keysaver {
         static constexpr size_t MAX_PASSWORD_LEN = 30;
 
         // members
-        mutable std::mutex m_db_mutex{};
-        DBManager          m_db;
-
+        DBManager            m_db;
         PasswordGenerator    m_generator{};
         mutable HashProvider m_hasher{};
     };
