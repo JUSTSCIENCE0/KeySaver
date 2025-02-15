@@ -14,6 +14,8 @@
 #include <string>
 #include <filesystem>
 #include <cstdint>
+#include <mutex>
+#include <shared_mutex>
 
 namespace Keysaver {
     class DBManager final {
@@ -91,10 +93,14 @@ namespace Keysaver {
         }
 
         //members
-        mutable bool             m_is_db_modified = false;
-        KeysaverConfig::DataBase m_proto_db{};
-        std::filesystem::path    m_db_path{};
-        EncryptionKey            m_encryption_key{};
+        mutable std::mutex    m_db_file_mutex{}; // protects only file
+        std::filesystem::path m_db_path{};
+
+        mutable std::shared_mutex m_db_mutex; // protects proto_db & modified flag
+        mutable bool              m_is_db_modified = false;
+        KeysaverConfig::DataBase  m_proto_db{};
+
+        EncryptionKey m_encryption_key{};
     };
 } // Keysaver
 
