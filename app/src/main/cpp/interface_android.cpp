@@ -213,8 +213,8 @@ KEYSAVER_API(keysaverSyncDatabase) {
 KEYSAVER_API(keysaverGetServicesCount, jobject servicesCount) {
     if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
 
-    size_t serv_cnt = 0;
-    auto code = ks_impl->GetServicesCount(&serv_cnt);
+    Keysaver::DBManager::ServicesNames services;
+    auto code = ks_impl->GetServicesList(&services);
     if (is_keysaver_error(code)) return code;
 
     auto wrapperClass = j_env->GetObjectClass(servicesCount);
@@ -222,7 +222,7 @@ KEYSAVER_API(keysaverGetServicesCount, jobject servicesCount) {
     j_env->SetIntField(
             servicesCount,
             valueField,
-            static_cast<int>(serv_cnt));
+            static_cast<int>(services.size()));
 
     return code;
 }
@@ -234,6 +234,8 @@ KEYSAVER_API(keysaverGetServicesList, jobjectArray servicesList) {
     auto code = ks_impl->GetServicesList(&c_services_list);
     if (is_keysaver_error(code)) return code;
 
+    const auto max_index = j_env->GetArrayLength(servicesList);
+
     jsize index = 0;
     for (auto& service: c_services_list) {
         jstring str = j_env->NewStringUTF(service.c_str());
@@ -241,6 +243,8 @@ KEYSAVER_API(keysaverGetServicesList, jobjectArray servicesList) {
         j_env->DeleteLocalRef(str);
 
         index++;
+        if (index >= max_index)
+            break;
     }
 
     return code;
@@ -264,18 +268,18 @@ KEYSAVER_API(keysaverGetService, jstring serviceName, jobject service) {
     if (!serviceNameField || !serviceConfigField)
         return KeysaverStatus::E_INVALID_ARG;
 
-    const KeysaverConfig::Service* c_service = nullptr;
+    KeysaverConfig::Service c_service;
     auto code = ks_impl->GetService(c_service_name, &c_service);
     if (is_keysaver_error(code)) return code;
 
     j_env->SetObjectField(
             service,
             serviceNameField,
-            j_env->NewStringUTF(c_service->name().c_str()));
+            j_env->NewStringUTF(c_service.name().c_str()));
     j_env->SetObjectField(
             service,
             serviceConfigField,
-            j_env->NewStringUTF(c_service->conf_id().c_str()));
+            j_env->NewStringUTF(c_service.conf_id().c_str()));
 
     return code;
 }
@@ -283,8 +287,8 @@ KEYSAVER_API(keysaverGetService, jstring serviceName, jobject service) {
 KEYSAVER_API(keysaverGetConfigurationsCount, jobject configurationsCount) {
     if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
 
-    size_t conf_cnt = 0;
-    auto code = ks_impl->GetConfigurationsCount(&conf_cnt);
+    Keysaver::DBManager::ConfigurationsNames configs;
+    auto code = ks_impl->GetConfigurationsList(&configs);
     if (is_keysaver_error(code)) return code;
 
     auto wrapperClass = j_env->GetObjectClass(configurationsCount);
@@ -292,7 +296,7 @@ KEYSAVER_API(keysaverGetConfigurationsCount, jobject configurationsCount) {
     j_env->SetIntField(
         configurationsCount,
             valueField,
-            static_cast<int>(conf_cnt));
+            static_cast<int>(configs.size()));
 
     return code;
 }
@@ -304,6 +308,8 @@ KEYSAVER_API(keysaverGetConfigurationsList, jobjectArray configurationsList) {
     auto code = ks_impl->GetConfigurationsList(&c_conf_list);
     if (is_keysaver_error(code)) return code;
 
+    const auto max_index = j_env->GetArrayLength(configurationsList);
+
     jsize index = 0;
     for (auto& config: c_conf_list) {
         jstring str = j_env->NewStringUTF(config.c_str());
@@ -311,6 +317,8 @@ KEYSAVER_API(keysaverGetConfigurationsList, jobjectArray configurationsList) {
         j_env->DeleteLocalRef(str);
 
         index++;
+        if (index >= max_index)
+            break;
     }
 
     return code;

@@ -56,55 +56,16 @@ namespace Keysaver {
     }
 
     KeysaverStatus Engine::AddService(const KeysaverConfig::Service& service) {
-        if (m_db.IsServiceExists(service.name()))
-            return KeysaverStatus::E_SERVICE_ALREADY_EXISTS;
-
-        if (m_db.IsServiceUrlExists(service.url()))
-            return KeysaverStatus::E_SERVICE_URL_ALREADY_EXISTS;
-
-        if (!m_db.IsConfigExists(service.conf_id()))
-            return KeysaverStatus::E_CONFIG_NOT_EXISTS;
-
-        auto new_service = m_db.Patch().add_services();
-        *new_service = service;
-
-        return KeysaverStatus::S_OK;
+        return m_db.AddService(service);
     }
 
     KeysaverStatus Engine::EditService(const std::string& serviceName,
-                               const KeysaverConfig::Service& newService) {
-        int serviceID = m_db.GetServiceIndex(serviceName);
-        if (serviceID < 0) return KeysaverStatus::E_SERVICE_NOT_EXISTS;
-
-        // check new config
-        if (!m_db.IsConfigExists(newService.conf_id()))
-            return KeysaverStatus::E_CONFIG_NOT_EXISTS;
-
-        // check & patch name
-        if (serviceName != newService.name()) {
-            if (m_db.IsServiceExists(newService.name()))
-                return KeysaverStatus::E_SERVICE_ALREADY_EXISTS;
-
-            m_db.Patch().mutable_services(serviceID)->set_name(newService.name());
-        }
-
-        // patch config
-        auto oldServiceConfig = m_db.Get().services(serviceID).conf_id();
-        if (oldServiceConfig != newService.conf_id()) {
-            m_db.Patch().mutable_services(serviceID)->set_conf_id(newService.conf_id());
-        }
-
-        return KeysaverStatus::S_OK;
+                                       const KeysaverConfig::Service& newService) {
+        return m_db.EditService(serviceName, newService);
     }
 
     KeysaverStatus Engine::DeleteService(const std::string& serviceName) {
-        int servIndex = m_db.GetServiceIndex(serviceName);
-        if (servIndex < 0) return KeysaverStatus::E_SERVICE_NOT_EXISTS;
-
-        m_db.Patch().mutable_services()->DeleteSubrange(servIndex, 1);
-
-        assert(!m_db.IsServiceExists(serviceName));
-        return KeysaverStatus::S_OK;
+        return m_db.DeleteService(serviceName);
     }
 
     KeysaverStatus Engine::AddConfiguration(const KeysaverConfig::Configuration& config) {
@@ -125,49 +86,23 @@ namespace Keysaver {
         if (!config.use_lower() && !config.use_upper())
             return KeysaverStatus::E_WITHOUT_ANY_CASE;
 
-        if (m_db.IsConfigExists(config.id_name()))
-            return KeysaverStatus::E_SERVICE_ALREADY_EXISTS;
-
-        // add config
-        auto new_config = m_db.Patch().add_configurations();
-        *new_config = config;
-
-        return KeysaverStatus::S_OK;
-    }
-
-    KeysaverStatus Engine::GetServicesCount(size_t* count) const {
-        if (!count) return KeysaverStatus::E_INVALID_ARG;
-
-        *count = m_db.Get().services_size();
-        return KeysaverStatus::S_OK;
+        return m_db.AddConfiguration(config);
     }
 
     KeysaverStatus Engine::GetServicesList(std::list<std::string>* serviceNames) const {
         if (!serviceNames) return KeysaverStatus::E_INVALID_ARG;
 
-        for (const auto& service: m_db.Get().services()) {
-            serviceNames->push_back(service.name());
-        }
-
+        *serviceNames = m_db.GetServicesList();
         return KeysaverStatus::S_OK;
     }
 
     KeysaverStatus Engine::GetService(const std::string& serviceName,
-                                      const KeysaverConfig::Service** service) const {
+                                      KeysaverConfig::Service* service) const {
         if (!service) return KeysaverStatus::E_INVALID_ARG;
 
-        auto result = m_db.GetService(serviceName);
-        if (!result) return KeysaverStatus::E_SERVICE_NOT_EXISTS;
+        if (!m_db.GetService(serviceName, service))
+            return KeysaverStatus::E_SERVICE_NOT_EXISTS;
 
-        *service = result;
-
-        return KeysaverStatus::S_OK;
-    }
-
-    KeysaverStatus Engine::GetConfigurationsCount(size_t* count) const {
-        if (!count) return KeysaverStatus::E_INVALID_ARG;
-
-        *count = m_db.Get().configurations_size() + 1;
         return KeysaverStatus::S_OK;
     }
 
@@ -175,11 +110,7 @@ namespace Keysaver {
             std::list<std::string>* configNames) const {
         if (!configNames) return KeysaverStatus::E_INVALID_ARG;
 
-        configNames->emplace_back(DBManager::DEFAULT_CONFIG_NAME);
-        for (const auto& config: m_db.Get().configurations()) {
-            configNames->push_back(config.id_name());
-        }
-
+        *configNames = m_db.GetConfigurationsList();
         return KeysaverStatus::S_OK;
     }
 
@@ -188,20 +119,13 @@ namespace Keysaver {
         if (saltNumber >= SALTS_COUNT || !result)
             return KeysaverStatus::E_INVALID_ARG;
 
-        auto serviceIndex = m_db.GetServiceIndex(serviceName);
-        if (serviceIndex == DBManager::INVALID_INDEX)
+        KeysaverConfig::Service service;
+        if (!m_db.GetService(serviceName, &service))
             return KeysaverStatus::E_SERVICE_NOT_EXISTS;
 
-        const auto& service = m_db.Get().services(serviceIndex);
-
-        auto confIndex = m_db.GetConfigurationIndex(service.conf_id());
-        if (confIndex == DBManager::INVALID_INDEX)
+        KeysaverConfig::Configuration config;
+        if (!m_db.GetConfiguration(service.conf_id(), &config))
             return KeysaverStatus::E_CONFIG_NOT_EXISTS;
-
-        const KeysaverConfig::Configuration config =
-                (confIndex == DBManager::DEFAULT_CONFIG_INDEX) ?
-                DBManager::GetDefaultConfiguration() :
-                m_db.Get().configurations(confIndex);
 
         HashProvider::Hash init_vector{};
         if (!m_hasher.CalculateHash(

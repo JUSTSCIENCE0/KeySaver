@@ -20,12 +20,11 @@ namespace Keysaver {
     public:
         // consts
         static constexpr size_t      ENCRYPTION_KEY_SIZE = 32;
-        static constexpr std::string DEFAULT_CONFIG_NAME = "Default";
-        static constexpr int         DEFAULT_CONFIG_INDEX = std::numeric_limits<int>::min();
-        static constexpr int         INVALID_INDEX = -1;
 
         // types
         using EncryptionKey = std::array<uint8_t, ENCRYPTION_KEY_SIZE>;
+        using ServicesNames = std::list<std::string>;
+        using ConfigurationsNames = std::list<std::string>;
 
         // ctors/dtor
         explicit DBManager(const std::string& pathToDB);
@@ -38,50 +37,58 @@ namespace Keysaver {
 
         // interface
         bool IsFileExists() const { return std::filesystem::exists(m_db_path); }
-        bool IsServiceExists(const std::string& serviceName) const;
-        bool IsServiceUrlExists(const std::string& serviceUrl) const;
-        bool IsConfigExists(const std::string& configName) const;
 
-        const KeysaverConfig::Service* GetService(const std::string& serviceName) const;
-        int GetServiceIndex(const std::string& serviceName) const;
+        bool GetService(const std::string& serviceName,
+                        KeysaverConfig::Service* service) const;
+        int  GetServiceIndex(const std::string& serviceName) const;
+        ServicesNames GetServicesList() const;
 
-        int GetConfigurationIndex(const std::string& configName) const;
+        bool GetConfiguration(const std::string& configName,
+                              KeysaverConfig::Configuration* config) const;
+        int  GetConfigurationIndex(const std::string& configName) const;
+        ConfigurationsNames GetConfigurationsList() const;
+
+        KeysaverStatus AddService(const KeysaverConfig::Service& service);
+        KeysaverStatus EditService(const std::string& serviceName,
+                                   const KeysaverConfig::Service& newService);
+        KeysaverStatus DeleteService(const std::string& serviceName);
+
+        KeysaverStatus AddConfiguration(const KeysaverConfig::Configuration& config);
 
         KeysaverStatus SetEncryptionKey(const EncryptionKey& key);
         KeysaverStatus Flush() const;
 
         void Invalidate();
 
-        const KeysaverConfig::DataBase& Get() const { return m_proto_db; }
-        KeysaverConfig::DataBase& Patch() {
-            m_is_db_modified = true;
-            return m_proto_db;
-        }
-
-        static KeysaverConfig::Configuration GetDefaultConfiguration() {
-            KeysaverConfig::Configuration defConfig;
-            defConfig.set_id_name(DEFAULT_CONFIG_NAME);
-            defConfig.set_length(16);
-            defConfig.set_use_upper(true);
-            defConfig.set_use_lower(true);
-            defConfig.set_alphabet(KeysaverConfig::Configuration_AlphabetType_LATIN_ENGLISH);
-            defConfig.set_use_special_chars(true);
-            defConfig.set_special_chars_count(2);
-            defConfig.set_special_charset(R"(!@#$%^&*()_-+=/?.,<>'";:[]{})");
-            defConfig.set_use_digits(true);
-            defConfig.set_digits_amount(2);
-            return defConfig;
-        }
-
     private:
         // types
         using uint8_t = std::uint8_t;
 
         // consts
-        static constexpr auto DB_NAME = "/database.bin";
+        static constexpr std::string DB_NAME = "/database.bin";
+        static constexpr std::string DEFAULT_CONFIG_NAME = "Default";
+        static constexpr int         DEFAULT_CONFIG_INDEX = std::numeric_limits<int>::min();
+        static constexpr int         INVALID_INDEX = -1;
 
         // methods
+        int FindService(const std::string& serviceName) const;
+        int FindConfiguration(const std::string& configName) const;
+        bool IsServiceUrlExists(const std::string& serviceUrl) const;
+
         KeysaverStatus Read();
+
+        static void GetDefaultConfiguration(KeysaverConfig::Configuration* defConfig) {
+            defConfig->set_id_name(DEFAULT_CONFIG_NAME);
+            defConfig->set_length(16);
+            defConfig->set_use_upper(true);
+            defConfig->set_use_lower(true);
+            defConfig->set_alphabet(KeysaverConfig::Configuration_AlphabetType_LATIN_ENGLISH);
+            defConfig->set_use_special_chars(true);
+            defConfig->set_special_chars_count(2);
+            defConfig->set_special_charset(R"(!@#$%^&*()_-+=/?.,<>'";:[]{})");
+            defConfig->set_use_digits(true);
+            defConfig->set_digits_amount(2);
+        }
 
         //members
         mutable bool             m_is_db_modified = false;

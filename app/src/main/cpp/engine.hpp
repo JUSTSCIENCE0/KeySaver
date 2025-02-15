@@ -47,11 +47,9 @@ namespace Keysaver {
                     KeysaverStatus::S_OK :
                     KeysaverStatus::M_DATABASE_NOT_FOUND;
         }
-        KeysaverStatus GetServicesCount(size_t* count) const;
         KeysaverStatus GetServicesList(std::list<std::string>* serviceNames) const;
         KeysaverStatus GetService(const std::string& serviceName,
-                                  const KeysaverConfig::Service** service) const;
-        KeysaverStatus GetConfigurationsCount(size_t* count) const;
+                                  KeysaverConfig::Service* service) const;
         KeysaverStatus GetConfigurationsList(std::list<std::string>* configNames) const;
 
         KeysaverStatus GeneratePassword(const std::string& serviceName,
