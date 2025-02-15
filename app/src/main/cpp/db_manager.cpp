@@ -7,6 +7,15 @@
 #include <fstream>
 
 namespace Keysaver {
+    static inline bool is_equal_bytes(const uint8_t* lhs, const uint8_t* rhs, size_t count) {
+        for (size_t i = 0; i < count; i++) {
+            if (lhs[i] != rhs[i])
+                return false;
+        }
+
+        return true;
+    }
+
     DBManager::DBManager(const std::string& pathToDB) :
         m_db_path(pathToDB + DB_NAME) {
         assert(!pathToDB.empty());
@@ -176,9 +185,17 @@ namespace Keysaver {
             m_is_db_modified = false;
         }
 
-        // TODO:
         //  calculate & write checksum
-        //  encrypt binary_db
+        HashProvider::Hash binary_db_hash{};
+        if (!m_hasher.CalculateHash(
+                binary_db.data(), binary_db.size(),
+                HashProvider::HashAlgorithm::SHA3_256,
+                &binary_db_hash))
+            return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
+        binary_db.insert(
+                binary_db.end(), binary_db_hash.begin(), binary_db_hash.end());
+
+        // TODO: encrypt binary_db
 
         {
             std::scoped_lock lock(m_db_file_mutex);
@@ -206,10 +223,12 @@ namespace Keysaver {
             std::scoped_lock lock(m_db_file_mutex);
 
             std::ifstream db_file(m_db_path, std::ios::binary | std::ios::ate);
-            if (!db_file) return KeysaverStatus::E_DB_READ_ERROR;
+            if (!db_file)
+                return KeysaverStatus::E_DB_READ_ERROR;
 
             auto db_size = db_file.tellg();
-            if (!db_size) return KeysaverStatus::E_DB_CORRUPTED;
+            if (size_t(db_size) <= HashProvider::HASH_SIZE)
+                return KeysaverStatus::E_DB_CORRUPTED;
             binary_db.resize(db_size);
 
             db_file.seekg(0, std::ios::beg);
@@ -221,13 +240,26 @@ namespace Keysaver {
 
         // TODO:
         //  decrypt binary_db
-        //  check checksum
+
+        // check checksum
+        HashProvider::Hash binary_db_hash{};
+        if (!m_hasher.CalculateHash(
+                binary_db.data(), binary_db.size() - HashProvider::HASH_SIZE,
+                HashProvider::HashAlgorithm::SHA3_256,
+                &binary_db_hash))
+            return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
+        if (!is_equal_bytes(
+                binary_db_hash.data(),
+                binary_db.data() + binary_db.size() - HashProvider::HASH_SIZE,
+                HashProvider::HASH_SIZE))
+            return KeysaverStatus::E_INVALID_MASTER_PASSWORD;
 
         {
             std::scoped_lock lock(m_db_mutex);
 
             if (!m_proto_db.ParseFromArray(
-                    binary_db.data(), static_cast<int>(binary_db.size())))
+                    binary_db.data(),
+                    static_cast<int>(binary_db.size() - HashProvider::HASH_SIZE)))
                 return KeysaverStatus::E_DB_CORRUPTED;
 
             m_is_db_modified = false;

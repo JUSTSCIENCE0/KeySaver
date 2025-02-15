@@ -101,6 +101,7 @@ namespace Keysaver {
         KeysaverConfig::DataBase  m_proto_db{};
 
         EncryptionKey m_encryption_key{};
+        mutable HashProvider  m_hasher{};
     };
 } // Keysaver
 
