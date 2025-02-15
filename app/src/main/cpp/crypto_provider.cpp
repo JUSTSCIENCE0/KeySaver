@@ -80,18 +80,6 @@ namespace Keysaver {
         }
     }
 
-    static inline PRNGProvider::PRNGIV HashToIV(const HashProvider::Hash& hash) {
-        static_assert(HashProvider::HASH_SIZE == PRNGProvider::PRNG_IV_SIZE * 2);
-
-        PRNGProvider::PRNGIV result{};
-
-        for (size_t i = 0; i < PRNGProvider::PRNG_IV_SIZE; i++) {
-            result[i] = hash[i] ^ hash[i + PRNGProvider::PRNG_IV_SIZE];
-        }
-
-        return result;
-    }
-
     HashProvider::HashProvider() {
         m_ossl_ctx = EVP_MD_CTX_new();
         if (!m_ossl_ctx) throw KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
@@ -145,13 +133,15 @@ namespace Keysaver {
         return true;
     }
 
-    bool PRNGProvider::ChangeIV(const PRNGIV& iv) {
+    bool PRNGProvider::ChangeIV(const HashProvider::Hash& iv) {
         if (m_is_cipher_inited) {
             int out_len = 0;
             if (EVP_EncryptFinal_ex(m_ossl_ctx, m_buffer.data(), &out_len) != 1)
                 return false;
-            std::memset(m_buffer.data(), 0, m_buffer.size());
         }
+
+        static_assert(HashProvider::HASH_SIZE == BLOCK_SIZE + PRNG_IV_SIZE);
+        std::memcpy(m_buffer.data(), iv.data() + PRNG_IV_SIZE, m_buffer.size());
 
         if (EVP_EncryptInit_ex(
                 m_ossl_ctx, EVP_aes_256_ofb(), nullptr,
@@ -160,10 +150,6 @@ namespace Keysaver {
 
         m_is_cipher_inited = true;
         return UpdateBlock();
-    }
-
-    bool PRNGProvider::ChangeIV(const HashProvider::Hash& iv) {
-        return ChangeIV(HashToIV(iv));
     }
 
     bool PRNGProvider::GetByte(uint8_t* result) {
@@ -193,6 +179,7 @@ namespace Keysaver {
         if (m_is_cipher_inited) {
             int out_len = 0;
             EVP_EncryptFinal_ex(m_ossl_ctx, m_buffer.data(), &out_len);
+            m_is_cipher_inited = false;
         }
     }
 
@@ -208,18 +195,6 @@ namespace Keysaver {
             result |= tmp_byte;
         }
 
-        return result;
-    }
-
-    PRNGProvider::PRNGIV PRNGProvider::GenerateIV() {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<uint8_t> dist(0, 255);
-
-        PRNGIV result{};
-        for (auto& byte : result) {
-            byte = dist(gen);
-        }
         return result;
     }
 

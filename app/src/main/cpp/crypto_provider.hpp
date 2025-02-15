@@ -45,11 +45,9 @@ namespace Keysaver {
     public:
         // consts
         static constexpr size_t PRNG_KEY_SIZE = 32;
-        static constexpr size_t PRNG_IV_SIZE = 16;
 
         // types
         using PRNGKey = std::array<uint8_t, PRNG_KEY_SIZE>;
-        using PRNGIV = std::array<uint8_t, PRNG_IV_SIZE>;
 
         // ctors/dtor
         PRNGProvider();
@@ -61,7 +59,6 @@ namespace Keysaver {
 
         // interface
         bool SetKey(const PRNGKey& key);
-        bool ChangeIV(const PRNGIV& iv);
         bool ChangeIV(const HashProvider::Hash& iv);
         bool GetByte(uint8_t* result);
         bool GetBytes(uint8_t* result, size_t count);
@@ -76,12 +73,12 @@ namespace Keysaver {
     private:
         // consts
         static constexpr size_t BLOCK_SIZE = 16;
+        static constexpr size_t PRNG_IV_SIZE = 16;
 
         // types
         using Block = std::array<uint8_t, BLOCK_SIZE>;
 
         // methods
-        static PRNGIV GenerateIV();
         bool UpdateBlock();
 
         // members
