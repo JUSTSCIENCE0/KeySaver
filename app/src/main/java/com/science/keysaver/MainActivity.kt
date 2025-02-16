@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -14,6 +15,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.Group
 import androidx.lifecycle.lifecycleScope
 import com.science.keysaver.databinding.EnterMasterKeyBinding
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: EnterMasterKeyBinding
     private lateinit var saveFileLauncher: ActivityResultLauncher<Intent>
+    private lateinit var openFileLauncher: ActivityResultLauncher<Intent>
 
     private fun prepareGetPassword() {
         val selectedServiceSpinner: Spinner = findViewById(R.id.selected_service)
@@ -48,6 +51,14 @@ class MainActivity : AppCompatActivity() {
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.data?.let { uri ->
                     Implementation.shareDataBase(this, uri)
+                }
+            }
+        }
+        openFileLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri: Uri? = result.data?.data
+                if (uri != null) {
+                    Implementation.importDataBase(this, uri)
                 }
             }
         }
@@ -144,11 +155,47 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onShareDataBase(view: View?) {
-        val createFileIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/octet-stream"
-            putExtra(Intent.EXTRA_TITLE, "database.bin")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.warning))
+        builder.setMessage(getString(R.string.db_share_warning))
+
+        builder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            val createFileIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "application/octet-stream"
+                putExtra(Intent.EXTRA_TITLE, "database.bin")
+            }
+            saveFileLauncher.launch(createFileIntent)
+            dialog.dismiss()
         }
-        saveFileLauncher.launch(createFileIntent)
+
+        builder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+
+    fun onImportDataBase(view: View?) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.warning))
+        builder.setMessage(getString(R.string.db_import_warning))
+
+        builder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "application/octet-stream"
+            }
+            openFileLauncher.launch(intent)
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
     }
 }

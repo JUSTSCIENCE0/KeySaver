@@ -9,6 +9,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
+import android.os.Process
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -469,6 +470,30 @@ class Implementation private constructor() {
             Toast.makeText(context,
                 context.getString(R.string.file_saved) + saveFile.path.toString(),
                 Toast.LENGTH_SHORT).show()
+        }
+
+        fun importDataBase(context: Context, openFile: Uri) {
+            val dbName = StringWrapper("")
+            val code = KeysaverStatus.fromCode(impl.keysaverGetDatabaseName(dbName))
+            if (!code.isSuccess()) {
+                Toast.makeText(context,
+                    code.getDescription(context),
+                    Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            close()
+
+            val dataBasePath = context.filesDir.absolutePath + dbName.value
+            val destinationFile = File(dataBasePath)
+
+            context.contentResolver.openInputStream(openFile)?.use { input ->
+                destinationFile.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            Process.killProcess(Process.myPid())
         }
 
         private val impl : Implementation = Implementation()

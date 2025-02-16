@@ -43,4 +43,6 @@
     <string name="required_field_empty">Одно из обязательных полей пусто</string>
     <string name="password_copied">Пароль скопирован!</string>
     <string name="file_saved">"Файл успешно сохранен. Путь: "</string>
+    <string name="db_share_warning">Будет сохранена зашифрованная копия текущей базы данных. Вы берете на себя риски возможной утечки данного файла. Продолжить?</string>
+    <string name="db_import_warning">Текущая база данных будет стерта. После импорта приложение будет закрыто. Продолжить?</string>
 </resources>

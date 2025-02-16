@@ -43,4 +43,6 @@
     <string name="required_field_empty">One of the required fields is empty</string>
     <string name="password_copied">Password copied!</string>
     <string name="file_saved">File saved successfully. Path:</string>
+    <string name="db_share_warning">An encrypted copy of the current database will be saved. You assume the risks of a potential leak of this file. Do you want to continue?</string>
+    <string name="db_import_warning">The current database will be erased. After the import, the application will be closed. Do you want to continue?</string>
 </resources>
