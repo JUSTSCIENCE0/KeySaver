@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import android.view.View
@@ -17,6 +18,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.NotificationCompat
+import java.io.File
 import kotlin.reflect.KClass
 
 enum class KeysaverStatus(val code: Int) {
@@ -145,6 +147,7 @@ class Implementation private constructor() {
     private external fun keysaverSyncDatabase(): Int
     private external fun keysaverGeneratePassword(
         serviceName: String, imageIndex: Int, result: StringWrapper): Int
+    private external fun keysaverGetDatabaseName(fileName: StringWrapper): Int
 
     companion object {
         private fun showWelcomeMessage(context: Context) {
@@ -434,6 +437,38 @@ class Implementation private constructor() {
             }
 
             return result.value
+        }
+
+        fun shareDataBase(context: Context, saveFile: Uri) {
+            var code = KeysaverStatus.fromCode(impl.keysaverSyncDatabase())
+            if (!code.isSuccess()) {
+                Toast.makeText(context,
+                    code.getDescription(context),
+                    Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val dbName = StringWrapper("")
+            code = KeysaverStatus.fromCode(impl.keysaverGetDatabaseName(dbName))
+            if (!code.isSuccess()) {
+                Toast.makeText(context,
+                    code.getDescription(context),
+                    Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val dataBasePath = context.filesDir.absolutePath + dbName.value
+            val sourceFile = File(dataBasePath)
+
+            context.contentResolver.openOutputStream(saveFile)?.use { output ->
+                sourceFile.inputStream().use { input ->
+                    input.copyTo(output)
+                }
+            }
+
+            Toast.makeText(context,
+                context.getString(R.string.file_saved) + saveFile.path.toString(),
+                Toast.LENGTH_SHORT).show()
         }
 
         private val impl : Implementation = Implementation()

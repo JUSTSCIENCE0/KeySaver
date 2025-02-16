@@ -42,4 +42,5 @@
     <string name="service_updated_successfull">The service has been successfully updated</string>
     <string name="required_field_empty">One of the required fields is empty</string>
     <string name="password_copied">Password copied!</string>
+    <string name="file_saved">File saved successfully. Path:</string>
 </resources>

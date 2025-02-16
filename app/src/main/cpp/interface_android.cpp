@@ -186,7 +186,8 @@ KEYSAVER_API(keysaverDeleteService, jstring serviceName) {
 KEYSAVER_API(keysaverEditService, jstring oldServiceName, jobject newService) {
     if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
 
-    auto c_service_name = j_env->GetStringUTFChars(oldServiceName, nullptr);
+    auto c_service_name = j_env->GetStringUTFChars(
+            oldServiceName, nullptr);
     KeysaverConfig::Service servConf;
     auto code = jobj_to_service(j_env, newService, &servConf);
     if (is_keysaver_error(code)) return code;
@@ -354,7 +355,22 @@ KEYSAVER_API(keysaverGetAlphabetsList, jobjectArray alphabetsList) {
     return KeysaverStatus::S_OK;
 }
 
-KEYSAVER_API(keysaverGeneratePassword, jstring serviceName, jint imageIndex, jobject result) {
+KEYSAVER_API(keysaverGetDatabaseName, jobject fileName) {
+    jclass resultClass = j_env->GetObjectClass(fileName);
+    if (!resultClass) return KeysaverStatus::E_INVALID_ARG;
+    jfieldID resultField = j_env->GetFieldID(
+            resultClass, "value", "Ljava/lang/String;");
+    if (!resultField) return KeysaverStatus::E_INVALID_ARG;
+
+    std::string c_file_name = Keysaver::DBManager::DB_NAME;
+    j_env->SetObjectField(fileName, resultField,
+            j_env->NewStringUTF(c_file_name.data()));
+
+    return KeysaverStatus::S_OK;
+}
+
+KEYSAVER_API(keysaverGeneratePassword,
+             jstring serviceName, jint imageIndex, jobject result) {
     if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
 
     auto c_service_name = j_env->GetStringUTFChars(serviceName, nullptr);
@@ -362,7 +378,8 @@ KEYSAVER_API(keysaverGeneratePassword, jstring serviceName, jint imageIndex, job
 
     jclass resultClass = j_env->GetObjectClass(result);
     if (!resultClass) return KeysaverStatus::E_INVALID_ARG;
-    jfieldID resultField = j_env->GetFieldID(resultClass, "value", "Ljava/lang/String;");
+    jfieldID resultField = j_env->GetFieldID(
+            resultClass, "value", "Ljava/lang/String;");
     if (!resultField) return KeysaverStatus::E_INVALID_ARG;
 
     std::u8string cpp_result;

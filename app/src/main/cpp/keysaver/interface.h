@@ -74,6 +74,7 @@ KEYSAVER_API(keysaverGetConfigurationsCount, jobject      configurationsCount);
 KEYSAVER_API(keysaverGetConfigurationsList,  jobjectArray configurationsList);
 KEYSAVER_API(keysaverGetAlphabetsCount,      jobject      alphabetsCount);
 KEYSAVER_API(keysaverGetAlphabetsList,       jobjectArray alphabetsList);
+KEYSAVER_API(keysaverGetDatabaseName,        jobject      fileName);
 
 KEYSAVER_API(keysaverGeneratePassword,       jstring serviceName,
                                              jint imageIndex,

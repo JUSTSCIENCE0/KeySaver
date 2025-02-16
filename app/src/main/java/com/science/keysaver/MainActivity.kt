@@ -1,5 +1,6 @@
 package com.science.keysaver
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -11,6 +12,8 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.Group
 import androidx.lifecycle.lifecycleScope
 import com.science.keysaver.databinding.EnterMasterKeyBinding
@@ -21,6 +24,7 @@ import kotlinx.coroutines.withContext
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: EnterMasterKeyBinding
+    private lateinit var saveFileLauncher: ActivityResultLauncher<Intent>
 
     private fun prepareGetPassword() {
         val selectedServiceSpinner: Spinner = findViewById(R.id.selected_service)
@@ -38,6 +42,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = EnterMasterKeyBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        saveFileLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.data?.let { uri ->
+                    Implementation.shareDataBase(this, uri)
+                }
+            }
+        }
 
         Implementation.init(this)
     }
@@ -128,5 +141,14 @@ class MainActivity : AppCompatActivity() {
         val clip = ClipData.newPlainText("copied_text", passwordEditText.text.toString())
         clipboard.setPrimaryClip(clip)
         Toast.makeText(this, getString(R.string.password_copied), Toast.LENGTH_SHORT).show()
+    }
+
+    fun onShareDataBase(view: View?) {
+        val createFileIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/octet-stream"
+            putExtra(Intent.EXTRA_TITLE, "database.bin")
+        }
+        saveFileLauncher.launch(createFileIntent)
     }
 }

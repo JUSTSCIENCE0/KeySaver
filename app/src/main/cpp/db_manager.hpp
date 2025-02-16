@@ -20,6 +20,9 @@
 namespace Keysaver {
     class DBManager final {
     public:
+        // consts
+        static constexpr std::string DB_NAME = "/database.bin";
+
         // types
         using ServicesNames = std::list<std::string>;
         using ConfigurationsNames = std::list<std::string>;
@@ -65,7 +68,6 @@ namespace Keysaver {
         using uint8_t = std::uint8_t;
 
         // consts
-        static constexpr std::string DB_NAME = "/database.bin";
         static constexpr std::string DEFAULT_CONFIG_NAME = "Default";
         static constexpr int         DEFAULT_CONFIG_INDEX = std::numeric_limits<int>::min();
         static constexpr int         INVALID_INDEX = -1;

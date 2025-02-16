@@ -42,4 +42,5 @@
     <string name="service_updated_successfull">Сервис успешно обновлен</string>
     <string name="required_field_empty">Одно из обязательных полей пусто</string>
     <string name="password_copied">Пароль скопирован!</string>
+    <string name="file_saved">"Файл успешно сохранен. Путь: "</string>
 </resources>
