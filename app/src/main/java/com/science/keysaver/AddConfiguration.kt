@@ -71,4 +71,21 @@ class AddConfiguration : AppCompatActivity() {
         if (Implementation.addConfiguration(this, config))
             finish()
     }
+
+    fun onSelectCase(view: View?) {
+        val upperCaseSwitch: SwitchCompat = findViewById(R.id.add_configuration_upper_case)
+        val lowerCaseSwitch: SwitchCompat = findViewById(R.id.add_configuration_lower_case)
+
+        if (view?.id == R.id.add_configuration_upper_case) {
+            if (!upperCaseSwitch.isChecked) {
+                lowerCaseSwitch.isChecked = true
+            }
+        }
+        else if (view?.id == R.id.add_configuration_lower_case) {
+            if (!lowerCaseSwitch.isChecked) {
+                upperCaseSwitch.isChecked = true
+            }
+        }
+
+    }
 }
