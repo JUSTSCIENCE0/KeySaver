@@ -1,5 +1,8 @@
 package com.science.keysaver
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -114,5 +117,16 @@ class MainActivity : AppCompatActivity() {
 
         val passwordEditText = findViewById<EditText>(R.id.get_password_result)
         passwordEditText.setText(password)
+    }
+
+    fun onCopyPassword(view: View?) {
+        val passwordEditText = findViewById<EditText>(R.id.get_password_result)
+        if (isEmpty(passwordEditText))
+            return
+
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("copied_text", passwordEditText.text.toString())
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(this, getString(R.string.password_copied), Toast.LENGTH_SHORT).show()
     }
 }

@@ -41,4 +41,5 @@
     <string name="service_deleted_successfull">Сервис успешно удален</string>
     <string name="service_updated_successfull">Сервис успешно обновлен</string>
     <string name="required_field_empty">Одно из обязательных полей пусто</string>
+    <string name="password_copied">Пароль скопирован!</string>
 </resources>
