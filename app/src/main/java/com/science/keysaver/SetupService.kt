@@ -72,10 +72,18 @@ class SetupService : AppCompatActivity() {
         builder.setTitle(getString(R.string.warning))
         builder.setMessage(getString(R.string.want_continue))
 
+        val serviceDescr = ServiceDescr("", "", "");
+        val serviceNameTB : EditText = findViewById(R.id.setup_service_name)
+        val configurationSpinner: Spinner = findViewById(R.id.configuration_spinner_setup)
+
+        if (isEmpty(serviceNameTB)) {
+            Toast.makeText(this,
+                getString(R.string.required_field_empty),
+                Toast.LENGTH_SHORT).show()
+            return
+        }
+
         builder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
-            val serviceDescr = ServiceDescr("", "", "");
-            val serviceNameTB : EditText = findViewById(R.id.setup_service_name)
-            val configurationSpinner: Spinner = findViewById(R.id.configuration_spinner_setup)
             serviceDescr.name = serviceNameTB.text.toString()
             serviceDescr.conf_id = configurationSpinner.selectedItem.toString()
 
