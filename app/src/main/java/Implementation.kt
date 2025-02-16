@@ -438,6 +438,10 @@ class Implementation private constructor() {
 
         private val impl : Implementation = Implementation()
 
+        public const val DEFAULT_PASSWORD_LENGTH = 16
+        public const val DEFAULT_SPECIAL_CHARS_COUNT = 2
+        public const val DEFAULT_DIGITS_COUNT = 2
+
         init {
             System.loadLibrary("keysaver-core")
         }

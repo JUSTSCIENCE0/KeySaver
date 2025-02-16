@@ -1,6 +1,8 @@
 package com.science.keysaver
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Im
 import android.view.View
 import android.widget.EditText
 import android.widget.Spinner
@@ -30,6 +32,7 @@ class AddConfiguration : AppCompatActivity() {
         finish()
     }
 
+    @SuppressLint("SetTextI18n")
     fun onConfirm(view: View?) {
         val confNameText: EditText = findViewById(R.id.add_configuration_name)
         val pwdLenText: EditText = findViewById(R.id.add_configuration_password_length)
@@ -42,17 +45,20 @@ class AddConfiguration : AppCompatActivity() {
         val useDigitsSwitch: SwitchCompat = findViewById(R.id.add_configuration_add_digits)
         val digitsCountText: EditText = findViewById(R.id.add_configuration_digits_count)
 
-        if (isEmpty(confNameText) ||
-            isEmpty(pwdLenText) ||
-            isEmpty(pwdLenText) ||
-            isEmpty(specsetCountText) ||
-            isEmpty(specsetText) ||
-            isEmpty(digitsCountText)
-        ) {
-            Toast.makeText(this,
-                getString(R.string.required_field_empty),
-                Toast.LENGTH_SHORT).show()
-            return
+        if (isEmpty(confNameText)) {
+            confNameText.setText("Name")
+        }
+        if (isEmpty(pwdLenText)) {
+            pwdLenText.setText(Implementation.DEFAULT_PASSWORD_LENGTH.toString())
+        }
+        if (isEmpty(specsetCountText)) {
+            specsetCountText.setText(Implementation.DEFAULT_SPECIAL_CHARS_COUNT.toString())
+        }
+        if (isEmpty(specsetText)) {
+            specsetText.setText(getString(R.string.default_characters_set))
+        }
+        if (isEmpty(digitsCountText)) {
+            digitsCountText.setText(Implementation.DEFAULT_DIGITS_COUNT.toString())
         }
 
         val config = ConfigurationDescr(
@@ -86,6 +92,30 @@ class AddConfiguration : AppCompatActivity() {
                 upperCaseSwitch.isChecked = true
             }
         }
+    }
 
+    fun onSetSpecialUsage(view: View?) {
+        val useSpecsetSwitch: SwitchCompat = findViewById(R.id.add_configuration_add_specset)
+
+        if (!useSpecsetSwitch.isChecked) {
+            val specsetCountText: EditText = findViewById(R.id.add_configuration_spec_count)
+            val specsetText: EditText = findViewById(R.id.add_configuration_specset)
+
+            specsetCountText.setText("")
+            specsetCountText.setHint(Implementation.DEFAULT_SPECIAL_CHARS_COUNT.toString())
+
+            specsetText.setText(getString(R.string.default_characters_set))
+        }
+    }
+
+    fun onSetDigitsUsage(view: View?) {
+        val useDigitsSwitch: SwitchCompat = findViewById(R.id.add_configuration_add_digits)
+
+        if (!useDigitsSwitch.isChecked) {
+            val digitsCountText: EditText = findViewById(R.id.add_configuration_digits_count)
+
+            digitsCountText.setText("")
+            digitsCountText.setHint(Implementation.DEFAULT_DIGITS_COUNT.toString())
+        }
     }
 }
