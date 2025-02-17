@@ -45,4 +45,9 @@
     <string name="file_saved">File saved successfully. Path:</string>
     <string name="db_share_warning">An encrypted copy of the current database will be saved. You assume the risks of a potential leak of this file. Do you want to continue?</string>
     <string name="db_import_warning">The current database will be erased. After the import, the application will be closed. Do you want to continue?</string>
+    <string name="invalid_paasword_length">Invalid password length</string>
+    <string name="invalid_special_chars_count">Incorrect number of special characters</string>
+    <string name="invalid_digits_amount">Incorrect number of digits</string>
+    <string name="without_any_case">Either uppercase or lowercase must be selected</string>
+    <string name="internal_error">Internal error, code:</string>
 </resources>

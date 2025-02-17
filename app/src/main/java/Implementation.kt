@@ -35,7 +35,24 @@ enum class KeysaverStatus(val code: Int) {
     E_SERVICE_ALREADY_EXISTS(-3),
     E_SERVICE_URL_ALREADY_EXISTS(-4),
     E_CONFIG_ALREADY_EXISTS(-5),
+    E_INVALID_PASSWORD_LENGTH(-6),
+    E_INVALID_SPECIAL_CHAR_COUNT(-7),
+    E_INVALID_DIGITS_AMOUNT(-8),
+    E_WITHOUT_ANY_CASE(-9),
 
+    // Internal Errors
+    E_NOT_IMPLEMENTED(-1000),
+    E_NOT_INITIALIZED(-1001),
+    E_INTERNAL_OPENSSL_FAIL(-1002),
+    E_INVALID_ARG(-1003),
+    E_SERVICE_NOT_EXISTS(-1004),
+    E_CONFIG_NOT_EXISTS(-1005),
+    E_DB_WRITE_ERROR(-1006),
+    E_DB_READ_ERROR(-1007),
+    E_DB_CORRUPTED(-1008),
+    E_UNSUPPORTED_ALPHABET(-1009),
+    E_UNEXPECTED_EXCEPTION(-1010),
+    E_INVALID_ORDER(-1011),
     UNKNOWN(Int.MAX_VALUE);
 
     companion object {
@@ -52,7 +69,13 @@ enum class KeysaverStatus(val code: Int) {
             E_SERVICE_ALREADY_EXISTS -> context.getString(R.string.service_already_exists)
             E_SERVICE_URL_ALREADY_EXISTS -> context.getString(R.string.service_url_already_exists)
             E_CONFIG_ALREADY_EXISTS -> context.getString(R.string.config_already_exists)
-            else -> context.getString(R.string.unknown_error)
+            E_INVALID_PASSWORD_LENGTH -> context.getString(R.string.invalid_paasword_length)
+            E_INVALID_SPECIAL_CHAR_COUNT -> context.getString(R.string.invalid_special_chars_count)
+            E_INVALID_DIGITS_AMOUNT -> context.getString(R.string.invalid_digits_amount)
+            E_WITHOUT_ANY_CASE -> context.getString(R.string.without_any_case)
+
+            UNKNOWN -> context.getString(R.string.unknown_error)
+            else -> context.getString(R.string.internal_error) + code.toString()
         }
     }
 

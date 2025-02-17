@@ -45,4 +45,9 @@
     <string name="file_saved">"Файл успешно сохранен. Путь: "</string>
     <string name="db_share_warning">Будет сохранена зашифрованная копия текущей базы данных. Вы берете на себя риски возможной утечки данного файла. Продолжить?</string>
     <string name="db_import_warning">Текущая база данных будет стерта. После импорта приложение будет закрыто. Продолжить?</string>
+    <string name="invalid_paasword_length">Неверная длина пароля</string>
+    <string name="invalid_special_chars_count">Неверное число специальных символов</string>
+    <string name="invalid_digits_amount">Неверное количество цифр</string>
+    <string name="without_any_case">Должен быть выбран верхний или нижний регистр</string>
+    <string name="internal_error">"Внутренняя ошибка, код: "</string>
 </resources>
