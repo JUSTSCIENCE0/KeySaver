@@ -50,4 +50,8 @@
     <string name="invalid_digits_amount">Неверное количество цифр</string>
     <string name="without_any_case">Должен быть выбран верхний или нижний регистр</string>
     <string name="internal_error">"Внутренняя ошибка, код: "</string>
+    <string name="master_password_uppercase_letter">Мастер пароль должен содержать хотя бы одну заглавную букву</string>
+    <string name="master_password_lowercase_letter">Мастер пароль должен содержать хотя бы одну строчную букву</string>
+    <string name="master_password_digit">Мастер пароль должен содержать хотя бы одну цифру</string>
+    <string name="master_password_special_char">Мастер пароль должен содержать хотя бы один специальный символ</string>
 </resources>

@@ -86,6 +86,9 @@ class MainActivity : AppCompatActivity() {
         val mpInput : EditText = findViewById(R.id.master_password)
         val masterPassword = mpInput.text.toString()
 
+        if (!Implementation.validateMasterPassword(this, masterPassword))
+            return
+
         val loadBar : Group = findViewById(R.id.wait_db)
         val functional : Group = findViewById(R.id.first_layout_functional)
 

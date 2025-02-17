@@ -224,6 +224,50 @@ class Implementation private constructor() {
             }
         }
 
+        fun validateMasterPassword(context: Context, password: String) : Boolean {
+            if (password.length < 8) {
+                Toast.makeText(context,
+                    context.getString(R.string.short_master_password),
+                    Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            val hasUpperCase = password.any { it.isUpperCase() }
+            if (!hasUpperCase) {
+                Toast.makeText(context,
+                    context.getString(R.string.master_password_uppercase_letter),
+                    Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            val hasLowerCase = password.any { it.isLowerCase() }
+            if (!hasLowerCase) {
+                Toast.makeText(context,
+                    context.getString(R.string.master_password_lowercase_letter),
+                    Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            val hasDigit = password.any { it.isDigit() }
+            if (!hasDigit) {
+                Toast.makeText(context,
+                    context.getString(R.string.master_password_digit),
+                    Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            val specChars = context.getString(R.string.default_characters_set)
+            val hasSpecChar = password.any { it in specChars }
+            if (!hasSpecChar) {
+                Toast.makeText(context,
+                    context.getString(R.string.master_password_special_char),
+                    Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            return true;
+        }
+
         fun fillServicesList(context: Context, spinner: Spinner) {
             val servicesCount = IntWrapper(0)
             var result = KeysaverStatus.fromCode(impl.keysaverGetServicesCount(servicesCount))
@@ -373,8 +417,6 @@ class Implementation private constructor() {
         fun close() { impl.keysaverClose() }
 
         fun setMasterPassword(password: String) : KeysaverStatus {
-            // TODO: validate master password
-
             return KeysaverStatus.fromCode(impl.keysaverSetMasterPassword(password))
         }
 

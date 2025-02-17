@@ -50,4 +50,8 @@
     <string name="invalid_digits_amount">Incorrect number of digits</string>
     <string name="without_any_case">Either uppercase or lowercase must be selected</string>
     <string name="internal_error">Internal error, code:</string>
+    <string name="master_password_uppercase_letter">The master password must contain at least one uppercase letter</string>
+    <string name="master_password_lowercase_letter">The master password must contain at least one lowercase letter</string>
+    <string name="master_password_digit">The master password must contain at least one digit</string>
+    <string name="master_password_special_char">The master password must contain at least one special character</string>
 </resources>
