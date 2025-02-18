@@ -6,6 +6,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -64,5 +65,17 @@ class AddService : AppCompatActivity() {
 
         if (Implementation.addService(this, service))
             finish()
+    }
+
+    fun onAddServiceHelp(view: View?) {
+        val dialog = AlertDialog.Builder(this)
+            .setTitle(getString(R.string.info))
+            .setMessage(getString(R.string.add_service_help))
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+
+        dialog.show()
     }
 }

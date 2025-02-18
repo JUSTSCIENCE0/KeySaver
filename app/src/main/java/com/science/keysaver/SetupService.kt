@@ -138,4 +138,16 @@ class SetupService : AppCompatActivity() {
         val alertDialog = builder.create()
         alertDialog.show()
     }
+
+     fun onSetupServiceHelp(view: View?) {
+         val dialog = AlertDialog.Builder(this)
+             .setTitle(getString(R.string.info))
+             .setMessage(getString(R.string.setup_service_help))
+             .setPositiveButton("OK") { dialog, _ ->
+                 dialog.dismiss()
+             }
+             .create()
+
+         dialog.show()
+     }
 }

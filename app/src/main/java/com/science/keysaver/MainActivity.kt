@@ -201,4 +201,28 @@ class MainActivity : AppCompatActivity() {
         val alertDialog = builder.create()
         alertDialog.show()
     }
+
+    fun onMasterPasswordHelp(view: View?) {
+        val dialog = AlertDialog.Builder(this)
+            .setTitle(getString(R.string.info))
+            .setMessage(getString(R.string.master_password_help))
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+
+        dialog.show()
+    }
+
+    fun onGetPasswordHelp(view: View?) {
+        val dialog = AlertDialog.Builder(this)
+            .setTitle(getString(R.string.info))
+            .setMessage(getString(R.string.get_password_help))
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+
+        dialog.show()
+    }
 }

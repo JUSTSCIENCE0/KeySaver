@@ -23,6 +23,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:backgroundTint="@color/transparent"
+            android:onClick="onAddConfigurationHelp"
             android:src="@drawable/ic_help"
             app:layout_constraintBottom_toTopOf="@+id/textView9"
             app:layout_constraintEnd_toEndOf="parent"

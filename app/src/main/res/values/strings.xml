@@ -54,4 +54,10 @@
     <string name="master_password_lowercase_letter">The master password must contain at least one lowercase letter</string>
     <string name="master_password_digit">The master password must contain at least one digit</string>
     <string name="master_password_special_char">The master password must contain at least one special character</string>
+    <string name="master_password_help">The master password must contain both lowercase and uppercase letters, at least one digit, and one special character.</string>
+    <string name="info">Information</string>
+    <string name="add_service_help">To proceed, you need to save at least one service. \nEnter the service URL – it is used for password generation. \nEnter the service name – this is how it will be displayed in the service list. \nThen, choose a password generation configuration (length, character set, etc.) from the created configurations.</string>
+    <string name="add_configuration_help">Creating a Configuration. \nWhen creating a new configuration, keep in mind the following restrictions:\n - Password length must be between 8 and 30 characters (Default: 16)\n - The number of special characters, as well as digits, cannot exceed a quarter of the total password length.</string>
+    <string name="setup_service_help">You can change the displayed service name and the password configuration used for generating the service password.\nKeep in mind that if you modify the password configuration, the newly generated password WILL NOT match the old one.</string>
+    <string name="get_password_help">Password Generation.\nSelect the service for which you need a password.\nClick on the image to generate the password.</string>
 </resources>
