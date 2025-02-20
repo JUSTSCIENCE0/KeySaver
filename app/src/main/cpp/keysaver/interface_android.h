@@ -9,5 +9,5 @@
 
 #define KEYSAVER_API(func_name, ...) \
     extern "C" JNIEXPORT jint JNICALL Java_com_science_keysaver_Implementation_ ##func_name( \
-        JNIEnv* j_env, jobject j_this \
+        [[maybe_unused]] JNIEnv* j_env, [[maybe_unused]] jobject j_this \
         __VA_OPT__(,) __VA_ARGS__)

@@ -11,7 +11,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     add_compile_options(
             # warnings options
             /W4 /WX
-            /wd4505 /wd4100
+            /wd4505
             /DUNICODE /D_UNICODE  # use unicode
             /MP                   # multiple processes build
     )
@@ -22,8 +22,8 @@ elseif ((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES 
             -Wdisabled-optimization -Wformat=2 -Winit-self
             -Wmissing-include-dirs -Woverloaded-virtual
             -Wredundant-decls -Wshadow -Wsign-promo
-            -Wstrict-overflow=5 -Wundef -Wno-unused -Wno-variadic-macros
-            -Wno-parentheses -Wno-unused-parameter -fdiagnostics-show-option
+            -Wstrict-overflow=5 -Wundef
+            -fdiagnostics-show-option
             -Werror
     )
 endif() # GCC & Clang

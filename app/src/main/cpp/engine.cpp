@@ -13,15 +13,6 @@
 #include <fstream>
 
 namespace Keysaver {
-    KeysaverStatus ConstructPassword(
-            const KeysaverConfig::Configuration& config,
-            PRNGProvider& prng,
-            std::string* result) {
-        assert(result);
-
-        return KeysaverStatus::E_NOT_IMPLEMENTED;
-    }
-
     KeysaverStatus Engine::SetMasterPassword(const std::string& masterPassword) {
         if (masterPassword.length() < MIN_PASSWORD_LEN)
             return KeysaverStatus::E_TOO_SHORT_MASTER_PASSWORD;
