@@ -87,12 +87,12 @@ build_protobuf() {
     rm -rf "$protobuf_build_dir"
 }
 
-if [ -z "$ndk_root_option" ]; then
-    find_android_ndk
-else 
-    export ANDROID_NDK_ROOT="$ndk_root_option"
-    PATH=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
-fi
+#if [ -z "$ndk_root_option" ]; then
+#    find_android_ndk
+#else 
+#    export ANDROID_NDK_ROOT="$ndk_root_option"
+#    PATH=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+#fi
 
 if [ -d "$externals_dir" ]; then
     rm -rf "$externals_dir"
@@ -100,20 +100,20 @@ fi
 
 mkdir "$externals_dir"
 mkdir "$externals_src"
-mkdir "$externals_android_arm64"
-mkdir "$externals_android_x86_64"
+#mkdir "$externals_android_arm64"
+#mkdir "$externals_android_x86_64"
 
 # download openssl
-openssl_package=openssl-3.4.0
-openssl_url=https://github.com/openssl/openssl/releases/download/"$openssl_package"/"$openssl_package".tar.gz
-openssl_dir="$externals_src"/"$openssl_package"
-download_sources_archive "$openssl_url" "$openssl_package"
+#openssl_package=openssl-3.4.0
+#openssl_url=https://github.com/openssl/openssl/releases/download/"$openssl_package"/"$openssl_package".tar.gz
+#openssl_dir="$externals_src"/"$openssl_package"
+#download_sources_archive "$openssl_url" "$openssl_package"
 
 # build openssl
-pushd "$openssl_dir"
-    build_openssl android-arm64 "$externals_android_arm64"
-    build_openssl android-x86_64 "$externals_android_x86_64"
-popd
+#pushd "$openssl_dir"
+#    build_openssl android-arm64 "$externals_android_arm64"
+#    build_openssl android-x86_64 "$externals_android_x86_64"
+#popd
 
 # download protobuf
 protobuf_version=v29.3
@@ -121,7 +121,7 @@ protobuf_url=https://github.com/protocolbuffers/protobuf.git
 download_sources_git "$protobuf_url" "$protobuf_version"
 
 # build protobuf
-build_protobuf arm64-v8a "$externals_android_arm64"  android
-build_protobuf x86_64    "$externals_android_x86_64" android
+#build_protobuf arm64-v8a "$externals_android_arm64"  android
+#build_protobuf x86_64    "$externals_android_x86_64" android
 build_protobuf x86_64    "$externals_linux_x86_64"   linux
 
