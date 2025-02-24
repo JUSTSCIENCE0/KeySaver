@@ -101,17 +101,8 @@ namespace Keysaver {
         uint8_t rnd_byte = 0;
         if (!m_prng.GetByte(&rnd_byte)) return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
-        const Alphabet* alphabet = nullptr;
-        switch (config.alphabet()) {
-        case KeysaverConfig::Configuration_AlphabetType_LATIN_ENGLISH:
-            alphabet = &(LETTERS[0]);
-            break;
-        case KeysaverConfig::Configuration_AlphabetType_CYRILLIC_RUSSIAN:
-            alphabet = &(LETTERS[1]);
-            break;
-        default:
-            return KeysaverStatus::E_NOT_IMPLEMENTED;
-        }
+        assert(config.alphabet() >= 0 && config.alphabet() < int(LETTERS.size()));
+        const Alphabet* alphabet = &(LETTERS[config.alphabet()]);
 
         const auto& special_charset = config.special_charset();
 
