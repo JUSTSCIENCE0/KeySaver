@@ -64,9 +64,6 @@ namespace Keysaver {
         void Invalidate();
 
     private:
-        // types
-        using uint8_t = std::uint8_t;
-
         // consts
         static constexpr std::string DEFAULT_CONFIG_NAME = "Default";
         static constexpr int         DEFAULT_CONFIG_INDEX = std::numeric_limits<int>::min();

@@ -62,9 +62,6 @@ namespace Keysaver {
         explicit Engine(const std::string& pathToDB):
             m_db(pathToDB) {}
 
-        // types
-        using uint8_t = std::uint8_t;
-
         // consts
         static constexpr size_t MIN_PASSWORD_LEN = 8;
         static constexpr size_t MAX_PASSWORD_LEN = 30;
