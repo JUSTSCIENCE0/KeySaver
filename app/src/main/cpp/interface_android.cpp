@@ -110,7 +110,8 @@ KeysaverStatus jobj_to_config(
             j_env->GetStringUTFChars(j_special_charset, nullptr);
     if (!c_conf_id || !c_alphabet || !c_special_charset) return KeysaverStatus::E_INVALID_ARG;
 
-    std::u8string alphabetName{reinterpret_cast<const char8_t*>(c_alphabet)};
+    std::string tmpAlphabetName(c_alphabet);
+    std::u8string alphabetName{tmpAlphabetName.begin(), tmpAlphabetName.end()};
     auto alph_itr = std::find(
                               Keysaver::PasswordGenerator::SUPPORTED_ALPHABETS.begin(),
                               Keysaver::PasswordGenerator::SUPPORTED_ALPHABETS.end(),
@@ -345,7 +346,8 @@ KEYSAVER_API(keysaverGetAlphabetsList, jobjectArray alphabetsList) {
 
     jsize index = 0;
     for (auto& alphabet: Keysaver::PasswordGenerator::SUPPORTED_ALPHABETS) {
-        jstring str = j_env->NewStringUTF(reinterpret_cast<const char*>(alphabet.data()));
+        std::string tmpAlphabetName{alphabet.begin(), alphabet.end()};
+        jstring str = j_env->NewStringUTF(tmpAlphabetName.c_str());
         j_env->SetObjectArrayElement(alphabetsList, index, str);
         j_env->DeleteLocalRef(str);
 
@@ -387,11 +389,10 @@ KEYSAVER_API(keysaverGeneratePassword,
             c_service_name, imageIndex, &cpp_result);
     if (is_keysaver_error(code)) return code;
 
+    std::string c_result{cpp_result.begin(), cpp_result.end()};
     j_env->SetObjectField(
             result, resultField,
-            j_env->NewStringUTF(
-                    reinterpret_cast<const char*>(cpp_result.data())
-                )
+            j_env->NewStringUTF(c_result.c_str())
             );
     return code;
 }
