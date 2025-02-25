@@ -45,6 +45,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     set(OPENSSL_ENVIRONMENT
             ANDROID_NDK_ROOT=${ANDROID_NDK}
             PATH=${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin:$ENV{PATH})
+    set(PROTOBUF_USE_HOST_PROTOC TRUE)
     set(IMPLEMENTATION
         interface_android.cpp
         ${IMPLEMENTATION}
@@ -93,14 +94,6 @@ set_target_properties(OpenSSL::Crypto PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INSTALL_DIR}/include)
 
 # protobuf
-
-set(USE_SINGLE_PROTOC_BUILD FALSE)
-if (CMAKE_SYSTEM_NAME STREQUAL CMAKE_HOST_SYSTEM_NAME AND
-        CMAKE_SYSTEM_PROCESSOR STREQUAL CMAKE_HOST_SYSTEM_PROCESSOR)
-    set(USE_SINGLE_PROTOC_BUILD TRUE)
-endif()
-message("USE_SINGLE_PROTOC_BUILD = ${USE_SINGLE_PROTOC_BUILD}")
-
 FetchContent_Declare(
     protobuf
     GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
@@ -110,14 +103,33 @@ set(protobuf_BUILD_TESTS OFF)
 set(protobuf_BUILD_CONFORMANCE OFF)
 set(protobuf_BUILD_EXAMPLES OFF)
 set(protobuf_DISABLE_RTTI ON)
-if (NOT USE_SINGLE_PROTOC_BUILD)
+if (PROTOBUF_USE_HOST_PROTOC)
     set(protobuf_BUILD_PROTOC_BINARIES OFF)
 endif()
 FetchContent_MakeAvailable(protobuf)
 
-if (NOT USE_SINGLE_PROTOC_BUILD)
-    #TODO: internal native build
+if (PROTOBUF_USE_HOST_PROTOC)
+    if (NOT CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        message(FATAL_ERROR "Unsupported host OS")
+    endif ()
+    if (NOT CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64" AND
+            NOT CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "AMD64")
+        message(FATAL_ERROR "Unsupported host processor")
+    endif()
+
     set(PROTOC_EXECUTABLE ${CMAKE_SOURCE_DIR}/external/linux_x86_64/protobuf/bin/protoc)
+    if(NOT EXISTS ${PROTOC_EXECUTABLE})
+        execute_process(
+            COMMAND bash build_host_protobuf.sh
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            RESULT_VARIABLE SCRIPT_RESULT
+        )
+
+        if(NOT SCRIPT_RESULT EQUAL 0)
+            message(FATAL_ERROR "Protobuf build failed with code ${SCRIPT_RESULT}")
+        endif()
+    endif()
+
     add_custom_command(
         OUTPUT ${CMAKE_SOURCE_DIR}/configuration.pb.cc
         ${CMAKE_SOURCE_DIR}/configuration.pb.h
