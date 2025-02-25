@@ -132,7 +132,7 @@ if (PROTOBUF_USE_HOST_PROTOC)
 
     add_custom_command(
         OUTPUT ${CMAKE_SOURCE_DIR}/configuration.pb.cc
-        ${CMAKE_SOURCE_DIR}/configuration.pb.h
+               ${CMAKE_SOURCE_DIR}/configuration.pb.h
         COMMAND ${PROTOC_EXECUTABLE}
         ARGS --cpp_out=${CMAKE_SOURCE_DIR}
         --proto_path=${CMAKE_SOURCE_DIR}
