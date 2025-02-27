@@ -12,6 +12,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 set(IMPLEMENTATION
     engine.hpp
     engine.cpp
@@ -45,14 +47,22 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     set(OPENSSL_ENVIRONMENT
             ANDROID_NDK_ROOT=${ANDROID_NDK}
             PATH=${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin:$ENV{PATH})
-    set(PROTOBUF_USE_HOST_PROTOC TRUE)
     set(IMPLEMENTATION
         interface_android.cpp
         ${IMPLEMENTATION}
     )
-
     set(INTERFACE
         keysaver/interface_android.h
+        ${INTERFACE}
+    )
+    set(SYSTEM_SPECIFIC_LIBS android)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    if (NOT CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" AND NOT CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64")
+        message(FATAL_ERROR "Unsupported CPU Architecture - ${CMAKE_SYSTEM_PROCESSOR}")
+    endif()
+
+    set(INTERFACE
+        keysaver/interface_linux.h
         ${INTERFACE}
     )
 else()
@@ -71,10 +81,11 @@ ExternalProject_Add(
     PREFIX ${OPENSSL_INSTALL_DIR}
     URL https://github.com/openssl/openssl/releases/download/${OPENSSL_PACKAGE}/${OPENSSL_PACKAGE}.tar.gz
     BUILD_IN_SOURCE true
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
     CONFIGURE_COMMAND
         ${OPENSSL_ENVIRONMENT}
         ./Configure ${OPENSSL_PLATFORM_PARAMS} no-apps no-docs no-shared no-tests
-            --prefix=${OPENSSL_INSTALL_DIR} --openssldir=${OPENSSL_INSTALL_DIR}/ssl
+            --prefix=${OPENSSL_INSTALL_DIR} --openssldir=${OPENSSL_INSTALL_DIR}/ssl --libdir=lib
     BUILD_COMMAND ${OPENSSL_ENVIRONMENT} make -j${CMAKE_BUILD_PARALLEL_LEVEL}
     INSTALL_COMMAND ${OPENSSL_ENVIRONMENT} make install_sw
     BUILD_BYPRODUCTS
@@ -103,44 +114,40 @@ set(protobuf_BUILD_TESTS OFF)
 set(protobuf_BUILD_CONFORMANCE OFF)
 set(protobuf_BUILD_EXAMPLES OFF)
 set(protobuf_DISABLE_RTTI ON)
-if (PROTOBUF_USE_HOST_PROTOC)
-    set(protobuf_BUILD_PROTOC_BINARIES OFF)
-endif()
+set(protobuf_BUILD_PROTOC_BINARIES OFF)
 FetchContent_MakeAvailable(protobuf)
 
-if (PROTOBUF_USE_HOST_PROTOC)
-    if (NOT CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-        message(FATAL_ERROR "Unsupported host OS")
-    endif ()
-    if (NOT CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64" AND
-            NOT CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "AMD64")
-        message(FATAL_ERROR "Unsupported host processor")
-    endif()
-
-    set(PROTOC_EXECUTABLE ${CMAKE_SOURCE_DIR}/external/linux_x86_64/protobuf/bin/protoc)
-    if(NOT EXISTS ${PROTOC_EXECUTABLE})
-        execute_process(
-            COMMAND bash build_host_protobuf.sh
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            RESULT_VARIABLE SCRIPT_RESULT
-        )
-
-        if(NOT SCRIPT_RESULT EQUAL 0)
-            message(FATAL_ERROR "Protobuf build failed with code ${SCRIPT_RESULT}")
-        endif()
-    endif()
-
-    add_custom_command(
-        OUTPUT ${CMAKE_SOURCE_DIR}/configuration.pb.cc
-               ${CMAKE_SOURCE_DIR}/configuration.pb.h
-        COMMAND ${PROTOC_EXECUTABLE}
-        ARGS --cpp_out=${CMAKE_SOURCE_DIR}
-        --proto_path=${CMAKE_SOURCE_DIR}
-        configuration.proto
-    )
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+    set(PROTOC_BUILDER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/build_host_protobuf.sh)
+    set(PROTOC_EXECUTABLE ${CMAKE_CURRENT_SOURCE_DIR}/external/linux_x86_64/protobuf/bin/protoc)
 else()
-    #TODO
+    message(FATAL_ERROR "Unsupported host OS")
+endif ()
+if (NOT CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64" AND
+        NOT CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "AMD64")
+    message(FATAL_ERROR "Unsupported host processor")
 endif()
+
+if(NOT EXISTS ${PROTOC_EXECUTABLE})
+    execute_process(
+        COMMAND bash ${PROTOC_BUILDER_SCRIPT}
+        WORKING_DIRECTORY ${${CMAKE_CURRENT_SOURCE_DIR}}
+        RESULT_VARIABLE SCRIPT_RESULT
+    )
+
+    if(NOT SCRIPT_RESULT EQUAL 0)
+        message(FATAL_ERROR "Protobuf build failed with code ${SCRIPT_RESULT}")
+    endif()
+endif()
+
+add_custom_command(
+    OUTPUT  ${CMAKE_CURRENT_SOURCE_DIR}/configuration.pb.cc
+            ${CMAKE_CURRENT_SOURCE_DIR}/configuration.pb.h
+    COMMAND ${PROTOC_EXECUTABLE}
+    ARGS --cpp_out=${CMAKE_CURRENT_SOURCE_DIR}
+         --proto_path=${CMAKE_CURRENT_SOURCE_DIR}
+    configuration.proto
+)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     add_compile_options(
@@ -182,7 +189,7 @@ target_include_directories(keysaver-core
 )
 target_link_libraries(keysaver-core
     PRIVATE
-        android
+        ${SYSTEM_SPECIFIC_LIBS}
         protobuf::libprotobuf
         OpenSSL::SSL
         OpenSSL::Crypto

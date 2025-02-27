@@ -9,6 +9,7 @@
 
 #include <cassert>
 #include <random>
+#include <cstring>
 
 namespace Keysaver {
     constexpr uint8_t salts[SALTS_COUNT][HashProvider::HASH_SIZE] = {

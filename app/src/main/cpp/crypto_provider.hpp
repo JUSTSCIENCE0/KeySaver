@@ -10,6 +10,7 @@
 #include <openssl/types.h>
 
 #include <array>
+#include <numeric>
 
 namespace Keysaver {
     constexpr int SALTS_COUNT = 9;

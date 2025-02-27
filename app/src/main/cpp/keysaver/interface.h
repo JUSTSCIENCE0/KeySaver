@@ -7,6 +7,8 @@
 
 #if defined(__ANDROID__)
 #include  "interface_android.h"
+#elif defined(__linux__)
+#include "interface_linux.h"
 #endif
 
 #ifndef KEYSAVER_API
