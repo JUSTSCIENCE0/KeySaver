@@ -16,9 +16,14 @@ if(NUM_CORES GREATER 0)
     set(CMAKE_BUILD_PARALLEL_LEVEL ${NUM_CORES} CACHE STRING "Set parallel build level")
 endif()
 
-option(BUILD_KEYSAVER_TESTS "Build tests" ON)
+option(BUILD_KEYSAVER_DESKTOP "Build desktop application" ON)
+option(BUILD_KEYSAVER_TESTS   "Build tests"               ON)
 
 add_subdirectory(app/src/main/cpp)
+
+if (BUILD_KEYSAVER_DESKTOP)
+    add_subdirectory(desktop)
+endif(BUILD_KEYSAVER_DESKTOP)
 
 if (BUILD_KEYSAVER_TESTS)
     add_subdirectory(tests)
