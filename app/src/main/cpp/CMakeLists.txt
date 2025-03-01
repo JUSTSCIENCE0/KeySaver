@@ -145,15 +145,21 @@ add_custom_command(
     configuration.proto
 )
 
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
+add_library(keysaver-core SHARED)
+
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    add_compile_options(
+    target_compile_options(keysaver-core PRIVATE
         # warnings options
         /W4 /WX
         /DUNICODE /D_UNICODE  # use unicode
         /MP                   # multiple processes build
     )
 elseif ((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
-    add_compile_options(
+    target_compile_options(keysaver-core PRIVATE
         # warnings options
         -Wall -Wextra -Wcast-align -Wcast-qual
         -Wdisabled-optimization -Wformat=2 -Winit-self
@@ -162,17 +168,11 @@ elseif ((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES 
         -Werror
     )
     if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        add_compile_options(-Wno-gcc-compat)
+        target_compile_options(keysaver-core PRIVATE -Wno-gcc-compat)
     else()
-        add_compile_options(-Wno-missing-requires)
+        target_compile_options(keysaver-core PRIVATE -Wno-missing-requires)
     endif()
 endif() # GCC & Clang
-
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-
-add_library(keysaver-core SHARED)
 
 target_sources(keysaver-core
     PUBLIC
