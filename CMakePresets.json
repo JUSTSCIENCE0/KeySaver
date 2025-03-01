@@ -1,0 +1,42 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+         "minor": 22,
+         "patch": 1
+    },
+    "configurePresets": [
+        {
+            "name": "linux-debug",
+            "description": "Debug build using GCC and Unix Makefiles",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "/usr/bin/gcc",
+                "CMAKE_CXX_COMPILER": "/usr/bin/g++"
+            }
+        },
+        {
+            "name": "linux-release",
+            "description": "Release build using GCC and Unix Makefiles",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_C_COMPILER": "/usr/bin/gcc",
+                "CMAKE_CXX_COMPILER": "/usr/bin/g++"
+            }
+         }
+    ],
+    "buildPresets": [
+        {
+            "name": "build-debug",
+            "configurePreset": "linux-debug"
+        },
+        {
+            "name": "build-release",
+            "configurePreset": "linux-release"
+        }
+    ]
+}
