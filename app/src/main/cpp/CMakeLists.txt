@@ -43,6 +43,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     set(OPENSSL_ENVIRONMENT
             ANDROID_NDK_ROOT=${ANDROID_NDK}
             PATH=${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin:$ENV{PATH})
+    set(PROTOBUF_USE_HOST_PROTOC TRUE)
     set(IMPLEMENTATION
         interface_android.cpp
         ${IMPLEMENTATION}
@@ -110,47 +111,63 @@ set(protobuf_BUILD_TESTS OFF)
 set(protobuf_BUILD_CONFORMANCE OFF)
 set(protobuf_BUILD_EXAMPLES OFF)
 set(protobuf_DISABLE_RTTI ON)
-set(protobuf_BUILD_PROTOC_BINARIES OFF)
+if (PROTOBUF_USE_HOST_PROTOC)
+    set(protobuf_BUILD_PROTOC_BINARIES OFF)
+endif(PROTOBUF_USE_HOST_PROTOC)
 FetchContent_MakeAvailable(protobuf)
 
-if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-    set(PROTOC_BUILDER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/build_host_protobuf.sh)
-    set(PROTOC_EXECUTABLE ${CMAKE_CURRENT_SOURCE_DIR}/external/linux_x86_64/protobuf/bin/protoc)
-else()
-    message(FATAL_ERROR "Unsupported host OS")
-endif ()
-if (NOT CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64" AND
-        NOT CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "AMD64")
-    message(FATAL_ERROR "Unsupported host processor")
-endif()
-
-if(NOT EXISTS ${PROTOC_EXECUTABLE})
-    execute_process(
-        COMMAND bash ${PROTOC_BUILDER_SCRIPT}
-        WORKING_DIRECTORY ${${CMAKE_CURRENT_SOURCE_DIR}}
-        RESULT_VARIABLE SCRIPT_RESULT
-    )
-
-    if(NOT SCRIPT_RESULT EQUAL 0)
-        message(FATAL_ERROR "Protobuf build failed with code ${SCRIPT_RESULT}")
-    endif()
-endif()
-
-add_custom_command(
-    OUTPUT  ${CMAKE_CURRENT_SOURCE_DIR}/configuration.pb.cc
-            ${CMAKE_CURRENT_SOURCE_DIR}/configuration.pb.h
-    COMMAND ${PROTOC_EXECUTABLE}
-    ARGS --cpp_out=${CMAKE_CURRENT_SOURCE_DIR}
-         --proto_path=${CMAKE_CURRENT_SOURCE_DIR}
-    configuration.proto
-)
-
+# keysaver core
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 add_library(keysaver-core SHARED)
 
+#  generate protobuf sources
+if (PROTOBUF_USE_HOST_PROTOC)
+    if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        set(PROTOC_BUILDER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/build_host_protobuf.sh)
+        set(PROTOC_EXECUTABLE ${CMAKE_CURRENT_SOURCE_DIR}/external/linux_x86_64/protobuf/bin/protoc)
+    else()
+        message(FATAL_ERROR "Unsupported host OS")
+    endif ()
+    if (NOT CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64" AND
+            NOT CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "AMD64")
+        message(FATAL_ERROR "Unsupported host processor")
+    endif()
+
+    if(NOT EXISTS ${PROTOC_EXECUTABLE})
+        execute_process(
+            COMMAND bash ${PROTOC_BUILDER_SCRIPT}
+            WORKING_DIRECTORY ${${CMAKE_CURRENT_SOURCE_DIR}}
+            RESULT_VARIABLE SCRIPT_RESULT
+        )
+
+        if(NOT SCRIPT_RESULT EQUAL 0)
+            message(FATAL_ERROR "Protobuf build failed with code ${SCRIPT_RESULT}")
+        endif()
+    endif()
+
+    add_custom_command(
+        OUTPUT  ${CMAKE_CURRENT_SOURCE_DIR}/configuration.pb.cc
+                ${CMAKE_CURRENT_SOURCE_DIR}/configuration.pb.h
+        COMMAND ${PROTOC_EXECUTABLE}
+        ARGS --cpp_out=${CMAKE_CURRENT_SOURCE_DIR}
+            --proto_path=${CMAKE_CURRENT_SOURCE_DIR}
+        configuration.proto
+    )
+else(PROTOBUF_USE_HOST_PROTOC)
+    include(${protobuf_SOURCE_DIR}/cmake/protobuf-generate.cmake)
+    protobuf_generate(
+        TARGET keysaver-core
+        LANGUAGE cpp
+        IMPORT_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+        PROTOS configuration.proto
+        PROTOC_OUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+endif()
+
+# keysaver core compile options
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_compile_options(keysaver-core PRIVATE
         # warnings options
@@ -174,6 +191,7 @@ elseif ((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES 
     endif()
 endif() # GCC & Clang
 
+# keysaver core sources
 target_sources(keysaver-core
     PUBLIC
         ${INTERFACE}
@@ -181,6 +199,7 @@ target_sources(keysaver-core
         ${IMPLEMENTATION}
 )
 
+# keysaver core dependencies
 add_dependencies(keysaver-core OpenSSL)
 target_link_libraries(keysaver-core
     PRIVATE
