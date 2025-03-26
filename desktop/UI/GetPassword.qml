@@ -168,14 +168,18 @@ Rectangle {
             border.width: 4
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.bottom: copy_password.top
+            anchors.bottom: copyPassword.top
             anchors.leftMargin: 16
             anchors.rightMargin: 16
             anchors.bottomMargin: 8
             TextInput {
                 id: result_password
                 text: ""
-                anchors.fill: parent
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 13
                 font.letterSpacing: 0.9
                 font.pixelSize: 24
                 horizontalAlignment: Text.AlignLeft
@@ -191,28 +195,9 @@ Rectangle {
             }
         }
 
-    Button {
-        id: copy_password
+    StyledButton {
+        id: copyPassword
         text: qsTr("Copy password")
-
-        background: Rectangle {
-            color: "black"
-            radius: 10
-        }
-
-        contentItem: Text {
-            id: copy_text
-            font.bold: true
-            color: "white"
-            text: "Copy password"
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            anchors.fill: parent
-            font.weight: Font.Bold
-            font.pointSize: 18
-            font.family: "Arial"
-            font.capitalization: Font.AllUppercase
-        }
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -222,34 +207,5 @@ Rectangle {
         anchors.rightMargin: 16
         anchors.topMargin: 8
         anchors.bottomMargin: 16
-        wheelEnabled: false
-        spacing: 7
-        display: AbstractButton.TextOnly
-
-        PropertyAnimation {
-            id: pressAnim
-            target: copy_password
-            property: "scale"
-            from: 1.0
-            to: 0.95
-            duration: 50
-        }
-
-        PropertyAnimation {
-            id: releaseAnim
-            target: copy_password
-            property: "scale"
-            from: 0.95
-            to: 1.0
-            duration: 50
-        }
-
-        Connections {
-            id: connections
-            target: copy_password
-            function onPressed() { pressAnim.running = true }
-            function onReleased() { releaseAnim.running = true }
-            function onCanceled() { releaseAnim.running = true }
-        }
     }
 }

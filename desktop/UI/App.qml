@@ -8,7 +8,7 @@ Window {
     height: 1000
 
     minimumWidth: 450
-    minimumHeight: 300
+    minimumHeight: 750
 
     visible: true
     title: "KeysaverGUI"

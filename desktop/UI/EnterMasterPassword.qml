@@ -9,94 +9,28 @@ Rectangle {
     height: Window.height
     opacity: 1
 
-    Rectangle {
-        id: master_password_rect
-        height: 40
-        radius: 10
-        border.color: "#e0e0e0"
-        border.width: 4
+    StyledInput {
+        id: masterPassword
+        mode: TextInput.Password
+
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.leftMargin: 16
         anchors.rightMargin: 16
-        TextInput {
-            id: master_password
-            text: ""
-            anchors.fill: parent
-            font.letterSpacing: 0.9
-            font.pixelSize: 24
-            horizontalAlignment: Text.AlignLeft
-            verticalAlignment: Text.AlignVCenter
-            font.italic: false
-            font.weight: Font.Normal
-            rightPadding: 8
-            leftPadding: 8
-            font.family: "Arial"
-            maximumLength: 30
-            echoMode: TextInput.Password
-        }
     }
 
-    Button {
-        id: confirm_master_password
+    StyledButton {
+        id: confirmMasterPassword
         text: qsTr("Confirm")
         onClicked: loader.source = "GetPassword.qml"
 
-        background: Rectangle {
-            color: "black"
-            radius: 10
-        }
-
-        contentItem: Text {
-            id: text1
-            font.bold: true
-            color: "white"
-            text: "Confirm"
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            anchors.fill: parent
-            font.weight: Font.Bold
-            font.pointSize: 18
-            font.family: "Arial"
-            font.capitalization: Font.AllUppercase
-        }
-
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: master_password_rect.bottom
+        anchors.top: masterPassword.bottom
         anchors.leftMargin: 16
         anchors.rightMargin: 16
         anchors.topMargin: 8
-        wheelEnabled: false
-        spacing: 7
-        display: AbstractButton.TextOnly
-
-        PropertyAnimation {
-            id: pressAnim
-            target: confirm_master_password
-            property: "scale"
-            from: 1.0
-            to: 0.95
-            duration: 50
-        }
-
-        PropertyAnimation {
-            id: releaseAnim
-            target: confirm_master_password
-            property: "scale"
-            from: 0.95
-            to: 1.0
-            duration: 50
-        }
-
-        Connections {
-            id: connections
-            target: confirm_master_password
-            function onPressed() { pressAnim.running = true }
-            function onReleased() { releaseAnim.running = true }
-            function onCanceled() { releaseAnim.running = true }
-        }
     }
 
     Text {
@@ -105,7 +39,7 @@ Rectangle {
         height: implicitHeight
         text: qsTr("Enter master password")
         anchors.left: parent.left
-        anchors.bottom: master_password_rect.top
+        anchors.bottom: masterPassword.top
         anchors.leftMargin: 16
         anchors.bottomMargin: 8
         font.pixelSize: 18
