@@ -4,13 +4,90 @@ import KeysaverGUI
 import QtQuick.Studio.DesignEffects
 
 Rectangle {
-    id: rectangle
+    id: getPassword
     width: Window.width
     height: Window.height
     opacity: 1
 
+    ImageButton {
+        id: enableBackup
+        source: "ic_enable_backup.png"
+
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.leftMargin: 16
+        anchors.topMargin: 16
+    }
+
+    ImageButton {
+        id: shareBackup
+        source: "ic_share_backup.png"
+
+        anchors.left: enableBackup.right
+        anchors.top: parent.top
+        anchors.leftMargin: 8
+        anchors.topMargin: 16
+    }
+
+    HelpButton {
+        id: getPasswordHelp
+    }
+
+    StyledLabel {
+        id: selectService
+        text: qsTr("Select service")
+
+        anchors.left: parent.left
+        anchors.bottom: selected_service.top
+        anchors.leftMargin: 16
+        anchors.bottomMargin: 8
+    }
+
+    ComboBox {
+        id: selected_service
+        height: 40
+        anchors.left: parent.left
+        anchors.right: setupService.left
+        anchors.bottom: chooseImage.top
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        anchors.bottomMargin: 8
+        font.pixelSize: 18
+        font.family: "Arial"
+
+        background: Rectangle {
+            color: "white"
+            radius: 10
+            border.color: "#e0e0e0"
+            border.width: 4
+        }
+
+        model: ["example", "test", qsTr("Add new...")]
+    }
+
+    ImageButton {
+        id: setupService
+        source: "ic_setup.png"
+        onButtonClick: function() { loader.source = "SetupService.qml" }
+
+        anchors.right: parent.right
+        anchors.bottom: selected_service.bottom
+        anchors.rightMargin: 16
+        anchors.bottomMargin: 0
+    }
+
+    StyledLabel {
+        id: chooseImage
+        text: qsTr("Choose image")
+
+        anchors.left: parent.left
+        anchors.bottom: imageHashes.top
+        anchors.leftMargin: 16
+        anchors.bottomMargin: 8
+    }
+
     GridView {
-        id: hash_images
+        id: imageHashes
         height: 399
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
@@ -29,8 +106,8 @@ Rectangle {
             ListElement { imagePath: "plane.jpg" }
         }
         delegate: Item {
-            width: hash_images.cellWidth
-            height: hash_images.cellHeight
+            width: imageHashes.cellWidth
+            height: imageHashes.cellHeight
 
             Image {
                 width: 125
@@ -46,154 +123,27 @@ Rectangle {
         cellHeight: 133
     }
 
-    Image {
-        id: enable_backup
-        width: 40
-        height: 40
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.leftMargin: 16
-        anchors.topMargin: 16
-        source: "ic_enable_backup.png"
-        fillMode: Image.PreserveAspectFit
-    }
-
-    Image {
-        id: share_backup
-        width: 40
-        height: 40
-        anchors.left: enable_backup.right
-        anchors.top: parent.top
-        anchors.leftMargin: 8
-        anchors.topMargin: 16
-        source: "ic_share_backup.png"
-        fillMode: Image.PreserveAspectFit
-    }
-
-    Image {
-        id: get_password_help
-        width: 40
-        height: 40
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.rightMargin: 16
-        anchors.topMargin: 16
-        source: "ic_help.png"
-        fillMode: Image.PreserveAspectFit
-    }
-
-    Text {
-        id: text1
-        width: implicitWidth
-        height: implicitHeight
-        text: qsTr("Choose image")
-        anchors.left: parent.left
-        anchors.bottom: hash_images.top
-        anchors.leftMargin: 16
-        anchors.bottomMargin: 8
-        font.pixelSize: 18
-        font.family: "Arial"
-    }
-
-    ComboBox {
-        id: selected_service
-        height: 40
-        anchors.left: parent.left
-        anchors.right: setup_service.left
-        anchors.bottom: text1.top
-        anchors.leftMargin: 16
-        anchors.rightMargin: 16
-        anchors.bottomMargin: 8
-        font.pixelSize: 18
-        font.family: "Arial"
-
-        background: Rectangle {
-            color: "white"
-            radius: 10
-            border.color: "#e0e0e0"
-            border.width: 4
-        }
-
-        model: ["example", "test", qsTr("Add new...")]
-    }
-
-    Image {
-        id: setup_service
-        width: 40
-        height: 40
-        anchors.right: parent.right
-        anchors.bottom: selected_service.bottom
-        anchors.rightMargin: 16
-        anchors.bottomMargin: 0
-        source: "ic_setup.png"
-        fillMode: Image.PreserveAspectFit
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: loader.source = "SetupService.qml"
-        }
-    }
-
-    Text {
-        id: text2
-        width: implicitWidth
-        height: implicitHeight
-        text: qsTr("Select service")
-        anchors.left: parent.left
-        anchors.bottom: selected_service.top
-        anchors.leftMargin: 16
-        anchors.bottomMargin: 8
-        font.pixelSize: 18
-        font.family: "Arial"
-    }
-
-    Text {
-        id: text3
-        width: implicitWidth
-        height: implicitHeight
+    StyledLabel {
+        id: yourPassword
         text: qsTr("Your password")
+
         anchors.left: parent.left
-        anchors.bottom: result_password_rect.top
+        anchors.bottom: resultPassword.top
         anchors.leftMargin: 16
         anchors.bottomMargin: 8
-        font.pixelSize: 18
-        font.family: "Arial"
     }
 
-    Rectangle {
-            id: result_password_rect
-            height: 40
-            radius: 10
-            border.color: "#e0e0e0"
-            border.width: 4
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: copyPassword.top
-            anchors.leftMargin: 16
-            anchors.rightMargin: 16
-            anchors.bottomMargin: 8
-            TextInput {
-                id: result_password
-                text: ""
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 13
-                font.letterSpacing: 0.9
-                font.pixelSize: 24
-                horizontalAlignment: Text.AlignLeft
-                verticalAlignment: Text.AlignVCenter
-                readOnly: true
-                font.italic: false
-                font.weight: Font.Normal
-                rightPadding: 8
-                leftPadding: 8
-                font.family: "Arial"
-                maximumLength: 30
-                echoMode: TextInput.Password
-            }
-        }
+    StyledInput {
+        id: resultPassword
+        readOnly: true
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: copyPassword.top
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        anchors.bottomMargin: 8
+    }
 
     StyledButton {
         id: copyPassword

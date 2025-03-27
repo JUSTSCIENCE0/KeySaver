@@ -4,7 +4,7 @@ import KeysaverGUI
 import QtQuick.Studio.DesignEffects
 
 Rectangle {
-    id: rectangle
+    id: enterMasterPassword
     width: Window.width
     height: Window.height
     opacity: 1
@@ -33,17 +33,13 @@ Rectangle {
         anchors.topMargin: 8
     }
 
-    Text {
-        id: text2
-        width: implicitWidth
-        height: implicitHeight
+    StyledLabel {
+        id: enterMasterPasswordLabel
         text: qsTr("Enter master password")
+
         anchors.left: parent.left
         anchors.bottom: masterPassword.top
         anchors.leftMargin: 16
         anchors.bottomMargin: 8
-        font.pixelSize: 18
-        leftPadding: 2
-        font.family: "Arial"
     }
 }

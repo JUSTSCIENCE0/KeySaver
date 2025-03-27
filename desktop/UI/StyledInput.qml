@@ -11,6 +11,7 @@ Rectangle {
 
     property int mode: TextInput.Normal
     property int maxLength: 30
+    property bool readOnly: false
     property alias text: styledTextInput.text
 
     TextInput {
@@ -28,5 +29,6 @@ Rectangle {
         font.family: "Arial"
         maximumLength: styledInput.maxLength
         echoMode: styledInput.mode
+        readOnly: styledInput.readOnly
     }
 }

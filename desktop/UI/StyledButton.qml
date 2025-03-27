@@ -6,9 +6,6 @@ Button {
     property color backgroundColor : "black"
     property color borderColor : "black"
     property color textColor : "white"
-    
-    //text: qsTr("Confirm")
-    //onClicked: loader.source = "GetPassword.qml"
 
     background: Rectangle {
         color: styledButton.backgroundColor
@@ -34,29 +31,17 @@ Button {
     spacing: 7
     display: AbstractButton.TextOnly
 
-    PropertyAnimation {
-        id: pressAnim
-        target: styledButton
-        property: "scale"
-        from: 1.0
-        to: 0.95
-        duration: 50
+    SequentialAnimation {
+        id: onPressedAnimation
+        PropertyAnimation { target: styledButton; property: "opacity"; to: 0.7; duration: 0 }
     }
 
-    PropertyAnimation {
-        id: releaseAnim
-        target: styledButton
-        property: "scale"
-        from: 0.95
-        to: 1.0
-        duration: 50
+    SequentialAnimation {
+        id: onReleasedAnimation
+        PropertyAnimation { target: styledButton; property: "opacity"; to: 1.0; duration: 0 }
     }
 
-    Connections {
-        id: connections
-        target: styledButton
-        function onPressed() { pressAnim.running = true }
-        function onReleased() { releaseAnim.running = true }
-        function onCanceled() { releaseAnim.running = true }
-    }
+    onPressed: onPressedAnimation.start()
+    onReleased: onReleasedAnimation.start()
+    onCanceled: onReleasedAnimation.start()
 }

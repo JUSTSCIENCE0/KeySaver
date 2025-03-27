@@ -10,7 +10,7 @@ Rectangle {
     opacity: 1
 
     Row {
-        id: cancel_confirm
+        id: cancelConfirm
         height: 40
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
@@ -18,69 +18,27 @@ Rectangle {
         anchors.leftMargin: 16
         anchors.rightMargin: 16
 
-        Button {
-            id: cancel_setup
+        StyledButton {
+            id: cancelSetup
             text: qsTr("Cancel")
+            backgroundColor: "white"
+            borderColor: "#e0e0e0"
+            textColor: "black"
+
             anchors.left: parent.left
             anchors.leftMargin: 0
             width: parent.width / 2 - 4
+
             onClicked: loader.source = "GetPassword.qml"
-
-            background: Rectangle {
-                color: "white"
-                radius: 10
-                border.color: "#e0e0e0"
-                border.width: 4
-            }
-
-            contentItem: Text {
-                id: cancel_text
-                font.bold: true
-                color: "black"
-                text: "Cancel"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                anchors.fill: parent
-                font.weight: Font.Bold
-                font.pointSize: 18
-                font.family: "Arial"
-                font.capitalization: Font.AllUppercase
-            }
-
-            wheelEnabled: false
-            spacing: 7
-            display: AbstractButton.TextOnly
         }
 
-        Button {
-            id: confirm_setup
+        StyledButton {
+            id: confirmSetup
             text: qsTr("Confirm")
+
             anchors.right: parent.right
             anchors.rightMargin: 0
             width: parent.width / 2 - 4
-
-            background: Rectangle {
-                color: "black"
-                radius: 10
-            }
-
-            contentItem: Text {
-                id: confirm_text
-                font.bold: true
-                color: "white"
-                text: "Confirm"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                anchors.fill: parent
-                font.weight: Font.Bold
-                font.pointSize: 18
-                font.family: "Arial"
-                font.capitalization: Font.AllUppercase
-            }
-
-            wheelEnabled: false
-            spacing: 7
-            display: AbstractButton.TextOnly
         }
     }
 }
