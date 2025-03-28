@@ -30,7 +30,7 @@ Rectangle {
     }
 
     HelpButton {
-        id: getPasswordHelp
+        id: help
     }
 
     StyledLabel {
