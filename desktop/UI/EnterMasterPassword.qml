@@ -9,6 +9,10 @@ Rectangle {
     height: Window.height
     opacity: 1
 
+    HelpButton {
+        id: help
+    }
+
     StyledInput {
         id: masterPassword
         mode: TextInput.Password
