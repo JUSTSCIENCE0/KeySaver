@@ -4,19 +4,66 @@ import KeysaverGUI
 import QtQuick.Studio.DesignEffects
 
 Rectangle {
-    id: rectangle
+    id: setupService
     width: Window.width
     height: Window.height
     opacity: 1
 
-    Row {
-        id: cancelConfirm
-        height: 40
+    HelpButton {
+        id: help
+    }
+
+    StyledLabel {
+        id: serviceDisplay
+        text: qsTr("Service display name")
+
+        anchors.left: parent.left
+        anchors.bottom: serviceName.top
+        anchors.leftMargin: 16
+        anchors.bottomMargin: 8
+    }
+
+    StyledInput {
+        id: serviceName
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: configuration.top
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        anchors.bottomMargin: 24
+    }
+
+    StyledLabel {
+        id: configuration
+        text: qsTr("Configuration")
+
+        anchors.left: parent.left
+        anchors.bottom: selectedConfiguration.top
+        anchors.leftMargin: 16
+        anchors.bottomMargin: 8
+    }
+
+    StyledComboBox {
+        id: selectedConfiguration
+        model: ["example", "test", qsTr("Add new...")]
+
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.leftMargin: 16
         anchors.rightMargin: 16
+    }
+
+    Row {
+        id: cancelConfirm
+        height: 40
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: selectedConfiguration.bottom
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        anchors.topMargin: 8
 
         StyledButton {
             id: cancelSetup
@@ -40,5 +87,19 @@ Rectangle {
             anchors.rightMargin: 0
             width: parent.width / 2 - 4
         }
+    }
+
+    StyledButton {
+        id: deleteService
+        text: qsTr("Delete service")
+        backgroundColor: "red"
+        borderColor: "red"
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: cancelConfirm.bottom
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        anchors.topMargin: 8
     }
 }
