@@ -38,31 +38,21 @@ Rectangle {
         text: qsTr("Select service")
 
         anchors.left: parent.left
-        anchors.bottom: selected_service.top
+        anchors.bottom: selectedService.top
         anchors.leftMargin: 16
         anchors.bottomMargin: 8
     }
 
-    ComboBox {
-        id: selected_service
-        height: 40
+    StyledComboBox {
+        id: selectedService
+        model: ["example", "test", qsTr("Add new...")]
+
         anchors.left: parent.left
         anchors.right: setupService.left
         anchors.bottom: chooseImage.top
         anchors.leftMargin: 16
         anchors.rightMargin: 16
         anchors.bottomMargin: 8
-        font.pixelSize: 18
-        font.family: "Arial"
-
-        background: Rectangle {
-            color: "white"
-            radius: 10
-            border.color: "#e0e0e0"
-            border.width: 4
-        }
-
-        model: ["example", "test", qsTr("Add new...")]
     }
 
     ImageButton {
@@ -71,7 +61,7 @@ Rectangle {
         onButtonClick: function() { loader.source = "SetupService.qml" }
 
         anchors.right: parent.right
-        anchors.bottom: selected_service.bottom
+        anchors.bottom: selectedService.bottom
         anchors.rightMargin: 16
         anchors.bottomMargin: 0
     }
