@@ -19,7 +19,7 @@ Rectangle {
         text: ""
         anchors.fill: parent
         font.letterSpacing: 0.9
-        font.pixelSize: 24
+        font.pixelSize: 18
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
         font.italic: false
