@@ -59,12 +59,146 @@ Rectangle {
         text: qsTr("Character set")
 
         anchors.left: parent.left
-        anchors.bottom: cancelConfirm.top
+        anchors.bottom: useUpperCase.top
         anchors.leftMargin: 16
         anchors.bottomMargin: 8
     }
 
+    StyledSwitch {
+        id: useUpperCase
+        text: qsTr("Use upper case")
 
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: useLowerCase.top
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        anchors.bottomMargin: 8
+    }
+
+    StyledSwitch {
+        id: useLowerCase
+        text: qsTr("Use lower case")
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: alphabet.top
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        anchors.bottomMargin: 8
+    }
+
+    StyledLabel {
+        id: alphabet
+        text: qsTr("Alphabet")
+
+        anchors.left: parent.left
+        anchors.bottom: selectedAlphabet.top
+        anchors.leftMargin: 16
+        anchors.bottomMargin: 8
+    }
+
+    StyledComboBox {
+        id: selectedAlphabet
+        model: ["Latin (English, US)", "Кириллица (Русский, Россия)"]
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: addSpecialCharacters.top
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        anchors.bottomMargin: 8
+    }
+
+    StyledSwitch {
+        id: addSpecialCharacters
+        text: qsTr("Add special characters")
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: specialCharactersCountLabel.top
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        anchors.bottomMargin: 8
+    }
+
+    StyledLabel {
+        id: specialCharactersCountLabel
+        text: qsTr("Special characters count")
+
+        anchors.left: parent.left
+        anchors.bottom: specialCharactersCount.top
+        anchors.leftMargin: 16
+        anchors.bottomMargin: 8
+    }
+
+    StyledInput {
+        id: specialCharactersCount
+        maxLength: 1
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: specialCharactersSetLabel.top
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        anchors.bottomMargin: 8
+    }
+
+    StyledLabel {
+        id: specialCharactersSetLabel
+        text: qsTr("Special characters set")
+
+        anchors.left: parent.left
+        anchors.bottom: specialCharactersSet.top
+        anchors.leftMargin: 16
+        anchors.bottomMargin: 8
+    }
+
+    StyledInput {
+        id: specialCharactersSet
+        text: "!@#$%^&*()_-+=/?.,<>'\";:[]{}"
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: addDigits.top
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        anchors.bottomMargin: 8
+    }
+
+    StyledSwitch {
+        id: addDigits
+        text: qsTr("Add digits")
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: digitsCountLabel.top
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        anchors.bottomMargin: 8
+    }
+
+    StyledLabel {
+        id: digitsCountLabel
+        text: qsTr("Digits count")
+
+        anchors.left: parent.left
+        anchors.bottom: digitsCount.top
+        anchors.leftMargin: 16
+        anchors.bottomMargin: 8
+    }
+
+    StyledInput {
+        id: digitsCount
+        maxLength: 1
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: cancelConfirm.top
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        anchors.bottomMargin: 24
+    }
 
     Row {
         id: cancelConfirm
