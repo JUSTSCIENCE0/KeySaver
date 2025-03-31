@@ -47,6 +47,7 @@ Rectangle {
         id: passwordLength
         placeholderText: "16"
         maxLength: 2
+        validaotor: IntValidator { bottom: 8; top: 30 }
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -138,6 +139,7 @@ Rectangle {
         id: specialCharactersCount
         placeholderText: "2"
         maxLength: 1
+        validaotor: IntValidator { bottom: 1; top: 8 }
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -195,6 +197,7 @@ Rectangle {
         id: digitsCount
         placeholderText: "2"
         maxLength: 1
+        validaotor: IntValidator { bottom: 1; top: 8 }
 
         anchors.left: parent.left
         anchors.right: parent.right

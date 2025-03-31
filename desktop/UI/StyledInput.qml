@@ -14,6 +14,7 @@ Rectangle {
     property bool readOnly: false
     property alias text: styledTextInput.text
     property alias placeholderText: placeholder.text
+    property alias validaotor: styledTextInput.validator
 
     TextInput {
         id: styledTextInput
