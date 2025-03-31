@@ -23,6 +23,7 @@ Rectangle {
 
     StyledInput {
         id: serviceURL
+        placeholderText: "https://example.com"
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -44,6 +45,7 @@ Rectangle {
 
     StyledInput {
         id: serviceName
+        placeholderText: "example"
 
         anchors.left: parent.left
         anchors.right: parent.right

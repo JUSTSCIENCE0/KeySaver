@@ -13,6 +13,7 @@ Rectangle {
     property int maxLength: 30
     property bool readOnly: false
     property alias text: styledTextInput.text
+    property alias placeholderText: placeholder.text
 
     TextInput {
         id: styledTextInput
@@ -30,5 +31,18 @@ Rectangle {
         maximumLength: styledInput.maxLength
         echoMode: styledInput.mode
         readOnly: styledInput.readOnly
+
+        onTextChanged: placeholder.visible = text.length === 0
+    }
+
+    Text {
+        id: placeholder
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: 8
+        color: "#999999"
+        font.pixelSize: 18
+        font.family: "Arial"
+        visible: input.text.length === 0
     }
 }

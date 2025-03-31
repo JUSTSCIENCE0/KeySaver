@@ -23,6 +23,7 @@ Rectangle {
 
     StyledInput {
         id: configurationName
+        placeholderText: "Name"
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -44,6 +45,7 @@ Rectangle {
 
     StyledInput {
         id: passwordLength
+        placeholderText: "16"
         maxLength: 2
 
         anchors.left: parent.left
@@ -134,6 +136,7 @@ Rectangle {
 
     StyledInput {
         id: specialCharactersCount
+        placeholderText: "2"
         maxLength: 1
 
         anchors.left: parent.left
@@ -190,6 +193,7 @@ Rectangle {
 
     StyledInput {
         id: digitsCount
+        placeholderText: "2"
         maxLength: 1
 
         anchors.left: parent.left
