@@ -1,0 +1,14 @@
+// TODO
+
+<RCC>
+    <qresource prefix="/">
+        <file>App.qml</file>
+        <file>components/HelpButton.qml</file>
+        <file>components/ImageButton.qml</file>
+        <file>components/StyledButton.qml</file>
+        <file>components/StyledComboBox.qml</file>
+        <file>components/StyledInput.qml</file>
+        <file>components/StyledLabel.qml</file>
+        <file>components/StyledSwitch.qml</file>
+    </qresource>
+</RCC>

@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import KeysaverGUI
-import QtQuick.Studio.DesignEffects
+import "qrc:/UI/components"
 
 Rectangle {
     id: enterMasterPassword
@@ -27,7 +26,6 @@ Rectangle {
     StyledButton {
         id: confirmMasterPassword
         text: qsTr("Confirm")
-        onClicked: loader.source = "GetPassword.qml"
 
         anchors.left: parent.left
         anchors.right: parent.right

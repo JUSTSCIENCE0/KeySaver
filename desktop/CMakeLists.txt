@@ -49,6 +49,25 @@ target_sources(keysaver-desktop
         ${IMPLEMENTATION}
 )
 
+# qt resources
+qt_add_resources(keysaver-desktop "qml_resources"
+    PREFIX "/"
+    FILES
+        UI/App.qml
+        UI/components/HelpButton.qml
+        UI/components/ImageButton.qml
+        UI/components/StyledButton.qml
+        UI/components/StyledComboBox.qml
+        UI/components/StyledInput.qml
+        UI/components/StyledLabel.qml
+        UI/components/StyledSwitch.qml
+        UI/layouts/AddConfiguration.qml
+        UI/layouts/AddService.qml
+        UI/layouts/EnterMasterPassword.qml
+        UI/layouts/GetPassword.qml
+        UI/layouts/SetupService.qml
+)
+
 target_link_libraries(keysaver-desktop
     PRIVATE
         keysaver-core

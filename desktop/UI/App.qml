@@ -1,7 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import KeysaverGUI
-import QtQuick.Studio.DesignEffects
 
 Window {
     width: 500
@@ -16,7 +14,7 @@ Window {
     Loader {
         id: loader
         anchors.fill: parent
-        source: "EnterMasterPassword.qml"  // Загружаем стартовый экран
+        source: "qrc:/UI/layouts/EnterMasterPassword.qml"
     }
 }
 
