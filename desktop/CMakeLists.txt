@@ -66,6 +66,19 @@ qt_add_resources(keysaver-desktop "qml_resources"
         UI/layouts/EnterMasterPassword.qml
         UI/layouts/GetPassword.qml
         UI/layouts/SetupService.qml
+        UI/pictures/bot.jpg
+        UI/pictures/car.jpg
+        UI/pictures/cat.jpg
+        UI/pictures/city.jpg
+        UI/pictures/egg.jpg
+        UI/pictures/girl.jpg
+        UI/pictures/ic_enable_backup.png
+        UI/pictures/ic_help.png
+        UI/pictures/ic_setup.png
+        UI/pictures/ic_share_backup.png
+        UI/pictures/phone.jpg
+        UI/pictures/plane.jpg
+        UI/pictures/trees.jpg
 )
 
 target_link_libraries(keysaver-desktop
