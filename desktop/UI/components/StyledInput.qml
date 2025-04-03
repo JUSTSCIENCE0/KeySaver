@@ -44,6 +44,6 @@ Rectangle {
         color: "#999999"
         font.pixelSize: 18
         font.family: "Arial"
-        visible: input.text.length === 0
+        visible: styledTextInput.text.length === 0
     }
 }
