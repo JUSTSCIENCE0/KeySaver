@@ -12,11 +12,16 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(IMPLEMENTATION
     main.cpp
+    application.hpp
+    application.cpp
+    controller.hpp
+    controller.cpp
 )
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+set(CMAKE_AUTOMOC ON)
 
 find_package(Qt6 COMPONENTS Quick REQUIRED)
 
