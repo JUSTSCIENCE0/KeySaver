@@ -26,7 +26,7 @@ set(IMPLEMENTATION
 )
 
 set(INTERFACE
-    keysaver/interface.h
+    include/keysaver/interface.h
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
@@ -49,7 +49,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
         ${IMPLEMENTATION}
     )
     set(INTERFACE
-        keysaver/interface_android.h
+        include/keysaver/interface_android.h
         ${INTERFACE}
     )
     set(SYSTEM_SPECIFIC_LIBS android)
@@ -59,7 +59,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     endif()
 
     set(INTERFACE
-        keysaver/interface_linux.h
+        include/keysaver/interface_linux.h
         ${INTERFACE}
     )
 else()
@@ -197,6 +197,11 @@ target_sources(keysaver-core
         ${INTERFACE}
     PRIVATE
         ${IMPLEMENTATION}
+)
+
+target_include_directories(keysaver-core
+    PUBLIC
+        include
 )
 
 # keysaver core dependencies
