@@ -11,3 +11,15 @@
     extern "C" JNIEXPORT jint JNICALL Java_com_science_keysaver_Implementation_ ##func_name( \
         [[maybe_unused]] JNIEnv* j_env, [[maybe_unused]] jobject j_this \
         __VA_OPT__(,) __VA_ARGS__)
+
+#define keysaverString       jstring
+#define keysaverStringRef    jobject
+#define keysaverService      jobject
+#define keysaverServiceRef   jobject
+#define keysaverConfig       jobject
+#define keysaverInt          jint
+#define keysaverIntRef       jobject
+#define keysaverServicesList jobjectArray
+#define keysaverConfigsList  jobjectArray
+#define keysaverAlphabetList jobjectArray
+

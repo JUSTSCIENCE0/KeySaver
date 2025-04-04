@@ -57,27 +57,27 @@ static inline bool is_keysaver_success(KeysaverStatus code) {
     return code == 0;
 }
 
-KEYSAVER_API(keysaverInit, jstring configPath);
+KEYSAVER_API(keysaverInit, keysaverString configPath);
 KEYSAVER_API(keysaverClose);
 
-KEYSAVER_API(keysaverSetMasterPassword, jstring masterPassword);
-KEYSAVER_API(keysaverAddService,        jobject service);
-KEYSAVER_API(keysaverDeleteService,     jstring serviceName);
-KEYSAVER_API(keysaverEditService,       jstring oldServiceName,
-                                        jobject newService);
-KEYSAVER_API(keysaverAddConfiguration,  jobject confDescr);
+KEYSAVER_API(keysaverSetMasterPassword, keysaverString  masterPassword);
+KEYSAVER_API(keysaverAddService,        keysaverService service);
+KEYSAVER_API(keysaverDeleteService,     keysaverString  serviceName);
+KEYSAVER_API(keysaverEditService,       keysaverString  oldServiceName,
+                                        keysaverService newService);
+KEYSAVER_API(keysaverAddConfiguration,  keysaverConfig  confDescr);
 KEYSAVER_API(keysaverSyncDatabase);
 
-KEYSAVER_API(keysaverGetServicesCount,       jobject      servicesCount);
-KEYSAVER_API(keysaverGetServicesList,        jobjectArray servicesList);
-KEYSAVER_API(keysaverGetService,             jstring      serviceName,
-                                             jobject      service);
-KEYSAVER_API(keysaverGetConfigurationsCount, jobject      configurationsCount);
-KEYSAVER_API(keysaverGetConfigurationsList,  jobjectArray configurationsList);
-KEYSAVER_API(keysaverGetAlphabetsCount,      jobject      alphabetsCount);
-KEYSAVER_API(keysaverGetAlphabetsList,       jobjectArray alphabetsList);
-KEYSAVER_API(keysaverGetDatabaseName,        jobject      fileName);
+KEYSAVER_API(keysaverGetServicesCount,       keysaverIntRef       servicesCount);
+KEYSAVER_API(keysaverGetServicesList,        keysaverServicesList servicesList);
+KEYSAVER_API(keysaverGetService,             keysaverString       serviceName,
+                                             keysaverServiceRef   service);
+KEYSAVER_API(keysaverGetConfigurationsCount, keysaverIntRef       configurationsCount);
+KEYSAVER_API(keysaverGetConfigurationsList,  keysaverConfigsList  configurationsList);
+KEYSAVER_API(keysaverGetAlphabetsCount,      keysaverIntRef       alphabetsCount);
+KEYSAVER_API(keysaverGetAlphabetsList,       keysaverAlphabetList alphabetsList);
+KEYSAVER_API(keysaverGetDatabaseName,        keysaverStringRef    fileName);
 
-KEYSAVER_API(keysaverGeneratePassword,       jstring serviceName,
-                                             jint imageIndex,
-                                             jobject result);
+KEYSAVER_API(keysaverGeneratePassword,       keysaverString    serviceName,
+                                             keysaverInt       imageIndex,
+                                             keysaverStringRef result);

@@ -166,7 +166,7 @@ KeysaverStatus jobj_to_config(
     return KeysaverStatus::S_OK;
 }
 
-KEYSAVER_API(keysaverInit, jstring configPath) {
+KEYSAVER_API(keysaverInit, keysaverString configPath) {
     auto c_config_path = j_env->GetStringUTFChars(configPath, nullptr);
     if (!c_config_path)
         return KeysaverStatus::E_INVALID_ARG;
@@ -195,7 +195,7 @@ KEYSAVER_API(keysaverClose) {
     return KeysaverStatus::S_OK;
 }
 
-KEYSAVER_API(keysaverSetMasterPassword, jstring masterPassword){
+KEYSAVER_API(keysaverSetMasterPassword, keysaverString masterPassword){
     if (!ks_impl) return KeysaverStatus::E_NOT_INITIALIZED;
 
     auto c_master_password =
@@ -209,7 +209,7 @@ KEYSAVER_API(keysaverSetMasterPassword, jstring masterPassword){
     return code;
 }
 
-KEYSAVER_API(keysaverAddService, jobject service) {
+KEYSAVER_API(keysaverAddService, keysaverService service) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
 
@@ -221,7 +221,7 @@ KEYSAVER_API(keysaverAddService, jobject service) {
     return ks_impl->AddService(servConf);
 }
 
-KEYSAVER_API(keysaverDeleteService, jstring serviceName) {
+KEYSAVER_API(keysaverDeleteService, keysaverString serviceName) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
 
@@ -236,7 +236,7 @@ KEYSAVER_API(keysaverDeleteService, jstring serviceName) {
     return code;
 }
 
-KEYSAVER_API(keysaverEditService, jstring oldServiceName, jobject newService) {
+KEYSAVER_API(keysaverEditService, keysaverString oldServiceName, keysaverService newService) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
 
@@ -256,7 +256,7 @@ KEYSAVER_API(keysaverEditService, jstring oldServiceName, jobject newService) {
     return code;
 }
 
-KEYSAVER_API(keysaverAddConfiguration, jobject confDescr) {
+KEYSAVER_API(keysaverAddConfiguration, keysaverConfig confDescr) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
 
@@ -275,7 +275,7 @@ KEYSAVER_API(keysaverSyncDatabase) {
     return ks_impl->SyncDatabase();
 }
 
-KEYSAVER_API(keysaverGetServicesCount, jobject servicesCount) {
+KEYSAVER_API(keysaverGetServicesCount, keysaverIntRef servicesCount) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
 
@@ -294,7 +294,7 @@ KEYSAVER_API(keysaverGetServicesCount, jobject servicesCount) {
     return code;
 }
 
-KEYSAVER_API(keysaverGetServicesList, jobjectArray servicesList) {
+KEYSAVER_API(keysaverGetServicesList, keysaverServicesList servicesList) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
 
@@ -319,7 +319,7 @@ KEYSAVER_API(keysaverGetServicesList, jobjectArray servicesList) {
     return code;
 }
 
-KEYSAVER_API(keysaverGetService, jstring serviceName, jobject service) {
+KEYSAVER_API(keysaverGetService, keysaverString serviceName, keysaverServiceRef service) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
 
@@ -372,7 +372,7 @@ KEYSAVER_API(keysaverGetService, jstring serviceName, jobject service) {
     return code;
 }
 
-KEYSAVER_API(keysaverGetConfigurationsCount, jobject configurationsCount) {
+KEYSAVER_API(keysaverGetConfigurationsCount, keysaverIntRef configurationsCount) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
 
@@ -391,7 +391,7 @@ KEYSAVER_API(keysaverGetConfigurationsCount, jobject configurationsCount) {
     return code;
 }
 
-KEYSAVER_API(keysaverGetConfigurationsList, jobjectArray configurationsList) {
+KEYSAVER_API(keysaverGetConfigurationsList, keysaverConfigsList configurationsList) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
 
@@ -416,7 +416,7 @@ KEYSAVER_API(keysaverGetConfigurationsList, jobjectArray configurationsList) {
     return code;
 }
 
-KEYSAVER_API(keysaverGetAlphabetsCount, jobject alphabetsCount) {
+KEYSAVER_API(keysaverGetAlphabetsCount, keysaverIntRef alphabetsCount) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
 
@@ -432,7 +432,7 @@ KEYSAVER_API(keysaverGetAlphabetsCount, jobject alphabetsCount) {
     return KeysaverStatus::S_OK;
 }
 
-KEYSAVER_API(keysaverGetAlphabetsList, jobjectArray alphabetsList) {
+KEYSAVER_API(keysaverGetAlphabetsList, keysaverAlphabetList alphabetsList) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
 
@@ -449,7 +449,7 @@ KEYSAVER_API(keysaverGetAlphabetsList, jobjectArray alphabetsList) {
     return KeysaverStatus::S_OK;
 }
 
-KEYSAVER_API(keysaverGetDatabaseName, jobject fileName) {
+KEYSAVER_API(keysaverGetDatabaseName, keysaverStringRef fileName) {
     jclass resultClass = j_env->GetObjectClass(fileName);
     if (!resultClass)
         return KeysaverStatus::E_INVALID_ARG;
@@ -467,7 +467,7 @@ KEYSAVER_API(keysaverGetDatabaseName, jobject fileName) {
 }
 
 KEYSAVER_API(keysaverGeneratePassword,
-             jstring serviceName, jint imageIndex, jobject result) {
+             keysaverString serviceName, keysaverInt imageIndex, keysaverStringRef result) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
 
