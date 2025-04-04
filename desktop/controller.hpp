@@ -3,6 +3,8 @@
 //
 // License: MIT
 
+#include "application.hpp"
+
 #include <QObject>
 #include <QDebug>
 
@@ -11,8 +13,10 @@ namespace KeysaverDesktop {
         Q_OBJECT
 
     public:
-        explicit Controller(QObject* parent = nullptr);
+        explicit Controller(Application* app_callback, QObject* parent = nullptr);
 
-        Q_INVOKABLE void onConfirmMasterPassword();
+        Q_INVOKABLE void onConfirmMasterPassword(const QString& password);
+
+        Application* m_app = nullptr;
     };
 }

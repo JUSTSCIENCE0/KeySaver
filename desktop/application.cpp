@@ -13,7 +13,7 @@ namespace KeysaverDesktop {
     int Application::Run(int argc, char *argv[]) {
         Application app(argc, argv);
 
-        Controller controller;
+        Controller controller(&app);
         app.m_qml_app_engine.rootContext()->setContextProperty("Controller", &controller);
 
         const QUrl url(QString::fromUtf8(app.APP_RESOURCE_ID));

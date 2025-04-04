@@ -8,10 +8,11 @@
 #include <QDebug>
 
 namespace KeysaverDesktop {
-    Controller::Controller(QObject* parent) :
-            QObject(parent) {}
+    Controller::Controller(Application* app_callback, QObject* parent) :
+            QObject(parent),
+            m_app(app_callback) {}
 
-    Q_INVOKABLE void Controller::onConfirmMasterPassword() {
-        qDebug() << "Not implemented";
+    Q_INVOKABLE void Controller::onConfirmMasterPassword(const QString& password) {
+        qDebug() << password;
     }
 }

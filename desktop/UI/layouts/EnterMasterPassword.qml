@@ -26,7 +26,7 @@ Rectangle {
     StyledButton {
         id: confirmMasterPassword
         text: qsTr("Confirm")
-        onClicked: Controller.onConfirmMasterPassword()
+        onClicked: Controller.onConfirmMasterPassword(masterPassword.text)
 
         anchors.left: parent.left
         anchors.right: parent.right

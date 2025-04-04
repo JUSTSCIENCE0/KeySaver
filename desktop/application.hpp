@@ -3,11 +3,17 @@
 //
 // License: MIT
 
+#pragma once
+
+#include <keysaver/interface.h>
+
 #include <QtQuick>
 #include <QGuiApplication>
 
 namespace KeysaverDesktop {
-    class Application {
+    class Application final {
+        friend class Controller;
+
     public:
         // ctors & dtor
         Application(const Application&) = delete;
