@@ -18,6 +18,8 @@
 #define keysaverServiceRef   jobject
 #define keysaverConfig       jobject
 #define keysaverInt          jint
+#define keysaverUInt         jint
+#define keysaverBool         jboolean
 #define keysaverIntRef       jobject
 #define keysaverServicesList jobjectArray
 #define keysaverConfigsList  jobjectArray

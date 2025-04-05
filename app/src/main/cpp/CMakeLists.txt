@@ -58,6 +58,10 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         message(FATAL_ERROR "Unsupported CPU Architecture - ${CMAKE_SYSTEM_PROCESSOR}")
     endif()
 
+    set(IMPLEMENTATION
+        interface_common.cpp
+        ${IMPLEMENTATION}
+    )
     set(INTERFACE
         include/keysaver/interface_linux.h
         ${INTERFACE}

@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <stdlib.h>
+
 #if defined(__ANDROID__)
 #include  "interface_android.h"
 #elif defined(__linux__)
@@ -14,6 +16,8 @@
 #ifndef KEYSAVER_API
 #error "Unsupported OS"
 #endif
+
+#define KEYSAVER_STRING_MAX_SIZE 1024
 
 enum KeysaverStatus {
     // SUCCESS
@@ -47,6 +51,26 @@ enum KeysaverStatus {
     E_UNSUPPORTED_ALPHABET  = -1009,
     E_UNEXPECTED_EXCEPTION  = -1010,
     E_INVALID_ORDER         = -1011,
+    E_TOO_LONG_STRING       = -1012,
+};
+
+struct KeysaverService {
+    keysaverString url     = NULL;
+    keysaverString name    = NULL;
+    keysaverString conf_id = NULL;
+};
+
+struct KeysaverConfiguration {
+    keysaverString id_name             = NULL;
+    keysaverUInt   length              = 0;
+    keysaverBool   use_upper           = false;
+    keysaverBool   use_lower           = false;
+    keysaverInt    alphabet            = 0;
+    keysaverBool   use_special_chars   = false;
+    keysaverUInt   special_chars_count = 0;
+    keysaverString special_charset     = NULL;
+    keysaverBool   use_digits          = false;
+    keysaverUInt   digits_amount       = 0;
 };
 
 static inline bool is_keysaver_error(KeysaverStatus code) {
@@ -78,6 +102,6 @@ KEYSAVER_API(keysaverGetAlphabetsCount,      keysaverIntRef       alphabetsCount
 KEYSAVER_API(keysaverGetAlphabetsList,       keysaverAlphabetList alphabetsList);
 KEYSAVER_API(keysaverGetDatabaseName,        keysaverStringRef    fileName);
 
-KEYSAVER_API(keysaverGeneratePassword,       keysaverString    serviceName,
-                                             keysaverInt       imageIndex,
-                                             keysaverStringRef result);
+KEYSAVER_API(keysaverGeneratePassword, keysaverString    serviceName,
+                                       keysaverInt       imageIndex,
+                                       keysaverStringRef result);
