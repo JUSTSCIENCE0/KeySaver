@@ -285,7 +285,11 @@ KEYSAVER_API(keysaverGetServicesCount, keysaverIntRef servicesCount) {
         return code;
 
     auto wrapperClass = j_env->GetObjectClass(servicesCount);
+    if (!wrapperClass)
+        return KeysaverStatus::E_INVALID_ARG;
     auto valueField = j_env->GetFieldID(wrapperClass, "value", "I");
+    if (!valueField)
+        return KeysaverStatus::E_INVALID_ARG;
     j_env->SetIntField(
             servicesCount,
             valueField,
@@ -297,6 +301,8 @@ KEYSAVER_API(keysaverGetServicesCount, keysaverIntRef servicesCount) {
 KEYSAVER_API(keysaverGetServicesList, keysaverServicesList servicesList) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
+    if (!servicesList)
+        return KeysaverStatus::E_INVALID_ARG;
 
     std::list<std::string> c_services_list;
     auto code = ks_impl->GetServicesList(&c_services_list);
@@ -322,6 +328,8 @@ KEYSAVER_API(keysaverGetServicesList, keysaverServicesList servicesList) {
 KEYSAVER_API(keysaverGetService, keysaverString serviceName, keysaverServiceRef service) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
+    if (!serviceName || !service)
+        return KeysaverStatus::E_INVALID_ARG;
 
     auto c_service_name = j_env->GetStringUTFChars(serviceName, nullptr);
     if (!c_service_name)
@@ -375,6 +383,8 @@ KEYSAVER_API(keysaverGetService, keysaverString serviceName, keysaverServiceRef 
 KEYSAVER_API(keysaverGetConfigurationsCount, keysaverIntRef configurationsCount) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
+    if (!configurationsCount)
+        return KeysaverStatus::E_INVALID_ARG;
 
     Keysaver::DBManager::ConfigurationsNames configs;
     auto code = ks_impl->GetConfigurationsList(&configs);
@@ -382,7 +392,11 @@ KEYSAVER_API(keysaverGetConfigurationsCount, keysaverIntRef configurationsCount)
         return code;
 
     auto wrapperClass = j_env->GetObjectClass(configurationsCount);
+    if (!wrapperClass)
+        return KeysaverStatus::E_INVALID_ARG;
     auto valueField = j_env->GetFieldID(wrapperClass, "value", "I");
+    if (!valueField)
+        return KeysaverStatus::E_INVALID_ARG;
     j_env->SetIntField(
         configurationsCount,
             valueField,
@@ -394,6 +408,8 @@ KEYSAVER_API(keysaverGetConfigurationsCount, keysaverIntRef configurationsCount)
 KEYSAVER_API(keysaverGetConfigurationsList, keysaverConfigsList configurationsList) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
+    if (!configurationsList)
+        return KeysaverStatus::E_INVALID_ARG;
 
     std::list<std::string> c_conf_list;
     auto code = ks_impl->GetConfigurationsList(&c_conf_list);
@@ -417,13 +433,17 @@ KEYSAVER_API(keysaverGetConfigurationsList, keysaverConfigsList configurationsLi
 }
 
 KEYSAVER_API(keysaverGetAlphabetsCount, keysaverIntRef alphabetsCount) {
-    if (!ks_impl)
-        return KeysaverStatus::E_NOT_INITIALIZED;
+    if (!alphabetsCount)
+        return KeysaverStatus::E_INVALID_ARG;
 
     size_t alphabets_cnt = Keysaver::PasswordGenerator::SUPPORTED_ALPHABETS.size();
 
     auto wrapperClass = j_env->GetObjectClass(alphabetsCount);
+    if (!wrapperClass)
+        return KeysaverStatus::E_INVALID_ARG;
     auto valueField = j_env->GetFieldID(wrapperClass, "value", "I");
+    if (!valueField)
+        return KeysaverStatus::E_INVALID_ARG;
     j_env->SetIntField(
             alphabetsCount,
             valueField,
@@ -433,8 +453,10 @@ KEYSAVER_API(keysaverGetAlphabetsCount, keysaverIntRef alphabetsCount) {
 }
 
 KEYSAVER_API(keysaverGetAlphabetsList, keysaverAlphabetList alphabetsList) {
-    if (!ks_impl)
-        return KeysaverStatus::E_NOT_INITIALIZED;
+    if (!alphabetsList)
+        return KeysaverStatus::E_INVALID_ARG;
+
+    const auto max_index = j_env->GetArrayLength(alphabetsList);
 
     jsize index = 0;
     for (auto& alphabet: Keysaver::PasswordGenerator::SUPPORTED_ALPHABETS) {
@@ -444,12 +466,17 @@ KEYSAVER_API(keysaverGetAlphabetsList, keysaverAlphabetList alphabetsList) {
         j_env->DeleteLocalRef(str);
 
         index++;
+        if (index >= max_index)
+            break;
     }
 
     return KeysaverStatus::S_OK;
 }
 
 KEYSAVER_API(keysaverGetDatabaseName, keysaverStringRef fileName) {
+    if (!fileName)
+        return KeysaverStatus::E_INVALID_ARG;
+
     jclass resultClass = j_env->GetObjectClass(fileName);
     if (!resultClass)
         return KeysaverStatus::E_INVALID_ARG;
@@ -470,6 +497,8 @@ KEYSAVER_API(keysaverGeneratePassword,
              keysaverString serviceName, keysaverInt imageIndex, keysaverStringRef result) {
     if (!ks_impl)
         return KeysaverStatus::E_NOT_INITIALIZED;
+    if (!serviceName || !result)
+        return KeysaverStatus::E_INVALID_ARG;
 
     auto c_service_name = j_env->GetStringUTFChars(serviceName, nullptr);
     if (!c_service_name)
@@ -480,7 +509,6 @@ KEYSAVER_API(keysaverGeneratePassword,
         j_env->ReleaseStringUTFChars(serviceName, c_service_name);
         return KeysaverStatus::E_INVALID_ARG;
     }
-
     jfieldID resultField = j_env->GetFieldID(
             resultClass, "value", "Ljava/lang/String;");
     if (!resultField) {
