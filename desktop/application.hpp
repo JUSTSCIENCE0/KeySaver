@@ -5,10 +5,8 @@
 
 #pragma once
 
-#include <keysaver/interface.h>
-
 #include <QtQuick>
-#include <QGuiApplication>
+#include <QApplication>
 
 namespace KeysaverDesktop {
     class Application final {
@@ -31,7 +29,7 @@ namespace KeysaverDesktop {
         static constexpr auto APP_RESOURCE_ID = "qrc:/UI/App.qml";
 
         // members
-        QGuiApplication       m_gui_app;
+        QApplication       m_gui_app;
         QQmlApplicationEngine m_qml_app_engine;
     };
 }

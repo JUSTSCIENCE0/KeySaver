@@ -11,20 +11,33 @@ namespace KeysaverDesktop {
         m_gui_app(argc, argv) {}
 
     int Application::Run(int argc, char *argv[]) {
-        Application app(argc, argv);
+        try
+        {
+            Application app(argc, argv);
 
-        Controller controller(&app);
-        app.m_qml_app_engine.rootContext()->setContextProperty("Controller", &controller);
+            Controller controller(&app);
+            app.m_qml_app_engine.rootContext()->setContextProperty("Controller", &controller);
+    
+            const QUrl url(QString::fromUtf8(app.APP_RESOURCE_ID));
+            QObject::connect(&app.m_qml_app_engine, &QQmlApplicationEngine::objectCreationFailed,
+                             &app.m_gui_app, []() { QCoreApplication::exit(-1); },
+                             Qt::QueuedConnection);
+            app.m_qml_app_engine.load(url);
+    
+            if (app.m_qml_app_engine.rootObjects().isEmpty())
+                return -1;
 
-        const QUrl url(QString::fromUtf8(app.APP_RESOURCE_ID));
-        QObject::connect(&app.m_qml_app_engine, &QQmlApplicationEngine::objectCreationFailed,
-                         &app.m_gui_app, []() { QCoreApplication::exit(-1); },
-                         Qt::QueuedConnection);
-        app.m_qml_app_engine.load(url);
-
-        if (app.m_qml_app_engine.rootObjects().isEmpty())
+            return app.m_gui_app.exec();
+        }
+        catch(KeysaverStatus code) {
+            qDebug() << "Error code: " << int(code);
             return -1;
+        }
+        catch(...) {
+            qDebug() << "Unexpected error";
+            return -1;
+        }
 
-        return app.m_gui_app.exec();
+        return 0;
     }
 }

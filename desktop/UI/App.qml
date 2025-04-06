@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import "qrc:/UI/components"
 
 Window {
     width: 500
@@ -10,6 +11,8 @@ Window {
 
     visible: true
     title: "KeysaverGUI"
+
+    Component.onCompleted: Controller.onAppStarted()
 
     Loader {
         id: loader

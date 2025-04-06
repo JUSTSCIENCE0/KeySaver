@@ -23,7 +23,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 COMPONENTS Quick REQUIRED)
+find_package(Qt6 COMPONENTS Quick Widgets REQUIRED)
 
 add_executable(keysaver-desktop)
 
@@ -90,4 +90,5 @@ target_link_libraries(keysaver-desktop
     PRIVATE
         keysaver-core
         Qt6::Quick
+        Qt6::Widgets
 )
