@@ -27,6 +27,7 @@ namespace KeysaverDesktop {
 
         // consts
         static constexpr auto APP_RESOURCE_ID = "qrc:/UI/App.qml";
+        static constexpr auto DEFAULT_SPEC_SYMBOLS_SET = "!@#$%^&*()_-+=/?.,<>'\";:[]{}";
 
         // members
         QApplication       m_gui_app;

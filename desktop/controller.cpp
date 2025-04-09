@@ -53,7 +53,55 @@ namespace KeysaverDesktop {
         keysaverClose();
     }
 
+    bool Controller::ValidateMasterPassword(const QString& password) {
+        bool has_upper = false, has_lower = false,
+             has_spec = false, has_digit = false;
+
+        static const auto SPEC_SET = QString::fromUtf8(Application::DEFAULT_SPEC_SYMBOLS_SET);
+
+        for (auto symbol : password) {
+            if (symbol.isUpper()) {
+                has_upper = true;
+                continue;
+            }
+            if (symbol.isLower()) {
+                has_lower = true;
+                continue;
+            }
+            if (symbol.isDigit()) {
+                has_digit = true;
+                continue;
+            }
+            if (SPEC_SET.contains(symbol)) {
+                has_spec = true;
+                continue;
+            }
+        }
+
+        if (!has_upper) {
+            QMessageBox::information(nullptr, "Error!", "No upper");
+            return false;
+        }
+        if (!has_lower) {
+            QMessageBox::information(nullptr, "Error!", "No lower");
+            return false;
+        }
+        if (!has_spec) {
+            QMessageBox::information(nullptr, "Error!", "No special");
+            return false;
+        }
+        if (!has_digit) {
+            QMessageBox::information(nullptr, "Error!", "No digit");
+            return false;
+        }
+
+        return true;
+    }
+
     Q_INVOKABLE void Controller::onConfirmMasterPassword(const QString& password) {
+        if (!ValidateMasterPassword(password))
+            return;
+
         qDebug() << password;
     }
 

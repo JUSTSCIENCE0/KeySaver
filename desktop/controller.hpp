@@ -27,6 +27,6 @@ namespace KeysaverDesktop {
         bool m_is_first_usage = false;
 
         // methods
-        
+        bool ValidateMasterPassword(const QString& password);
     };
 }
