@@ -102,7 +102,14 @@ namespace KeysaverDesktop {
         if (!ValidateMasterPassword(password))
             return;
 
-        qDebug() << password;
+        auto pwd_utf8_bytes = password.toUtf8();
+        auto result = keysaverSetMasterPassword(pwd_utf8_bytes.constData());
+        if (is_keysaver_error(result)) {
+            QMessageBox::information(nullptr, "Error!", std::to_string(int(result)).c_str());
+            return;
+        }
+
+        QMessageBox::information(nullptr, "Success!", "Success!");
     }
 
     Q_INVOKABLE void Controller::onAppStarted() {
