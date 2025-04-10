@@ -25,7 +25,7 @@ Rectangle {
 
     StyledButton {
         id: confirmMasterPassword
-        text: qsTr("Confirm")
+        text: qsTr("confirm")
         onClicked: Controller.onConfirmMasterPassword(masterPassword.text)
 
         anchors.left: parent.left
@@ -38,7 +38,7 @@ Rectangle {
 
     StyledLabel {
         id: enterMasterPasswordLabel
-        text: qsTr("Enter master password")
+        text: qsTr("enter_master_password")
 
         anchors.left: parent.left
         anchors.bottom: masterPassword.top

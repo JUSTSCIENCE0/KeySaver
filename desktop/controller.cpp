@@ -79,19 +79,23 @@ namespace KeysaverDesktop {
         }
 
         if (!has_upper) {
-            QMessageBox::information(nullptr, "Error!", "No upper");
+            QMessageBox::information(nullptr, tr("error"),
+                tr("master_password_uppercase_letter"));
             return false;
         }
         if (!has_lower) {
-            QMessageBox::information(nullptr, "Error!", "No lower");
+            QMessageBox::information(nullptr, tr("error"),
+                tr("master_password_lowercase_letter"));
             return false;
         }
         if (!has_spec) {
-            QMessageBox::information(nullptr, "Error!", "No special");
+            QMessageBox::information(nullptr, tr("error"),
+                tr("master_password_special_char"));
             return false;
         }
         if (!has_digit) {
-            QMessageBox::information(nullptr, "Error!", "No digit");
+            QMessageBox::information(nullptr, tr("error"),
+                tr("master_password_digit"));
             return false;
         }
 
@@ -105,16 +109,18 @@ namespace KeysaverDesktop {
         auto pwd_utf8_bytes = password.toUtf8();
         auto result = keysaverSetMasterPassword(pwd_utf8_bytes.constData());
         if (is_keysaver_error(result)) {
-            QMessageBox::information(nullptr, "Error!", std::to_string(int(result)).c_str());
+            QMessageBox::information(nullptr, tr("error"), std::to_string(int(result)).c_str());
             return;
         }
 
-        QMessageBox::information(nullptr, "Success!", "Success!");
+        QMessageBox::information(nullptr, "success", "success");
     }
 
     Q_INVOKABLE void Controller::onAppStarted() {
         if (m_is_first_usage) {
-            QMessageBox::information(nullptr, "Attention!", "First usage");
+            QMessageBox::information(nullptr, 
+                tr("welcome"),
+                tr("welcome_message"));
         }
     }
 }

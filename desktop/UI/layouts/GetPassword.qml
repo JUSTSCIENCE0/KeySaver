@@ -35,7 +35,7 @@ Rectangle {
 
     StyledLabel {
         id: selectService
-        text: qsTr("Select service")
+        text: qsTr("select_service")
 
         anchors.left: parent.left
         anchors.bottom: selectedService.top
@@ -45,7 +45,7 @@ Rectangle {
 
     StyledComboBox {
         id: selectedService
-        model: ["example", "test", qsTr("Add new...")]
+        model: ["example", "test", qsTr("add_smth")]
 
         anchors.left: parent.left
         anchors.right: setupService.left
@@ -68,7 +68,7 @@ Rectangle {
 
     StyledLabel {
         id: chooseImage
-        text: qsTr("Choose image")
+        text: qsTr("select_image")
 
         anchors.left: parent.left
         anchors.bottom: imageHashes.top
@@ -115,7 +115,7 @@ Rectangle {
 
     StyledLabel {
         id: yourPassword
-        text: qsTr("Your password")
+        text: qsTr("your_password")
 
         anchors.left: parent.left
         anchors.bottom: resultPassword.top
@@ -137,7 +137,7 @@ Rectangle {
 
     StyledButton {
         id: copyPassword
-        text: qsTr("Copy password")
+        text: qsTr("copy_password")
 
         anchors.left: parent.left
         anchors.right: parent.right

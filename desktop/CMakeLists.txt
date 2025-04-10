@@ -23,7 +23,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 COMPONENTS Quick Widgets REQUIRED)
+find_package(Qt6 COMPONENTS Quick Widgets LinguistTools REQUIRED)
 
 add_executable(keysaver-desktop)
 
@@ -84,6 +84,10 @@ qt_add_resources(keysaver-desktop "qml_resources"
         UI/pictures/phone.jpg
         UI/pictures/plane.jpg
         UI/pictures/trees.jpg
+)
+
+qt_add_translations(${PROJECT_NAME}
+    TS_FILES UI/translations/en_US.ts
 )
 
 target_link_libraries(keysaver-desktop

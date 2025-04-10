@@ -11,13 +11,23 @@ namespace KeysaverDesktop {
         m_gui_app(argc, argv) {}
 
     int Application::Run(int argc, char *argv[]) {
+        std::filesystem::path app_path{argv[0]};
+        std::string app_dir = app_path.parent_path();
+
         try
         {
             Application app(argc, argv);
 
             Controller controller(&app);
             app.m_qml_app_engine.rootContext()->setContextProperty("Controller", &controller);
-    
+
+            std::string locale_file = app_dir + "/en_US.qm";
+            QTranslator translator;
+            if (!translator.load(locale_file.c_str())) {
+                qDebug() << "Can't load translation file";
+            }
+            app.m_gui_app.installTranslator(&translator);
+
             const QUrl url(QString::fromUtf8(app.APP_RESOURCE_ID));
             QObject::connect(&app.m_qml_app_engine, &QQmlApplicationEngine::objectCreationFailed,
                              &app.m_gui_app, []() { QCoreApplication::exit(-1); },

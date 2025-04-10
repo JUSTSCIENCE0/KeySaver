@@ -13,7 +13,7 @@ Rectangle {
 
     StyledLabel {
         id: serviceUrlLabel
-        text: qsTr("Service URL")
+        text: qsTr("service_url")
 
         anchors.left: parent.left
         anchors.bottom: serviceURL.top
@@ -35,7 +35,7 @@ Rectangle {
 
     StyledLabel {
         id: serviceDisplay
-        text: qsTr("Service display name")
+        text: qsTr("service_display_name")
 
         anchors.left: parent.left
         anchors.bottom: serviceName.top
@@ -57,7 +57,7 @@ Rectangle {
 
     StyledLabel {
         id: configuration
-        text: qsTr("Configuration")
+        text: qsTr("configuration")
 
         anchors.left: parent.left
         anchors.bottom: selectedConfiguration.top
@@ -67,7 +67,7 @@ Rectangle {
 
     StyledComboBox {
         id: selectedConfiguration
-        model: ["example", "test", qsTr("Add new...")]
+        model: ["example", "test", qsTr("add_smth")]
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
@@ -88,7 +88,7 @@ Rectangle {
 
         StyledButton {
             id: cancelSetup
-            text: qsTr("Cancel")
+            text: qsTr("cancel")
             backgroundColor: "white"
             borderColor: "#e0e0e0"
             textColor: "black"
@@ -102,7 +102,7 @@ Rectangle {
 
         StyledButton {
             id: confirmSetup
-            text: qsTr("Confirm")
+            text: qsTr("confirm")
 
             anchors.right: parent.right
             anchors.rightMargin: 0

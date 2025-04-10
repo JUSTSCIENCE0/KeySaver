@@ -13,7 +13,7 @@ Rectangle {
 
     StyledLabel {
         id: configurationNameLabel
-        text: qsTr("Configuration name")
+        text: qsTr("configuration_name")
 
         anchors.left: parent.left
         anchors.bottom: configurationName.top
@@ -35,7 +35,7 @@ Rectangle {
 
     StyledLabel {
         id: passwordLengthLabel
-        text: qsTr("Password length")
+        text: qsTr("password_length")
 
         anchors.left: parent.left
         anchors.bottom: passwordLength.top
@@ -59,7 +59,7 @@ Rectangle {
 
     StyledLabel {
         id: characterSet
-        text: qsTr("Character set")
+        text: qsTr("character_set")
 
         anchors.left: parent.left
         anchors.bottom: useUpperCase.top
@@ -69,7 +69,7 @@ Rectangle {
 
     StyledSwitch {
         id: useUpperCase
-        text: qsTr("Use upper case")
+        text: qsTr("use_upper_case")
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -81,7 +81,7 @@ Rectangle {
 
     StyledSwitch {
         id: useLowerCase
-        text: qsTr("Use lower case")
+        text: qsTr("use_lower_case")
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -93,7 +93,7 @@ Rectangle {
 
     StyledLabel {
         id: alphabet
-        text: qsTr("Alphabet")
+        text: qsTr("alphabet")
 
         anchors.left: parent.left
         anchors.bottom: selectedAlphabet.top
@@ -115,7 +115,7 @@ Rectangle {
 
     StyledSwitch {
         id: addSpecialCharacters
-        text: qsTr("Add special characters")
+        text: qsTr("use_special_characters")
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -127,7 +127,7 @@ Rectangle {
 
     StyledLabel {
         id: specialCharactersCountLabel
-        text: qsTr("Special characters count")
+        text: qsTr("special_characters_count")
 
         anchors.left: parent.left
         anchors.bottom: specialCharactersCount.top
@@ -151,7 +151,7 @@ Rectangle {
 
     StyledLabel {
         id: specialCharactersSetLabel
-        text: qsTr("Special characters set")
+        text: qsTr("special_characters_set")
 
         anchors.left: parent.left
         anchors.bottom: specialCharactersSet.top
@@ -173,7 +173,7 @@ Rectangle {
 
     StyledSwitch {
         id: addDigits
-        text: qsTr("Add digits")
+        text: qsTr("use_digits")
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -185,7 +185,7 @@ Rectangle {
 
     StyledLabel {
         id: digitsCountLabel
-        text: qsTr("Digits count")
+        text: qsTr("digits_count")
 
         anchors.left: parent.left
         anchors.bottom: digitsCount.top
@@ -219,7 +219,7 @@ Rectangle {
 
         StyledButton {
             id: cancelSetup
-            text: qsTr("Cancel")
+            text: qsTr("cancel")
             backgroundColor: "white"
             borderColor: "#e0e0e0"
             textColor: "black"
@@ -233,7 +233,7 @@ Rectangle {
 
         StyledButton {
             id: confirmSetup
-            text: qsTr("Confirm")
+            text: qsTr("confirm")
 
             anchors.right: parent.right
             anchors.rightMargin: 0
