@@ -10,6 +10,17 @@ namespace KeysaverDesktop {
     Application::Application(int argc, char *argv[]) :
         m_gui_app(argc, argv) {}
 
+    std::string Application::GetPrefferedLocale() {
+        auto current_locale = QLocale::system().name();
+
+        const std::string RUSSIAN_LOCALE = "ru_RU";
+        if (current_locale == RUSSIAN_LOCALE.c_str()) {
+            return RUSSIAN_LOCALE;
+        }
+
+        return DEFAULT_LOCALE;
+    }
+
     int Application::Run(int argc, char *argv[]) {
         std::filesystem::path app_path{argv[0]};
         std::string app_dir = app_path.parent_path();
@@ -21,7 +32,7 @@ namespace KeysaverDesktop {
             Controller controller(&app);
             app.m_qml_app_engine.rootContext()->setContextProperty("Controller", &controller);
 
-            std::string locale_file = app_dir + "/en_US.qm";
+            std::string locale_file = app_dir + "/" + GetPrefferedLocale() + ".qm";
             QTranslator translator;
             if (!translator.load(locale_file.c_str())) {
                 qDebug() << "Can't load translation file";

@@ -86,8 +86,10 @@ qt_add_resources(keysaver-desktop "qml_resources"
         UI/pictures/trees.jpg
 )
 
-qt_add_translations(${PROJECT_NAME}
-    TS_FILES UI/translations/en_US.ts
+qt_add_translations(keysaver-desktop
+    TS_FILES
+        UI/translations/en_US.ts
+        UI/translations/ru_RU.ts
 )
 
 target_link_libraries(keysaver-desktop

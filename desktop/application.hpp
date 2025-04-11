@@ -26,11 +26,15 @@ namespace KeysaverDesktop {
         Application(int argc, char *argv[]);
 
         // consts
+        static constexpr auto DEFAULT_LOCALE = "en_US";
         static constexpr auto APP_RESOURCE_ID = "qrc:/UI/App.qml";
         static constexpr auto DEFAULT_SPEC_SYMBOLS_SET = "!@#$%^&*()_-+=/?.,<>'\";:[]{}";
 
         // members
         QApplication       m_gui_app;
         QQmlApplicationEngine m_qml_app_engine;
+
+        // methods
+        static std::string GetPrefferedLocale();
     };
 }
