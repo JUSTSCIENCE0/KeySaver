@@ -53,6 +53,62 @@ namespace KeysaverDesktop {
         keysaverClose();
     }
 
+    void Controller::ShowError(KeysaverStatus code) {
+        switch (code)
+        {
+        case KeysaverStatus::E_INVALID_MASTER_PASSWORD:
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("invalid_master_password"));
+            break;
+        case KeysaverStatus::E_TOO_SHORT_MASTER_PASSWORD:
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("short_master_password"));
+            break;
+        case KeysaverStatus::E_SERVICE_ALREADY_EXISTS:
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("service_already_exists"));
+            break;
+        case KeysaverStatus::E_SERVICE_URL_ALREADY_EXISTS:
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("service_url_already_exists"));
+            break;
+        case KeysaverStatus::E_CONFIG_ALREADY_EXISTS:
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("config_already_exists"));
+            break;
+        case KeysaverStatus::E_INVALID_PASSWORD_LENGTH:
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("invalid_password_length"));
+            break;
+        case KeysaverStatus::E_INVALID_SPECIAL_CHAR_COUNT:
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("invalid_special_chars_count"));
+            break;
+        case KeysaverStatus::E_INVALID_DIGITS_AMOUNT:
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("invalid_digits_amount"));
+            break;
+        case KeysaverStatus::E_WITHOUT_ANY_CASE:
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("without_any_case"));
+            break;
+        default:
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("internal_error") + std::to_string(int(code)).c_str());
+            break;
+        }
+    }
+
     bool Controller::ValidateMasterPassword(const QString& password) {
         bool has_upper = false, has_lower = false,
              has_spec = false, has_digit = false;
