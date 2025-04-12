@@ -19,5 +19,9 @@ Window {
         anchors.fill: parent
         source: "qrc:/UI/layouts/EnterMasterPassword.qml"
     }
+
+    function loadMainLayout() {
+        loader.source = "qrc:/UI/layouts/GetPassword.qml";
+    }
 }
 

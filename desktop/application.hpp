@@ -28,6 +28,7 @@ namespace KeysaverDesktop {
         // consts
         static constexpr auto DEFAULT_LOCALE = "en_US";
         static constexpr auto APP_RESOURCE_ID = "qrc:/UI/App.qml";
+        static constexpr auto MAIN_LAYOUT_RESOURCE_ID = "qrc:/UI/layouts/GetPassword.qml";
         static constexpr auto DEFAULT_SPEC_SYMBOLS_SET = "!@#$%^&*()_-+=/?.,<>'\";:[]{}";
 
         // members

@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import KeysaverGUI
-import QtQuick.Studio.DesignEffects
+import "qrc:/UI/components"
 
 Rectangle {
     id: getPassword
@@ -11,7 +10,7 @@ Rectangle {
 
     ImageButton {
         id: enableBackup
-        source: "ic_enable_backup.png"
+        source: "qrc:/UI/pictures/ic_enable_backup.png"
 
         anchors.left: parent.left
         anchors.top: parent.top
@@ -21,7 +20,7 @@ Rectangle {
 
     ImageButton {
         id: shareBackup
-        source: "ic_share_backup.png"
+        source: "qrc:/UI/pictures/ic_share_backup.png"
 
         anchors.left: enableBackup.right
         anchors.top: parent.top
@@ -57,8 +56,8 @@ Rectangle {
 
     ImageButton {
         id: setupService
-        source: "ic_setup.png"
-        onButtonClick: function() { loader.source = "SetupService.qml" }
+        source: "qrc:/UI/pictures/ic_setup.png"
+        //onButtonClick: function() { loader.source = "qrc:/UI/layouts/SetupService.qml" }
 
         anchors.right: parent.right
         anchors.bottom: selectedService.bottom
@@ -85,15 +84,15 @@ Rectangle {
         anchors.leftMargin: 16
         anchors.rightMargin: 16
         model: ListModel {
-            ListElement { imagePath: "cat.jpg" }
-            ListElement { imagePath: "car.jpg" }
-            ListElement { imagePath: "egg.jpg" }
-            ListElement { imagePath: "city.jpg" }
-            ListElement { imagePath: "bot.jpg" }
-            ListElement { imagePath: "girl.jpg" }
-            ListElement { imagePath: "phone.jpg" }
-            ListElement { imagePath: "trees.jpg" }
-            ListElement { imagePath: "plane.jpg" }
+            ListElement { imagePath: "qrc:/UI/pictures/cat.jpg" }
+            ListElement { imagePath: "qrc:/UI/pictures/car.jpg" }
+            ListElement { imagePath: "qrc:/UI/pictures/egg.jpg" }
+            ListElement { imagePath: "qrc:/UI/pictures/city.jpg" }
+            ListElement { imagePath: "qrc:/UI/pictures/bot.jpg" }
+            ListElement { imagePath: "qrc:/UI/pictures/girl.jpg" }
+            ListElement { imagePath: "qrc:/UI/pictures/phone.jpg" }
+            ListElement { imagePath: "qrc:/UI/pictures/trees.jpg" }
+            ListElement { imagePath: "qrc:/UI/pictures/plane.jpg" }
         }
         delegate: Item {
             width: imageHashes.cellWidth
@@ -141,7 +140,6 @@ Rectangle {
 
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: master_password_rect.bottom
         anchors.bottom: parent.bottom
         anchors.leftMargin: 16
         anchors.rightMargin: 16

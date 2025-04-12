@@ -165,11 +165,11 @@ namespace KeysaverDesktop {
         auto pwd_utf8_bytes = password.toUtf8();
         auto result = keysaverSetMasterPassword(pwd_utf8_bytes.constData());
         if (is_keysaver_error(result)) {
-            QMessageBox::information(nullptr, tr("error"), std::to_string(int(result)).c_str());
+            ShowError(result);
             return;
         }
 
-        QMessageBox::information(nullptr, "success", "success");
+        LoadPasswordGenerator();
     }
 
     Q_INVOKABLE void Controller::onAppStarted() {
@@ -178,5 +178,10 @@ namespace KeysaverDesktop {
                 tr("welcome"),
                 tr("welcome_message"));
         }
+    }
+
+    void Controller::LoadPasswordGenerator() {
+        auto root = m_app->m_qml_app_engine.rootObjects().first();
+        QMetaObject::invokeMethod(root, "loadMainLayout");
     }
 }
