@@ -12,6 +12,7 @@ namespace KeysaverDesktop {
     class Controller final : public QObject {
         Q_OBJECT
         Q_PROPERTY(QStringList servicesList READ servicesList NOTIFY servicesListUpdated)
+        Q_PROPERTY(QStringList configsList READ configsList NOTIFY configsListUpdated)
 
     public:
         // ctor & dtor
@@ -25,9 +26,11 @@ namespace KeysaverDesktop {
 
         // QT options
         QStringList servicesList() const;
+        QStringList configsList() const;
 
     signals:
         void servicesListUpdated();
+        void configsListUpdated();
 
     private:
         // members

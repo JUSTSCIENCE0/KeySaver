@@ -25,7 +25,9 @@ Window {
     }
 
     function loadAddService() {
-        stackView.push("qrc:/UI/layouts/AddService.qml");
+        Qt.callLater(() => {
+            stackView.push("qrc:/UI/layouts/AddService.qml");
+        })
     }
 }
 

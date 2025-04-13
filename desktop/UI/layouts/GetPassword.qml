@@ -8,6 +8,10 @@ Rectangle {
     height: Window.height
     opacity: 1
 
+    StackView.onActivated: {
+        selectedService.onCurrentIndexChanged()
+    }
+
     ImageButton {
         id: enableBackup
         source: "qrc:/UI/pictures/ic_enable_backup.png"

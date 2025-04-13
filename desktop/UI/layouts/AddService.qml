@@ -69,7 +69,7 @@ Rectangle {
 
     StyledComboBox {
         id: selectedConfiguration
-        model: ["example", "test", qsTr("add_smth")]
+        model: Controller.configsList
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left

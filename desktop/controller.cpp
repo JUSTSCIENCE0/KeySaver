@@ -183,13 +183,13 @@ namespace KeysaverDesktop {
     Q_INVOKABLE void Controller::onSelectedServiceChanged(const QString& service) {
         if (tr("add_smth") == service) {
             auto root = m_app->m_qml_app_engine.rootObjects().first();
-            QMetaObject::invokeMethod(root, "loadMainLayout");
+            QMetaObject::invokeMethod(root, "loadAddService");
         }
     }
 
     void Controller::LoadPasswordGenerator() {
         auto root = m_app->m_qml_app_engine.rootObjects().first();
-        QMetaObject::invokeMethod(root, "loadAddService");
+        QMetaObject::invokeMethod(root, "loadMainLayout");
     }
 
     QStringList Controller::servicesList() const {
@@ -217,6 +217,38 @@ namespace KeysaverDesktop {
 
         QStringList result;
         for (auto service: serviceNamePtrs) {
+            result << QString::fromUtf8(service);
+        }
+        result << tr("add_smth");
+
+        return result;
+    }
+
+    QStringList Controller::configsList() const {
+        int configsCount = 0;
+        auto code = keysaverGetConfigurationsCount(&configsCount);
+        if (is_keysaver_error(code)) {
+            ShowError(code);
+            return { tr("add_smth") };
+        }
+
+        if (!configsCount) {
+            return { tr("add_smth") };
+        }
+
+        std::vector<char> cStrBuffer(KEYSAVER_STRING_MAX_SIZE * configsCount);
+        std::vector<char*> configsNamePtrs(configsCount);
+        for (int i = 0; i < configsCount; ++i) {
+            configsNamePtrs[i] = cStrBuffer.data() + (i * KEYSAVER_STRING_MAX_SIZE);
+        }
+        code = keysaverGetConfigurationsList(configsNamePtrs.data());
+        if (is_keysaver_error(code)) {
+            ShowError(code);
+            return { tr("add_smth") };
+        }
+
+        QStringList result;
+        for (auto service: configsNamePtrs) {
             result << QString::fromUtf8(service);
         }
         result << tr("add_smth");
