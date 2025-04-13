@@ -9,6 +9,7 @@ Rectangle {
     opacity: 1
 
     StackView.onActivated: {
+        selectedService.currentIndex = 0;
         selectedService.onCurrentIndexChanged()
     }
 
