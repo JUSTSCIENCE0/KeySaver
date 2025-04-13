@@ -29,5 +29,9 @@ Window {
             stackView.push("qrc:/UI/layouts/AddService.qml");
         })
     }
+
+    function closeLayout() {
+        stackView.pop()
+    }
 }
 

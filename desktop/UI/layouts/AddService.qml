@@ -107,6 +107,11 @@ Rectangle {
 
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height
+
+            onClicked: Controller.onAddService(
+                serviceURL.text, serviceName.text,
+                selectedConfiguration.model[selectedConfiguration.currentIndex]
+            )
         }
     }
 }

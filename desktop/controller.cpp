@@ -187,6 +187,40 @@ namespace KeysaverDesktop {
         }
     }
 
+    Q_INVOKABLE void Controller::onAddService(const QString& service_url,
+                                              const QString& service_name,
+                                              const QString& config) {
+        if (service_url.isEmpty() ||
+            service_name.isEmpty() ||
+            config.isEmpty()) {
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("required_field_empty"));
+            return;
+        }
+
+        auto service_url_bytes = service_url.toUtf8();
+        auto service_name_bytes = service_name.toUtf8();
+        auto config_bytes = config.toUtf8();
+
+        KeysaverService new_service = {
+            .url = service_url_bytes.constData(),
+            .name = service_name_bytes.constData(),
+            .conf_id = config_bytes.constData()
+        };
+
+        auto code = keysaverAddService(new_service);
+        if (is_keysaver_error(code)) {
+            ShowError(code);
+            return;
+        }
+
+        servicesListUpdated();
+
+        auto root = m_app->m_qml_app_engine.rootObjects().first();
+        QMetaObject::invokeMethod(root, "closeLayout");
+    }
+
     void Controller::LoadPasswordGenerator() {
         auto root = m_app->m_qml_app_engine.rootObjects().first();
         QMetaObject::invokeMethod(root, "loadMainLayout");
