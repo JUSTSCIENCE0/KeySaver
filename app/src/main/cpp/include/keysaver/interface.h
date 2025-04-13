@@ -17,7 +17,7 @@
 #error "Unsupported OS"
 #endif
 
-#define KEYSAVER_STRING_MAX_SIZE 1024
+#define KEYSAVER_STRING_MAX_SIZE 100
 
 enum KeysaverStatus {
     // SUCCESS

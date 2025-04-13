@@ -11,15 +11,22 @@
 namespace KeysaverDesktop {
     class Controller final : public QObject {
         Q_OBJECT
+        Q_PROPERTY(QStringList servicesList READ servicesList NOTIFY servicesListUpdated)
 
     public:
         // ctor & dtor
         explicit Controller(Application* app_callback, QObject* parent = nullptr);
         ~Controller();
 
-        // QT
+        // QT calls
         Q_INVOKABLE void onAppStarted();
         Q_INVOKABLE void onConfirmMasterPassword(const QString& password);
+
+        // QT options
+        QStringList servicesList() const;
+
+    signals:
+        void servicesListUpdated();
 
     private:
         // members

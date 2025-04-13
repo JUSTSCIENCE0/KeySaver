@@ -44,7 +44,7 @@ Rectangle {
 
     StyledComboBox {
         id: selectedService
-        model: ["example", "test", qsTr("add_smth")]
+        model: Controller.servicesList
 
         anchors.left: parent.left
         anchors.right: setupService.left

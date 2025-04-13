@@ -184,4 +184,36 @@ namespace KeysaverDesktop {
         auto root = m_app->m_qml_app_engine.rootObjects().first();
         QMetaObject::invokeMethod(root, "loadMainLayout");
     }
+
+    QStringList Controller::servicesList() const {
+        int serviceCount = 0;
+        auto code = keysaverGetServicesCount(&serviceCount);
+        if (is_keysaver_error(code)) {
+            ShowError(code);
+            return { tr("add_smth") };
+        }
+
+        if (!serviceCount) {
+            return { tr("add_smth") };
+        }
+
+        std::vector<char> cStrBuffer(KEYSAVER_STRING_MAX_SIZE * serviceCount);
+        std::vector<char*> serviceNamePtrs(serviceCount);
+        for (int i = 0; i < serviceCount; ++i) {
+            serviceNamePtrs[i] = cStrBuffer.data() + (i * KEYSAVER_STRING_MAX_SIZE);
+        }
+        code = keysaverGetServicesList(serviceNamePtrs.data());
+        if (is_keysaver_error(code)) {
+            ShowError(code);
+            return { tr("add_smth") };
+        }
+
+        QStringList result;
+        for (auto service: serviceNamePtrs) {
+            result << QString::fromUtf8(service);
+        }
+        result << tr("add_smth");
+
+        return result;
+    }
 }
