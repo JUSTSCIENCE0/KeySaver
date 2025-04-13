@@ -1,5 +1,7 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
+import "qrc:/UI/components"
 
 Rectangle {
     id: addService
@@ -76,7 +78,7 @@ Rectangle {
         anchors.rightMargin: 16
     }
 
-    Row {
+    RowLayout {
         id: cancelConfirm
         height: 40
         anchors.left: parent.left
@@ -93,20 +95,18 @@ Rectangle {
             borderColor: "#e0e0e0"
             textColor: "black"
 
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-            width: parent.width / 2 - 4
+            Layout.fillWidth: true
+            Layout.preferredHeight: parent.height
 
-            onClicked: loader.source = "GetPassword.qml"
+            onClicked: stackView.pop()
         }
 
         StyledButton {
             id: confirmSetup
             text: qsTr("confirm")
 
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            width: parent.width / 2 - 4
+            Layout.fillWidth: true
+            Layout.preferredHeight: parent.height
         }
     }
 }

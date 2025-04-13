@@ -180,9 +180,16 @@ namespace KeysaverDesktop {
         }
     }
 
+    Q_INVOKABLE void Controller::onSelectedServiceChanged(const QString& service) {
+        if (tr("add_smth") == service) {
+            auto root = m_app->m_qml_app_engine.rootObjects().first();
+            QMetaObject::invokeMethod(root, "loadMainLayout");
+        }
+    }
+
     void Controller::LoadPasswordGenerator() {
         auto root = m_app->m_qml_app_engine.rootObjects().first();
-        QMetaObject::invokeMethod(root, "loadMainLayout");
+        QMetaObject::invokeMethod(root, "loadAddService");
     }
 
     QStringList Controller::servicesList() const {

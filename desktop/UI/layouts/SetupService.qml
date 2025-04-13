@@ -75,7 +75,7 @@ Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height
 
-            onClicked: loader.source = "qrc:/UI/layouts/GetPassword.qml"
+            onClicked: stackView.pop()
         }
 
         StyledButton {

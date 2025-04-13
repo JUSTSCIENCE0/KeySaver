@@ -14,14 +14,18 @@ Window {
 
     Component.onCompleted: Controller.onAppStarted()
 
-    Loader {
-        id: loader
+    StackView {
+        id: stackView
         anchors.fill: parent
-        source: "qrc:/UI/layouts/EnterMasterPassword.qml"
+        initialItem: "qrc:/UI/layouts/EnterMasterPassword.qml"
     }
 
     function loadMainLayout() {
-        loader.source = "qrc:/UI/layouts/GetPassword.qml";
+        stackView.replace("qrc:/UI/layouts/GetPassword.qml");
+    }
+
+    function loadAddService() {
+        stackView.push("qrc:/UI/layouts/AddService.qml");
     }
 }
 
