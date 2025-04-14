@@ -221,6 +221,26 @@ namespace KeysaverDesktop {
         QMetaObject::invokeMethod(root, "closeLayout");
     }
 
+    Q_INVOKABLE void Controller::onGeneratePassword(const QString& service_name, int hash_id) {
+        if (service_name.isEmpty()) {
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("required_field_empty"));
+            return;
+        }
+
+        auto service_name_bytes = service_name.toUtf8();
+        char result[KEYSAVER_STRING_MAX_SIZE] = "";
+        auto code = keysaverGeneratePassword(service_name_bytes.constData(), hash_id, result);
+        if (is_keysaver_error(code)) {
+            ShowError(code);
+            return;
+        }
+
+        // TODO
+        qDebug() << result;
+    }
+
     void Controller::LoadPasswordGenerator() {
         auto root = m_app->m_qml_app_engine.rootObjects().first();
         QMetaObject::invokeMethod(root, "loadMainLayout");

@@ -91,28 +91,51 @@ Rectangle {
         anchors.leftMargin: 16
         anchors.rightMargin: 16
         model: ListModel {
-            ListElement { imagePath: "qrc:/UI/pictures/cat.jpg" }
-            ListElement { imagePath: "qrc:/UI/pictures/car.jpg" }
-            ListElement { imagePath: "qrc:/UI/pictures/egg.jpg" }
-            ListElement { imagePath: "qrc:/UI/pictures/city.jpg" }
-            ListElement { imagePath: "qrc:/UI/pictures/bot.jpg" }
-            ListElement { imagePath: "qrc:/UI/pictures/girl.jpg" }
-            ListElement { imagePath: "qrc:/UI/pictures/phone.jpg" }
-            ListElement { imagePath: "qrc:/UI/pictures/trees.jpg" }
-            ListElement { imagePath: "qrc:/UI/pictures/plane.jpg" }
+            ListElement {
+                elementId: 0
+                imagePath: "qrc:/UI/pictures/cat.jpg" }
+            ListElement {
+                elementId: 1
+                imagePath: "qrc:/UI/pictures/car.jpg" }
+            ListElement {
+                elementId: 2
+                imagePath: "qrc:/UI/pictures/egg.jpg" }
+            ListElement {
+                elementId: 3
+                imagePath: "qrc:/UI/pictures/city.jpg" }
+            ListElement {
+                elementId: 4
+                imagePath: "qrc:/UI/pictures/bot.jpg" }
+            ListElement {
+                elementId: 5
+                imagePath: "qrc:/UI/pictures/girl.jpg" }
+            ListElement {
+                elementId: 6
+                imagePath: "qrc:/UI/pictures/phone.jpg" }
+            ListElement {
+                elementId: 7
+                imagePath: "qrc:/UI/pictures/trees.jpg" }
+            ListElement {
+                elementId: 8
+                imagePath: "qrc:/UI/pictures/plane.jpg" }
         }
         delegate: Item {
             width: imageHashes.cellWidth
             height: imageHashes.cellHeight
 
-            Image {
+            ImageButton {
                 width: 125
                 height: 125
                 sourceSize.width: 200
                 sourceSize.height: 200
                 source: imagePath
-                fillMode: Image.PreserveAspectFit
+
                 anchors.centerIn: parent
+
+                onButtonClick: function() {
+                    Controller.onGeneratePassword(
+                        selectedService.model[selectedService.currentIndex], elementId)
+                }
             }
         }
         cellWidth: width / 3

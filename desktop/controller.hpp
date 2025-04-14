@@ -26,6 +26,7 @@ namespace KeysaverDesktop {
         Q_INVOKABLE void onAddService(const QString& service_url,
                                       const QString& service_name,
                                       const QString& config);
+        Q_INVOKABLE void onGeneratePassword(const QString& service_name, int hash_id);
 
         // QT options
         QStringList servicesList() const;
