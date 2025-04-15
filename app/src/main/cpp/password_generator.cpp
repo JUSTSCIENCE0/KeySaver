@@ -53,7 +53,8 @@ namespace Keysaver {
 
     KeysaverStatus PasswordGenerator::MakeMask(
             const KeysaverConfig::Configuration& config, Mask* mask) {
-        if (!mask || !mask->empty()) return KeysaverStatus::E_INVALID_ARG;
+        if (!mask || !mask->empty())
+            return KeysaverStatus::E_INVALID_ARG;
 
         uint8_t rnd_byte = 0;
         uint32_t upper_count = 0;
@@ -72,7 +73,8 @@ namespace Keysaver {
         }
 
         if (config.use_upper() && config.use_lower()) {
-            if (!m_prng.GetByte(&rnd_byte)) return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
+            if (!m_prng.GetByte(&rnd_byte))
+                return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
 
             lower_count = (rnd_byte % (letters_count - 1)) + 1;
             upper_count = letters_count - lower_count;
@@ -90,7 +92,30 @@ namespace Keysaver {
         mask->insert(mask->end(), digits_count, SymbolType::DIGIT);
 
         assert(mask->size() == config.length());
-        std::ranges::shuffle(mask->begin(), mask->end(), m_prng);
+        return ShuffleMask(mask);
+    }
+
+    KeysaverStatus PasswordGenerator::ShuffleMask(Mask* mask) {
+        // Unfortunately, the implementation of std::ranges::shuffle on Android
+        // differs from other platforms. It has more iterations, returns a different
+        // result, and brings the PRNG to a different state.
+        // Therefore, to achieve cross-platform compatibility, a custom
+        // shuffle has been implemented.
+        assert(mask);
+
+        uint8_t rnd_byte = 0;
+        auto mask_size = mask->size();
+        assert(mask_size < 256);
+
+        for (auto i = mask_size - 1; i > 0; --i) {
+            if (!m_prng.GetByte(&rnd_byte))
+                return KeysaverStatus::E_INTERNAL_OPENSSL_FAIL;
+
+            size_t j = rnd_byte % i;
+            if (i != j)
+                std::swap((*mask)[i], (*mask)[j]);
+        }
+
         return KeysaverStatus::S_OK;
     }
 
