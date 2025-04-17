@@ -155,6 +155,7 @@ Rectangle {
     StyledInput {
         id: resultPassword
         readOnly: true
+        text: Controller.servicePassword
 
         anchors.left: parent.left
         anchors.right: parent.right

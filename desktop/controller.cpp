@@ -237,8 +237,8 @@ namespace KeysaverDesktop {
             return;
         }
 
-        // TODO
-        qDebug() << result;
+        m_current_password = result;
+        servicePasswordUpdated();
     }
 
     void Controller::LoadPasswordGenerator() {
@@ -308,5 +308,9 @@ namespace KeysaverDesktop {
         result << tr("add_smth");
 
         return result;
+    }
+
+    QString Controller::servicePassword() const {
+        return QString::fromUtf8(m_current_password.c_str());
     }
 }
