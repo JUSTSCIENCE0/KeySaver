@@ -13,7 +13,6 @@ namespace KeysaverDesktop {
         Q_OBJECT
         Q_PROPERTY(QStringList servicesList READ servicesList NOTIFY servicesListUpdated)
         Q_PROPERTY(QStringList configsList READ configsList NOTIFY configsListUpdated)
-        Q_PROPERTY(QString servicePassword READ servicePassword NOTIFY servicePasswordUpdated)
 
     public:
         // ctor & dtor
@@ -29,7 +28,7 @@ namespace KeysaverDesktop {
         Q_INVOKABLE void onAddService(const QString& service_url,
                                       const QString& service_name,
                                       const QString& config);
-        Q_INVOKABLE void onGeneratePassword(const QString& service_name, int hash_id);
+        Q_INVOKABLE QString generatePassword(const QString& service_name, int hash_id);
         Q_INVOKABLE QString getSetupService() const {
             assert(m_setup_service.length());
             return QString::fromUtf8(m_setup_service.c_str());
@@ -38,18 +37,15 @@ namespace KeysaverDesktop {
         // QT properties
         QStringList servicesList() const;
         QStringList configsList() const;
-        QString servicePassword() const;
 
     signals:
         void servicesListUpdated();
         void configsListUpdated();
-        void servicePasswordUpdated();
 
     private:
         // members
         Application* m_app = nullptr;
         bool m_is_first_usage = false;
-        std::string m_current_password = "password";
         std::string m_setup_service = "";
 
         // methods

@@ -242,12 +242,12 @@ namespace KeysaverDesktop {
         QMetaObject::invokeMethod(root, "closeLayout");
     }
 
-    Q_INVOKABLE void Controller::onGeneratePassword(const QString& service_name, int hash_id) {
+    Q_INVOKABLE QString Controller::generatePassword(const QString& service_name, int hash_id) {
         if (service_name.isEmpty()) {
             QMessageBox::information(nullptr, 
                 tr("error"),
                 tr("required_field_empty"));
-            return;
+            return tr("error");
         }
 
         auto service_name_bytes = service_name.toUtf8();
@@ -255,11 +255,10 @@ namespace KeysaverDesktop {
         auto code = keysaverGeneratePassword(service_name_bytes.constData(), hash_id, result);
         if (is_keysaver_error(code)) {
             ShowError(code);
-            return;
+            return tr("error");
         }
 
-        m_current_password = result;
-        servicePasswordUpdated();
+        return QString::fromUtf8(result);
     }
 
     void Controller::LoadPasswordGenerator() {
@@ -329,9 +328,5 @@ namespace KeysaverDesktop {
         result << tr("add_smth");
 
         return result;
-    }
-
-    QString Controller::servicePassword() const {
-        return QString::fromUtf8(m_current_password.c_str());
     }
 }

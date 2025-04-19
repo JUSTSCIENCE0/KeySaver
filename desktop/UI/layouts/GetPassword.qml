@@ -135,7 +135,7 @@ Rectangle {
                 anchors.centerIn: parent
 
                 onButtonClick: function() {
-                    Controller.onGeneratePassword(
+                    resultPassword.text = Controller.generatePassword(
                         selectedService.model[selectedService.currentIndex], elementId)
                 }
             }
@@ -157,7 +157,7 @@ Rectangle {
     StyledInput {
         id: resultPassword
         readOnly: true
-        text: Controller.servicePassword
+        text: "password"
 
         anchors.left: parent.left
         anchors.right: parent.right
