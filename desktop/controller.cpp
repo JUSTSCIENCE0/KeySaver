@@ -187,6 +187,13 @@ namespace KeysaverDesktop {
         }
     }
 
+    Q_INVOKABLE void Controller::onSelectedConfigChanged(const QString& config) {
+        if (tr("add_smth") == config) {
+            auto root = m_app->m_qml_app_engine.rootObjects().first();
+            QMetaObject::invokeMethod(root, "loadAddConfig");
+        }
+    }
+
     Q_INVOKABLE void Controller::onAddService(const QString& service_url,
                                               const QString& service_name,
                                               const QString& config) {

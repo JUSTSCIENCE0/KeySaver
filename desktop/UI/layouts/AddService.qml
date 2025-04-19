@@ -9,6 +9,11 @@ Rectangle {
     height: Window.height
     opacity: 1
 
+    StackView.onActivated: {
+        selectedConfiguration.currentIndex = 0;
+        selectedConfiguration.onCurrentIndexChanged()
+    }
+
     HelpButton {
         id: help
     }
@@ -76,6 +81,8 @@ Rectangle {
         anchors.right: parent.right
         anchors.leftMargin: 16
         anchors.rightMargin: 16
+
+        onCurrentIndexChanged: Controller.onSelectedConfigChanged(model[currentIndex])
     }
 
     RowLayout {

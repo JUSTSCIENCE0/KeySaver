@@ -30,6 +30,14 @@ Window {
         })
     }
 
+    function loadAddConfig() {
+        stackView.push("qrc:/UI/layouts/AddConfiguration.qml");
+    }
+
+    function loadSetupService() {
+        stackView.push("qrc:/UI/layouts/SetupService.qml");
+    }
+
     function closeLayout() {
         stackView.pop()
     }

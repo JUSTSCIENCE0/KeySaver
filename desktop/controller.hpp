@@ -24,6 +24,7 @@ namespace KeysaverDesktop {
         Q_INVOKABLE void onAppStarted();
         Q_INVOKABLE void onConfirmMasterPassword(const QString& password);
         Q_INVOKABLE void onSelectedServiceChanged(const QString& service);
+        Q_INVOKABLE void onSelectedConfigChanged(const QString& config);
         Q_INVOKABLE void onAddService(const QString& service_url,
                                       const QString& service_name,
                                       const QString& config);

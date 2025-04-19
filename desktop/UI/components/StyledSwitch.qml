@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
-
-Row {
+RowLayout {
     id: styledSwitch
     spacing: 16
     height: 30
@@ -12,19 +12,18 @@ Row {
 
     StyledLabel {
         id: switchLabel
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
+        Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
     }
 
     Switch {
         id: switchButton
-        width: styledSwitch.height * 2
+        Layout.preferredWidth: styledSwitch.height * 1.8
         height: styledSwitch.height
         checked: true
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
+        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
 
         background: Rectangle {
+            anchors.fill: parent
             radius: height / 2
             color: switchButton.checked ? "black" : "white"
             border.width: 2
