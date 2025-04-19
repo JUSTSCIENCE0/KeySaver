@@ -93,6 +93,11 @@ Rectangle {
 
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height
+
+            onClicked: Controller.onEditService(
+                serviceName.text,
+                selectedConfiguration.model[selectedConfiguration.currentIndex]
+            )
         }
     }
 

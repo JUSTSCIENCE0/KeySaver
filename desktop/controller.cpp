@@ -276,6 +276,47 @@ namespace KeysaverDesktop {
         QMetaObject::invokeMethod(root, "closeLayout");
     }
 
+    Q_INVOKABLE void Controller::onEditService(const QString& service_name,
+                                                const QString& config) {
+        assert(m_setup_service.length());
+        if (service_name.isEmpty() ||
+            config.isEmpty()) {
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("required_field_empty"));
+            return;
+        }
+
+        auto service_name_bytes = service_name.toUtf8();
+        auto config_bytes = config.toUtf8();
+
+        KeysaverService edit_service = {
+            .url = "stub",
+            .name = service_name_bytes.constData(),
+            .conf_id = config_bytes.constData()
+        };
+
+        if (!confirm_action(this))
+            return;
+
+        auto code = keysaverEditService(m_setup_service.c_str(), edit_service);
+        if (is_keysaver_error(code)) {
+            ShowError(code);
+            return;
+        }
+
+        QMessageBox::information(nullptr, 
+            tr("success"),
+            tr("service_updated_successfull"));
+
+        m_setup_service = "";
+
+        servicesListUpdated();
+
+        auto root = m_app->m_qml_app_engine.rootObjects().first();
+        QMetaObject::invokeMethod(root, "closeLayout");
+    }
+
     Q_INVOKABLE QString Controller::generatePassword(const QString& service_name, int hash_id) {
         if (service_name.isEmpty()) {
             QMessageBox::information(nullptr, 
