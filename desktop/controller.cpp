@@ -317,6 +317,64 @@ namespace KeysaverDesktop {
         QMetaObject::invokeMethod(root, "closeLayout");
     }
 
+    Q_INVOKABLE void Controller::onAddConfig(const QString& config_name,
+                                             int pwd_length,
+                                             bool use_upper,
+                                             bool use_lower,
+                                             int alphabet,
+                                             bool use_spec,
+                                             int spec_count,
+                                             const QString& spec_set,
+                                             bool use_digits,
+                                             int digits_count) {
+        assert(pwd_length >= 0);
+        assert(spec_count >= 0);
+        assert(digits_count >= 0);
+        assert(alphabet >= 0);
+
+        if (config_name.isEmpty() ||
+            spec_set.isEmpty()) {
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("required_field_empty"));
+            return;
+        }
+
+        if (!use_upper && !use_lower) {
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("without_any_case"));
+            return;
+        }
+
+        auto config_name_bytes = config_name.toUtf8();
+        auto spec_set_bytes = spec_set.toUtf8();
+
+        KeysaverConfiguration config = {
+            .id_name = config_name_bytes.constData(),
+            .length = uint(pwd_length),
+            .use_upper = use_upper,
+            .use_lower = use_lower,
+            .alphabet = alphabet,
+            .use_special_chars = use_spec,
+            .special_chars_count = uint(spec_count),
+            .special_charset = spec_set_bytes.constData(),
+            .use_digits = use_digits,
+            .digits_amount = uint(digits_count)
+        };
+
+        auto code = keysaverAddConfiguration(config);
+        if (is_keysaver_error(code)) {
+            ShowError(code);
+            return;
+        }
+
+        configsListUpdated();
+
+        auto root = m_app->m_qml_app_engine.rootObjects().first();
+        QMetaObject::invokeMethod(root, "closeLayout");
+    }
+
     Q_INVOKABLE QString Controller::generatePassword(const QString& service_name, int hash_id) {
         if (service_name.isEmpty()) {
             QMessageBox::information(nullptr, 

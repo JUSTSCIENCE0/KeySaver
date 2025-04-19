@@ -31,6 +31,16 @@ namespace KeysaverDesktop {
         Q_INVOKABLE void onDeleteService();
         Q_INVOKABLE void onEditService(const QString& service_name,
                                        const QString& config);
+        Q_INVOKABLE void onAddConfig(const QString& config_name,
+                                     int pwd_length,
+                                     bool use_upper,
+                                     bool use_lower,
+                                     int alphabet,
+                                     bool use_spec,
+                                     int spec_count,
+                                     const QString& spec_set,
+                                     bool use_digits,
+                                     int digits_count);
         Q_INVOKABLE QString generatePassword(const QString& service_name, int hash_id);
         Q_INVOKABLE QString getSetupService() const {
             assert(m_setup_service.length());

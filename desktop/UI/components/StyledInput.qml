@@ -12,9 +12,10 @@ Rectangle {
     property int mode: TextInput.Normal
     property int maxLength: 30
     property bool readOnly: false
+    property string effectiveText: styledTextInput.text.length > 0 ? styledTextInput.text : placeholder.text
     property alias text: styledTextInput.text
     property alias placeholderText: placeholder.text
-    property alias validaotor: styledTextInput.validator
+    property alias validator: styledTextInput.validator
 
     TextInput {
         id: styledTextInput
