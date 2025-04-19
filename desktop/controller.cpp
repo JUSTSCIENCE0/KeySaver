@@ -194,6 +194,20 @@ namespace KeysaverDesktop {
         }
     }
 
+    Q_INVOKABLE void Controller::onShowSetupService(const QString& service) {
+        if (service.isEmpty()) {
+            QMessageBox::information(nullptr, 
+                tr("error"),
+                tr("required_field_empty"));
+            return;
+        }
+
+        m_setup_service = service.toUtf8().constData();
+
+        auto root = m_app->m_qml_app_engine.rootObjects().first();
+        QMetaObject::invokeMethod(root, "loadSetupService");
+    }
+
     Q_INVOKABLE void Controller::onAddService(const QString& service_url,
                                               const QString& service_name,
                                               const QString& config) {

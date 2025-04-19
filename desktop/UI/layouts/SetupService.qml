@@ -9,6 +9,13 @@ Rectangle {
     height: Window.height
     opacity: 1
 
+    StackView.onActivated: {
+        serviceName.text = Controller.getSetupService()
+
+        selectedConfiguration.currentIndex = 0;
+        selectedConfiguration.onCurrentIndexChanged()
+    }
+
     HelpButton {
         id: help
     }
@@ -46,13 +53,15 @@ Rectangle {
 
     StyledComboBox {
         id: selectedConfiguration
-        model: ["example", "test", qsTr("add_smth")]
+        model: Controller.configsList
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.leftMargin: 16
         anchors.rightMargin: 16
+
+        onCurrentIndexChanged: Controller.onSelectedConfigChanged(model[currentIndex])
     }
 
     RowLayout {

@@ -64,7 +64,9 @@ Rectangle {
     ImageButton {
         id: setupService
         source: "qrc:/UI/pictures/ic_setup.png"
-        //onButtonClick: function() { loader.source = "qrc:/UI/layouts/SetupService.qml" }
+        onButtonClick: function() {
+            Controller.onShowSetupService(selectedService.model[selectedService.currentIndex])
+        }
 
         anchors.right: parent.right
         anchors.bottom: selectedService.bottom
