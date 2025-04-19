@@ -35,6 +35,16 @@ namespace KeysaverDesktop {
         return result;
     }
 
+    static inline bool confirm_action(const QObject* context) {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(context->tr("warning"));
+        msgBox.setText(context->tr("want_continue"));
+        msgBox.addButton(context->tr("yes"), QMessageBox::YesRole);
+        msgBox.addButton(context->tr("no"), QMessageBox::NoRole);
+
+        return 0 == msgBox.exec();
+    }
+
     Controller::Controller(Application* app_callback, QObject* parent) :
             QObject(parent),
             m_app(app_callback) {
@@ -235,6 +245,30 @@ namespace KeysaverDesktop {
             ShowError(code);
             return;
         }
+
+        servicesListUpdated();
+
+        auto root = m_app->m_qml_app_engine.rootObjects().first();
+        QMetaObject::invokeMethod(root, "closeLayout");
+    }
+
+    Q_INVOKABLE void Controller::onDeleteService() {
+        assert(m_setup_service.length());
+
+        if (!confirm_action(this))
+            return;
+
+        auto code = keysaverDeleteService(m_setup_service.c_str());
+        if (is_keysaver_error(code)) {
+            ShowError(code);
+            return;
+        }
+
+        QMessageBox::information(nullptr, 
+            tr("success"),
+            tr("service_deleted_successfull"));
+
+        m_setup_service = "";
 
         servicesListUpdated();
 
