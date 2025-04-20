@@ -17,6 +17,16 @@
 #include  <pwd.h>
 #endif
 
+// error helper
+#define KEYSAVER_CHECK_ERROR(action, ...) \
+do { \
+    auto code = action; \
+    if (is_keysaver_error(code)) { \
+        ShowError(code); \
+        return __VA_ARGS__ ; \
+    } \
+} while(0)
+
 namespace KeysaverDesktop {
     static inline std::filesystem::path get_config_path() {
         std::filesystem::path result;
@@ -179,11 +189,7 @@ namespace KeysaverDesktop {
             return;
 
         auto pwd_utf8_bytes = password.toUtf8();
-        auto result = keysaverSetMasterPassword(pwd_utf8_bytes.constData());
-        if (is_keysaver_error(result)) {
-            ShowError(result);
-            return;
-        }
+        KEYSAVER_CHECK_ERROR(keysaverSetMasterPassword(pwd_utf8_bytes.constData()));
 
         LoadPasswordGenerator();
     }
@@ -246,11 +252,7 @@ namespace KeysaverDesktop {
             .conf_id = config_bytes.constData()
         };
 
-        auto code = keysaverAddService(new_service);
-        if (is_keysaver_error(code)) {
-            ShowError(code);
-            return;
-        }
+        KEYSAVER_CHECK_ERROR(keysaverAddService(new_service));
 
         servicesListUpdated();
 
@@ -264,11 +266,7 @@ namespace KeysaverDesktop {
         if (!confirm_action(this))
             return;
 
-        auto code = keysaverDeleteService(m_setup_service.c_str());
-        if (is_keysaver_error(code)) {
-            ShowError(code);
-            return;
-        }
+        KEYSAVER_CHECK_ERROR(keysaverDeleteService(m_setup_service.c_str()));
 
         QMessageBox::information(nullptr, 
             tr("success"),
@@ -305,11 +303,7 @@ namespace KeysaverDesktop {
         if (!confirm_action(this))
             return;
 
-        auto code = keysaverEditService(m_setup_service.c_str(), edit_service);
-        if (is_keysaver_error(code)) {
-            ShowError(code);
-            return;
-        }
+        KEYSAVER_CHECK_ERROR(keysaverEditService(m_setup_service.c_str(), edit_service));
 
         QMessageBox::information(nullptr, 
             tr("success"),
@@ -369,11 +363,7 @@ namespace KeysaverDesktop {
             .digits_amount = uint(digits_count)
         };
 
-        auto code = keysaverAddConfiguration(config);
-        if (is_keysaver_error(code)) {
-            ShowError(code);
-            return;
-        }
+        KEYSAVER_CHECK_ERROR(keysaverAddConfiguration(config));
 
         configsListUpdated();
 
@@ -395,18 +385,10 @@ namespace KeysaverDesktop {
         if (!out_file.isEmpty()) {
             out_file += ".bin";
 
-            auto code = keysaverSyncDatabase();
-            if (is_keysaver_error(code)) {
-                ShowError(code);
-                return;
-            }
+            KEYSAVER_CHECK_ERROR(keysaverSyncDatabase());
 
             char db_name[KEYSAVER_STRING_MAX_SIZE] = "";
-            code = keysaverGetDatabaseName(db_name);
-            if (is_keysaver_error(code)) {
-                ShowError(code);
-                return;
-            }
+            KEYSAVER_CHECK_ERROR(keysaverGetDatabaseName(db_name));
 
             auto db_path = get_config_path().concat(db_name);
             std::filesystem::path dst_path = out_file.toUtf8().constData();
@@ -438,11 +420,8 @@ namespace KeysaverDesktop {
 
         auto service_name_bytes = service_name.toUtf8();
         char result[KEYSAVER_STRING_MAX_SIZE] = "";
-        auto code = keysaverGeneratePassword(service_name_bytes.constData(), hash_id, result);
-        if (is_keysaver_error(code)) {
-            ShowError(code);
-            return tr("error");
-        }
+        KEYSAVER_CHECK_ERROR(keysaverGeneratePassword(service_name_bytes.constData(), hash_id, result),
+            tr("error"));
 
         return QString::fromUtf8(result);
     }
@@ -454,11 +433,8 @@ namespace KeysaverDesktop {
 
     QStringList Controller::servicesList() const {
         int serviceCount = 0;
-        auto code = keysaverGetServicesCount(&serviceCount);
-        if (is_keysaver_error(code)) {
-            ShowError(code);
-            return { tr("add_smth") };
-        }
+        KEYSAVER_CHECK_ERROR(keysaverGetServicesCount(&serviceCount),
+            { tr("add_smth") });
 
         if (!serviceCount) {
             return { tr("add_smth") };
@@ -469,11 +445,8 @@ namespace KeysaverDesktop {
         for (int i = 0; i < serviceCount; ++i) {
             serviceNamePtrs[i] = cStrBuffer.data() + (i * KEYSAVER_STRING_MAX_SIZE);
         }
-        code = keysaverGetServicesList(serviceNamePtrs.data());
-        if (is_keysaver_error(code)) {
-            ShowError(code);
-            return { tr("add_smth") };
-        }
+        KEYSAVER_CHECK_ERROR(keysaverGetServicesList(serviceNamePtrs.data()),
+            { tr("add_smth") });
 
         QStringList result;
         for (auto service: serviceNamePtrs) {
@@ -486,11 +459,8 @@ namespace KeysaverDesktop {
 
     QStringList Controller::configsList() const {
         int configsCount = 0;
-        auto code = keysaverGetConfigurationsCount(&configsCount);
-        if (is_keysaver_error(code)) {
-            ShowError(code);
-            return { tr("add_smth") };
-        }
+        KEYSAVER_CHECK_ERROR(keysaverGetConfigurationsCount(&configsCount),
+            { tr("add_smth") });
 
         if (!configsCount) {
             return { tr("add_smth") };
@@ -501,11 +471,8 @@ namespace KeysaverDesktop {
         for (int i = 0; i < configsCount; ++i) {
             configsNamePtrs[i] = cStrBuffer.data() + (i * KEYSAVER_STRING_MAX_SIZE);
         }
-        code = keysaverGetConfigurationsList(configsNamePtrs.data());
-        if (is_keysaver_error(code)) {
-            ShowError(code);
-            return { tr("add_smth") };
-        }
+        KEYSAVER_CHECK_ERROR(keysaverGetConfigurationsList(configsNamePtrs.data()),
+            { tr("add_smth") });
 
         QStringList result;
         for (auto service: configsNamePtrs) {
