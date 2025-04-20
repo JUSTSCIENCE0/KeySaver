@@ -371,6 +371,45 @@ namespace KeysaverDesktop {
         QMetaObject::invokeMethod(root, "closeLayout");
     }
 
+    Q_INVOKABLE void Controller::onImport() {
+        if (!confirm_action(this, tr("db_import_warning")))
+            return;
+
+        auto in_file = QFileDialog::getOpenFileName(
+            nullptr,
+            tr("open_dialog_title"),
+            "",
+            "Keysaver DataBase Binary (*.bin)"
+        );
+
+        if (!in_file.isEmpty()) {
+            char db_name[KEYSAVER_STRING_MAX_SIZE] = "";
+            KEYSAVER_CHECK_ERROR(keysaverGetDatabaseName(db_name));
+
+            std::filesystem::path src_path = in_file.toUtf8().constData();
+            auto db_path = get_config_path().concat(db_name);
+
+            if (!std::filesystem::remove(db_path))  {
+                QMessageBox::information(nullptr, 
+                    tr("error"),
+                    tr("import_error"));
+                return;
+            }
+
+            if (!std::filesystem::copy_file(src_path, db_path))  {
+                QMessageBox::information(nullptr, 
+                    tr("error"),
+                    tr("import_error"));
+                return;
+            }
+
+            QMessageBox::information(nullptr, 
+                tr("success"),
+                tr("file_imported"));
+            QApplication::exit(0);
+        }
+    }
+
     Q_INVOKABLE void Controller::onShare() const {
         if (!confirm_action(this, tr("db_share_warning")))
             return;

@@ -22,6 +22,10 @@ Rectangle {
         anchors.top: parent.top
         anchors.leftMargin: 16
         anchors.topMargin: 16
+
+        onButtonClick: function() {
+            Controller.onImport()
+        }
     }
 
     ImageButton {
