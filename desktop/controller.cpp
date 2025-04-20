@@ -7,6 +7,7 @@
 
 #include <QDebug>
 #include <QMessageBox>
+#include <QClipboard>
 
 #include <filesystem>
 
@@ -373,6 +374,10 @@ namespace KeysaverDesktop {
 
         auto root = m_app->m_qml_app_engine.rootObjects().first();
         QMetaObject::invokeMethod(root, "closeLayout");
+    }
+
+    Q_INVOKABLE void Controller::onCopyToClipboard(const QString& password) const {
+        QApplication::clipboard()->setText(password);
     }
 
     Q_INVOKABLE QString Controller::generatePassword(const QString& service_name, int hash_id) {

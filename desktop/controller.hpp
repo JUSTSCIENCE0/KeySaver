@@ -41,6 +41,7 @@ namespace KeysaverDesktop {
                                      const QString& spec_set,
                                      bool use_digits,
                                      int digits_count);
+        Q_INVOKABLE void onCopyToClipboard(const QString& password) const;
         Q_INVOKABLE QString generatePassword(const QString& service_name, int hash_id);
         Q_INVOKABLE QString getSetupService() const {
             assert(m_setup_service.length());

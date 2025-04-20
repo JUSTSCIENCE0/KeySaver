@@ -178,5 +178,18 @@ Rectangle {
         anchors.rightMargin: 16
         anchors.topMargin: 8
         anchors.bottomMargin: 16
+
+        onClicked: {
+            Controller.onCopyToClipboard(resultPassword.text)
+            text = qsTr("password_copied")
+            revertTimer.restart()
+        }
+
+        Timer {
+            id: revertTimer
+            interval: 2000
+            repeat: false
+            onTriggered: copyPassword.text = qsTr("copy_password")
+        }
     }
 }
