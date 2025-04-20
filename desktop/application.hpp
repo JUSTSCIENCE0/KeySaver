@@ -7,6 +7,8 @@
 
 #include <QtQuick>
 #include <QApplication>
+#include <QLocalServer>
+#include <QLocalSocket>
 
 namespace KeysaverDesktop {
     class Application final {
@@ -36,6 +38,7 @@ namespace KeysaverDesktop {
         QQmlApplicationEngine m_qml_app_engine;
 
         // methods
+        static bool IsAlreadyRunning();
         static std::string GetPrefferedLocale();
     };
 }

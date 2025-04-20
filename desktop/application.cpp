@@ -7,6 +7,8 @@
 #include "controller.hpp"
 
 namespace KeysaverDesktop {
+    static const QString QT_SERVER_NAME = "KeysaverDesktopQtInstance";
+
     Application::Application(int argc, char *argv[]) :
         m_gui_app(argc, argv) {}
 
@@ -21,12 +23,34 @@ namespace KeysaverDesktop {
         return DEFAULT_LOCALE;
     }
 
+    bool Application::IsAlreadyRunning() {
+        QLocalSocket socket;
+        socket.connectToServer(QT_SERVER_NAME);
+        if (socket.waitForConnected(100)) {
+            return true;
+        }
+    
+        QLocalServer::removeServer(QT_SERVER_NAME);
+        return false;
+    }
+
     int Application::Run(int argc, char *argv[]) {
         std::filesystem::path app_path{argv[0]};
         std::string app_dir = app_path.parent_path();
 
         try
         {
+            if (IsAlreadyRunning()) {
+                qDebug() << "Instance already exists";
+                return 0;
+            }
+
+            QLocalServer server;
+            if (!server.listen(QT_SERVER_NAME)) {
+                qDebug() << "Failed to create QLocalServer";
+                return 1;
+            }
+
             Application app(argc, argv);
 
             Controller controller(&app);
