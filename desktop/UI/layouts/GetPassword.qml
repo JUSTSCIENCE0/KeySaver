@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Dialogs
 import "qrc:/UI/components"
 
 Rectangle {
@@ -31,6 +32,10 @@ Rectangle {
         anchors.top: parent.top
         anchors.leftMargin: 8
         anchors.topMargin: 16
+
+        onButtonClick: function() {
+            Controller.onShare()
+        }
     }
 
     HelpButton {

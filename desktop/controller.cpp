@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QClipboard>
+#include <QFileDialog>
 
 #include <filesystem>
 
@@ -36,10 +37,14 @@ namespace KeysaverDesktop {
         return result;
     }
 
-    static inline bool confirm_action(const QObject* context) {
+    static inline bool confirm_action(const QObject* context,
+                                      QString msg = "") {
+        if (msg.isEmpty())
+            msg = context->tr("want_continue");
+
         QMessageBox msgBox;
         msgBox.setWindowTitle(context->tr("warning"));
-        msgBox.setText(context->tr("want_continue"));
+        msgBox.setText(msg);
         msgBox.addButton(context->tr("yes"), QMessageBox::YesRole);
         msgBox.addButton(context->tr("no"), QMessageBox::NoRole);
 
@@ -374,6 +379,49 @@ namespace KeysaverDesktop {
 
         auto root = m_app->m_qml_app_engine.rootObjects().first();
         QMetaObject::invokeMethod(root, "closeLayout");
+    }
+
+    Q_INVOKABLE void Controller::onShare() const {
+        if (!confirm_action(this, tr("db_share_warning")))
+            return;
+
+        auto out_file = QFileDialog::getSaveFileName(
+            nullptr,
+            tr("save_dialog_title"),
+            "",
+            "Keysaver DataBase Binary (*.bin)"
+        );
+
+        if (!out_file.isEmpty()) {
+            out_file += ".bin";
+
+            auto code = keysaverSyncDatabase();
+            if (is_keysaver_error(code)) {
+                ShowError(code);
+                return;
+            }
+
+            char db_name[KEYSAVER_STRING_MAX_SIZE] = "";
+            code = keysaverGetDatabaseName(db_name);
+            if (is_keysaver_error(code)) {
+                ShowError(code);
+                return;
+            }
+
+            auto db_path = get_config_path().concat(db_name);
+            std::filesystem::path dst_path = out_file.toUtf8().constData();
+
+            if (!std::filesystem::copy_file(db_path, dst_path)) {
+                QMessageBox::information(nullptr, 
+                    tr("error"),
+                    tr("save_file_error"));
+                return;
+            }
+            
+            QMessageBox::information(nullptr, 
+                tr("success"),
+                tr("file_saved") + out_file);
+        }
     }
 
     Q_INVOKABLE void Controller::onCopyToClipboard(const QString& password) const {
