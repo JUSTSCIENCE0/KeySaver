@@ -44,6 +44,7 @@ Rectangle {
 
     HelpButton {
         id: help
+        text: qsTr("get_password_help")
     }
 
     StyledLabel {

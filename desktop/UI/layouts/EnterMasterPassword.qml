@@ -10,6 +10,7 @@ Rectangle {
 
     HelpButton {
         id: help
+        text: qsTr("master_password_help")
     }
 
     StyledInput {

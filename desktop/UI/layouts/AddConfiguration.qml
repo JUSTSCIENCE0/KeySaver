@@ -11,6 +11,7 @@ Rectangle {
 
     HelpButton {
         id: help
+        text: qsTr("add_configuration_help")
     }
 
     StyledLabel {
