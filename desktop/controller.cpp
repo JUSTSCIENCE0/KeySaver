@@ -65,7 +65,7 @@ namespace KeysaverDesktop {
             QObject(parent),
             m_app(app_callback) {
         auto config_path = get_config_path();
-        auto result = keysaverInit(config_path.c_str());
+        auto result = keysaverInit(config_path.string().c_str());
         if (is_keysaver_error(result))
             throw result;
 

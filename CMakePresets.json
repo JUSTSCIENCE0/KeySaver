@@ -7,36 +7,65 @@
     },
     "configurePresets": [
         {
-            "name": "linux-debug",
-            "description": "Debug build using GCC and Unix Makefiles",
+            "name": "linux",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            },
             "generator": "Unix Makefiles",
-            "binaryDir": "${sourceDir}/build/debug",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_C_COMPILER": "/usr/bin/gcc",
                 "CMAKE_CXX_COMPILER": "/usr/bin/g++"
+            }
+        },
+        {
+            "name": "linux-debug",
+            "inherits": "linux",
+            "description": "Debug build using GCC and Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
             }
         },
         {
             "name": "linux-release",
+            "inherits": "linux",
             "description": "Release build using GCC and Unix Makefiles",
-            "generator": "Unix Makefiles",
             "binaryDir": "${sourceDir}/build/release",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_C_COMPILER": "/usr/bin/gcc",
-                "CMAKE_CXX_COMPILER": "/usr/bin/g++"
+                "CMAKE_BUILD_TYPE": "Release"
             }
-         }
+        },
+        {
+            "name": "windows-vs2022",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
+            "generator": "Visual Studio 17 2022",
+            "architecture": "x64",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_PREFIX_PATH": "$env{QT_INSTALL_PATH}\\msvc2022_64",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            }
+        }
     ],
     "buildPresets": [
         {
-            "name": "build-debug",
+            "name": "build-linux-debug",
             "configurePreset": "linux-debug"
         },
         {
-            "name": "build-release",
+            "name": "build-linux-release",
             "configurePreset": "linux-release"
+        },
+        {
+            "name": "windows-build",
+            "configurePreset": "windows-vs2022"
         }
     ]
 }

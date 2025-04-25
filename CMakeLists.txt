@@ -8,6 +8,7 @@ cmake_minimum_required(VERSION 3.22.1)
 project(keysaver)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 include(ProcessorCount)
 ProcessorCount(NUM_CORES)

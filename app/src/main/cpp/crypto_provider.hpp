@@ -11,6 +11,7 @@
 
 #include <array>
 #include <numeric>
+#include <limits>
 
 namespace Keysaver {
     constexpr int SALTS_COUNT = 9;

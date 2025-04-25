@@ -11,6 +11,8 @@
 #include  "interface_android.h"
 #elif defined(__linux__)
 #include "interface_linux.h"
+#elif defined(WIN32)
+#include "interface_windows.h"
 #endif
 
 #ifndef KEYSAVER_API

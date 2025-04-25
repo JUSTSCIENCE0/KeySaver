@@ -8,7 +8,15 @@
 #include "crypto_provider.hpp"
 
 #include "keysaver/interface.h"
+
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable : 4100 4267 4127)
+#endif
 #include "configuration.pb.h"
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif
 
 #include <array>
 #include <string>
@@ -21,7 +29,7 @@ namespace Keysaver {
     class DBManager final {
     public:
         // consts
-        static constexpr std::string DB_NAME = "/database.bin";
+        static const std::string DB_NAME;
 
         // types
         using ServicesNames = std::list<std::string>;
@@ -65,7 +73,7 @@ namespace Keysaver {
 
     private:
         // consts
-        static constexpr std::string DEFAULT_CONFIG_NAME = "Default";
+        static const std::string DEFAULT_CONFIG_NAME;
         static constexpr int         DEFAULT_CONFIG_INDEX = std::numeric_limits<int>::min();
         static constexpr int         INVALID_INDEX = -1;
 

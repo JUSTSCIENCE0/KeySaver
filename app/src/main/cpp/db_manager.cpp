@@ -16,6 +16,9 @@ namespace Keysaver {
         return true;
     }
 
+    const std::string DBManager::DB_NAME = "/database.bin";
+    const std::string DBManager::DEFAULT_CONFIG_NAME = "Default";
+
     DBManager::DBManager(const std::string& pathToDB) :
         m_db_path(pathToDB + DB_NAME) {
         assert(!pathToDB.empty());

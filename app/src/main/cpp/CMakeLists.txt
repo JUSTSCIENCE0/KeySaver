@@ -43,6 +43,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     set(OPENSSL_ENVIRONMENT
             ANDROID_NDK_ROOT=${ANDROID_NDK}
             PATH=${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin:$ENV{PATH})
+    set(OPENSSL_CONFIGURE ./Configure)
+    set(OPENSSL_BUILDER make)
+    set(OPENSSL_LIBSSL_NAME libssl.a)
+    set(OPENSSL_LIBCRYPTO_NAME libcrypto.a)
     set(PROTOBUF_USE_HOST_PROTOC TRUE)
     set(IMPLEMENTATION
         interface_android.cpp
@@ -58,12 +62,33 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         message(FATAL_ERROR "Unsupported CPU Architecture - ${CMAKE_SYSTEM_PROCESSOR}")
     endif()
 
+    set(OPENSSL_CONFIGURE ./Configure)
+    set(OPENSSL_BUILDER make)
+    set(OPENSSL_LIBSSL_NAME libssl.a)
+    set(OPENSSL_LIBCRYPTO_NAME libcrypto.a)
     set(IMPLEMENTATION
         interface_common.cpp
         ${IMPLEMENTATION}
     )
     set(INTERFACE
         include/keysaver/interface_linux.h
+        ${INTERFACE}
+    )
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    if (NOT CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" AND NOT CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64")
+        message(FATAL_ERROR "Unsupported CPU Architecture - ${CMAKE_SYSTEM_PROCESSOR}")
+    endif()
+
+    set(OPENSSL_CONFIGURE perl Configure)
+    set(OPENSSL_BUILDER nmake)
+    set(OPENSSL_LIBSSL_NAME libssl.lib)
+    set(OPENSSL_LIBCRYPTO_NAME libcrypto.lib)
+    set(IMPLEMENTATION
+        interface_common.cpp
+        ${IMPLEMENTATION}
+    )
+    set(INTERFACE
+        include/keysaver/interface_windows.h
         ${INTERFACE}
     )
 else()
@@ -85,25 +110,29 @@ ExternalProject_Add(
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
     CONFIGURE_COMMAND
         ${OPENSSL_ENVIRONMENT}
-        ./Configure ${OPENSSL_PLATFORM_PARAMS} no-apps no-docs no-shared no-tests
+        ${OPENSSL_CONFIGURE} ${OPENSSL_PLATFORM_PARAMS} no-apps no-docs no-shared no-tests
             --prefix=${OPENSSL_INSTALL_DIR} --openssldir=${OPENSSL_INSTALL_DIR}/ssl --libdir=lib
-    BUILD_COMMAND ${OPENSSL_ENVIRONMENT} make -j${CMAKE_BUILD_PARALLEL_LEVEL}
-    INSTALL_COMMAND ${OPENSSL_ENVIRONMENT} make install_sw
+    BUILD_COMMAND ${OPENSSL_ENVIRONMENT} ${OPENSSL_BUILDER}
+    INSTALL_COMMAND ${OPENSSL_ENVIRONMENT} ${OPENSSL_BUILDER} install_sw
     BUILD_BYPRODUCTS
-        ${OPENSSL_INSTALL_DIR}/lib/libssl.a
-        ${OPENSSL_INSTALL_DIR}/lib/libcrypto.a
+        ${OPENSSL_INSTALL_DIR}/lib/${OPENSSL_LIBSSL_NAME}
+        ${OPENSSL_INSTALL_DIR}/lib/${OPENSSL_LIBCRYPTO_NAME}
 )
 file(MAKE_DIRECTORY ${OPENSSL_INSTALL_DIR}/include)
 add_library(OpenSSL::SSL STATIC IMPORTED)
 add_dependencies(OpenSSL::SSL OpenSSL)
 set_target_properties(OpenSSL::SSL PROPERTIES
-        IMPORTED_LOCATION ${OPENSSL_INSTALL_DIR}/lib/libssl.a
+        IMPORTED_LOCATION ${OPENSSL_INSTALL_DIR}/lib/${OPENSSL_LIBSSL_NAME}
         INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INSTALL_DIR}/include)
 add_library(OpenSSL::Crypto STATIC IMPORTED)
 add_dependencies(OpenSSL::Crypto OpenSSL)
 set_target_properties(OpenSSL::Crypto PROPERTIES
-        IMPORTED_LOCATION ${OPENSSL_INSTALL_DIR}/lib/libcrypto.a
+        IMPORTED_LOCATION ${OPENSSL_INSTALL_DIR}/lib/${OPENSSL_LIBCRYPTO_NAME}
         INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INSTALL_DIR}/include)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 # protobuf
 FetchContent_Declare(
@@ -118,13 +147,13 @@ set(protobuf_DISABLE_RTTI ON)
 if (PROTOBUF_USE_HOST_PROTOC)
     set(protobuf_BUILD_PROTOC_BINARIES OFF)
 endif(PROTOBUF_USE_HOST_PROTOC)
+if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    set(protobuf_MSVC_STATIC_RUNTIME OFF)
+endif() # MSVC
+
 FetchContent_MakeAvailable(protobuf)
 
 # keysaver core
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-
 add_library(keysaver-core SHARED)
 
 #  generate protobuf sources
@@ -176,9 +205,14 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_compile_options(keysaver-core PRIVATE
         # warnings options
         /W4 /WX
-        /DUNICODE /D_UNICODE  # use unicode
-        /MP                   # multiple processes build
+        # disable protobuf warnings
+        /wd4100 /wd4267 /wd4127
+        /wd4189
+        /DUNICODE /D_UNICODE    # use unicode
+        /MP                     # multiple processes build
     )
+    target_compile_definitions(keysaver-core PRIVATE
+        _CRT_SECURE_NO_WARNINGS)
 elseif ((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
     target_compile_options(keysaver-core PRIVATE
         # warnings options
@@ -217,3 +251,11 @@ target_link_libraries(keysaver-core
         OpenSSL::SSL
         OpenSSL::Crypto
 )
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    target_link_libraries(keysaver-core
+    PRIVATE
+        Ws2_32.lib
+        Crypt32.lib
+)
+endif() # MSVC

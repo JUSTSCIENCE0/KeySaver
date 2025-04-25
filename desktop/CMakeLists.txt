@@ -23,7 +23,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 COMPONENTS Quick Widgets LinguistTools REQUIRED)
+find_package(Qt6 COMPONENTS Quick Widgets LinguistTools QuickControls2 REQUIRED)
 
 add_executable(keysaver-desktop)
 
@@ -98,3 +98,10 @@ target_link_libraries(keysaver-desktop
         Qt6::Quick
         Qt6::Widgets
 )
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+target_link_libraries(keysaver-desktop
+    PRIVATE
+        Qt6::QuickControls2
+)
+endif() #MSVC

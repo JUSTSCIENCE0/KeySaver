@@ -268,7 +268,7 @@ KEYSAVER_API(keysaverGetAlphabetsList, keysaverAlphabetList alphabetsList) {
 }
 
 KEYSAVER_API(keysaverGetDatabaseName, keysaverStringRef fileName) {
-    static_assert(Keysaver::DBManager::DB_NAME.size() <= KEYSAVER_STRING_MAX_SIZE);
+    assert(Keysaver::DBManager::DB_NAME.size() <= KEYSAVER_STRING_MAX_SIZE);
 
     if (!fileName)
         return KeysaverStatus::E_INVALID_ARG;

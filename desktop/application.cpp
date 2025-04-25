@@ -6,6 +6,8 @@
 #include "application.hpp"
 #include "controller.hpp"
 
+#include <QQuickStyle>
+
 namespace KeysaverDesktop {
     static const QString QT_SERVER_NAME = "KeysaverDesktopQtInstance";
 
@@ -36,7 +38,7 @@ namespace KeysaverDesktop {
 
     int Application::Run(int argc, char *argv[]) {
         std::filesystem::path app_path{argv[0]};
-        std::string app_dir = app_path.parent_path();
+        std::string app_dir = app_path.parent_path().string();
 
         try
         {
@@ -51,6 +53,7 @@ namespace KeysaverDesktop {
                 return 1;
             }
 
+            QQuickStyle::setStyle("Basic");
             Application app(argc, argv);
 
             Controller controller(&app);
