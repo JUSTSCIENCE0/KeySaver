@@ -38,7 +38,6 @@ namespace KeysaverDesktop {
 
     int Application::Run(int argc, char *argv[]) {
         std::filesystem::path app_path{argv[0]};
-        std::string app_dir = app_path.parent_path().string();
 
         try
         {
@@ -59,9 +58,11 @@ namespace KeysaverDesktop {
             Controller controller(&app);
             app.m_qml_app_engine.rootContext()->setContextProperty("Controller", &controller);
 
-            std::string locale_file = app_dir + "/" + GetPrefferedLocale() + ".qm";
+            auto locale_file = QCoreApplication::applicationDirPath();
+            locale_file.append("/");
+            locale_file.append(GetPrefferedLocale() + ".qm");
             QTranslator translator;
-            if (!translator.load(locale_file.c_str())) {
+            if (!translator.load(locale_file)) {
                 qDebug() << "Can't load translation file";
             }
             app.m_gui_app.installTranslator(&translator);
