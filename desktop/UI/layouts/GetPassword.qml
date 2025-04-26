@@ -11,7 +11,7 @@ Rectangle {
 
     StackView.onActivated: {
         selectedService.currentIndex = 0;
-        selectedService.onCurrentIndexChanged()
+        Controller.onSelectedServiceChanged(model[0])
     }
 
     ImageButton {

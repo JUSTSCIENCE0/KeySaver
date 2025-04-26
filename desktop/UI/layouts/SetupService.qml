@@ -13,7 +13,7 @@ Rectangle {
         serviceName.text = Controller.getSetupService()
 
         selectedConfiguration.currentIndex = 0;
-        selectedConfiguration.onCurrentIndexChanged()
+        Controller.onSelectedConfigChanged(model[0])
     }
 
     HelpButton {

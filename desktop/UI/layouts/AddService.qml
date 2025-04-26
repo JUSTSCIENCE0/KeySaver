@@ -11,7 +11,7 @@ Rectangle {
 
     StackView.onActivated: {
         selectedConfiguration.currentIndex = 0;
-        selectedConfiguration.onCurrentIndexChanged()
+        Controller.onSelectedConfigChanged(model[0])
     }
 
     HelpButton {
