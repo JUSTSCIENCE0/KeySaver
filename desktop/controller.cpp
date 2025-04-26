@@ -15,6 +15,9 @@
 #ifdef __linux__
 #include  <unistd.h>
 #include  <pwd.h>
+#elif WIN32
+#include <windows.h>
+#include <shlobj.h>
 #endif
 
 // error helper
@@ -34,13 +37,20 @@ namespace KeysaverDesktop {
         struct passwd* pwd = getpwuid(getuid());
         if (pwd && pwd->pw_dir) {
             result = std::filesystem::path(pwd->pw_dir);
+            result.append(".config/keysaver");
+        }
+#elif WIN32
+        char path[MAX_PATH];
+        if (SUCCEEDED(SHGetFolderPathA(nullptr, CSIDL_APPDATA, nullptr, 0, path))) {
+            result = std::filesystem::path(path);
+            result.append("keysaver");
         }
 #endif
         if (result.empty()) {
             result = std::filesystem::current_path();
+            result.append(".config/keysaver");
         }
 
-        result.append(".config/keysaver");
         if (!std::filesystem::exists(result))
             std::filesystem::create_directories(result);
 
