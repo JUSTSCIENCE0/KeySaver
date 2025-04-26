@@ -97,11 +97,5 @@ target_link_libraries(keysaver-desktop
         keysaver-core
         Qt6::Quick
         Qt6::Widgets
-)
-
-if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-target_link_libraries(keysaver-desktop
-    PRIVATE
         Qt6::QuickControls2
 )
-endif() #MSVC
