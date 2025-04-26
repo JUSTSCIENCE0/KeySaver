@@ -57,6 +57,13 @@ target_sources(keysaver-desktop
         ${IMPLEMENTATION}
 )
 
+# logo
+if(WIN32)
+    target_sources(keysaver-desktop
+        PRIVATE
+            UI/app_icon.rc)
+endif()
+
 # qt resources
 qt_add_resources(keysaver-desktop "qml_resources"
     PREFIX "/"
