@@ -138,10 +138,10 @@ namespace KeysaverDesktop {
         QMessageBox msgBox;
         msgBox.setWindowTitle(tr("warning"));
         msgBox.setText(msg);
-        msgBox.addButton(tr("yes"), QMessageBox::YesRole);
-        msgBox.addButton(tr("no"), QMessageBox::NoRole);
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msgBox.setDefaultButton(QMessageBox::No);
 
-        return 0 == msgBox.exec();
+        return msgBox.exec() == QMessageBox::Yes;
     }
 
     bool Controller::ValidateMasterPassword(const QString& password) {
