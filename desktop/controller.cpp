@@ -415,6 +415,7 @@ namespace KeysaverDesktop {
         if (!in_file.isEmpty()) {
             char db_name[KEYSAVER_STRING_MAX_SIZE] = "";
             KEYSAVER_CHECK_ERROR(keysaverGetDatabaseName(db_name));
+            KEYSAVER_CHECK_ERROR(keysaverClose());
 
             std::filesystem::path src_path = in_file.toUtf8().constData();
             auto db_path = get_config_path().concat(db_name);
