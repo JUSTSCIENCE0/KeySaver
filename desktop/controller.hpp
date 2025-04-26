@@ -66,6 +66,7 @@ namespace KeysaverDesktop {
 
         // methods
         static void ShowError(KeysaverStatus code);
+        static bool ConfirmAction(QString msg = "");
         bool ValidateMasterPassword(const QString& password);
         void LoadPasswordGenerator();
     };

@@ -57,20 +57,6 @@ namespace KeysaverDesktop {
         return result;
     }
 
-    static inline bool confirm_action(const QObject* context,
-                                      QString msg = "") {
-        if (msg.isEmpty())
-            msg = context->tr("want_continue");
-
-        QMessageBox msgBox;
-        msgBox.setWindowTitle(context->tr("warning"));
-        msgBox.setText(msg);
-        msgBox.addButton(context->tr("yes"), QMessageBox::YesRole);
-        msgBox.addButton(context->tr("no"), QMessageBox::NoRole);
-
-        return 0 == msgBox.exec();
-    }
-
     Controller::Controller(Application* app_callback, QObject* parent) :
             QObject(parent),
             m_app(app_callback) {
@@ -143,6 +129,19 @@ namespace KeysaverDesktop {
                 tr("internal_error") + std::to_string(int(code)).c_str());
             break;
         }
+    }
+
+    bool Controller::ConfirmAction(QString msg) {
+        if (msg.isEmpty())
+            msg = tr("want_continue");
+
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(tr("warning"));
+        msgBox.setText(msg);
+        msgBox.addButton(tr("yes"), QMessageBox::YesRole);
+        msgBox.addButton(tr("no"), QMessageBox::NoRole);
+
+        return 0 == msgBox.exec();
     }
 
     bool Controller::ValidateMasterPassword(const QString& password) {
@@ -293,7 +292,7 @@ namespace KeysaverDesktop {
     Q_INVOKABLE void Controller::onDeleteService() {
         assert(m_setup_service.length());
 
-        if (!confirm_action(this))
+        if (!ConfirmAction())
             return;
 
         KEYSAVER_CHECK_ERROR(keysaverDeleteService(m_setup_service.c_str()));
@@ -330,7 +329,7 @@ namespace KeysaverDesktop {
             .conf_id = config_bytes.constData()
         };
 
-        if (!confirm_action(this))
+        if (!ConfirmAction())
             return;
 
         KEYSAVER_CHECK_ERROR(keysaverEditService(m_setup_service.c_str(), edit_service));
@@ -402,7 +401,7 @@ namespace KeysaverDesktop {
     }
 
     Q_INVOKABLE void Controller::onImport() {
-        if (!confirm_action(this, tr("db_import_warning")))
+        if (!ConfirmAction(tr("db_import_warning")))
             return;
 
         auto in_file = QFileDialog::getOpenFileName(
@@ -442,7 +441,7 @@ namespace KeysaverDesktop {
     }
 
     Q_INVOKABLE void Controller::onShare() const {
-        if (!confirm_action(this, tr("db_share_warning")))
+        if (!ConfirmAction(tr("db_share_warning")))
             return;
 
         auto out_file = QFileDialog::getSaveFileName(

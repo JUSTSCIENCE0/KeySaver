@@ -186,24 +186,20 @@ Click on the image to generate the password.</translation>
 <context>
     <name>KeysaverDesktop</name>
     <message>
-        <location filename="../../controller.cpp" line="53"/>
         <source>want_continue</source>
-        <translation>Are you sure you want to continue?</translation>
+        <translation type="vanished">Are you sure you want to continue?</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="56"/>
         <source>warning</source>
-        <translation>Warning!</translation>
+        <translation type="vanished">Warning!</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="58"/>
         <source>yes</source>
-        <translation>Yes</translation>
+        <translation type="vanished">Yes</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="59"/>
         <source>no</source>
-        <translation>No</translation>
+        <translation type="vanished">No</translation>
     </message>
 </context>
 <context>
@@ -213,194 +209,214 @@ Click on the image to generate the password.</translation>
         <translation type="vanished">Error!</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="165"/>
+        <location filename="../../controller.cpp" line="174"/>
         <source>master_password_uppercase_letter</source>
         <translation>The master password must contain at least one uppercase letter</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="170"/>
+        <location filename="../../controller.cpp" line="179"/>
         <source>master_password_lowercase_letter</source>
         <translation>The master password must contain at least one lowercase letter</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="175"/>
+        <location filename="../../controller.cpp" line="184"/>
         <source>master_password_special_char</source>
         <translation>The master password must contain at least one special character</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="180"/>
+        <location filename="../../controller.cpp" line="189"/>
         <source>master_password_digit</source>
         <translation>The master password must contain at least one digit</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="87"/>
-        <location filename="../../controller.cpp" line="92"/>
-        <location filename="../../controller.cpp" line="97"/>
-        <location filename="../../controller.cpp" line="102"/>
-        <location filename="../../controller.cpp" line="107"/>
-        <location filename="../../controller.cpp" line="112"/>
-        <location filename="../../controller.cpp" line="117"/>
-        <location filename="../../controller.cpp" line="122"/>
-        <location filename="../../controller.cpp" line="127"/>
-        <location filename="../../controller.cpp" line="132"/>
-        <location filename="../../controller.cpp" line="164"/>
-        <location filename="../../controller.cpp" line="169"/>
-        <location filename="../../controller.cpp" line="174"/>
-        <location filename="../../controller.cpp" line="179"/>
-        <location filename="../../controller.cpp" line="222"/>
-        <location filename="../../controller.cpp" line="240"/>
-        <location filename="../../controller.cpp" line="289"/>
-        <location filename="../../controller.cpp" line="338"/>
-        <location filename="../../controller.cpp" line="345"/>
-        <location filename="../../controller.cpp" line="394"/>
-        <location filename="../../controller.cpp" line="401"/>
-        <location filename="../../controller.cpp" line="437"/>
-        <location filename="../../controller.cpp" line="455"/>
-        <location filename="../../controller.cpp" line="457"/>
-        <location filename="../../controller.cpp" line="463"/>
+        <location filename="../../controller.cpp" line="83"/>
+        <location filename="../../controller.cpp" line="88"/>
+        <location filename="../../controller.cpp" line="93"/>
+        <location filename="../../controller.cpp" line="98"/>
+        <location filename="../../controller.cpp" line="103"/>
+        <location filename="../../controller.cpp" line="108"/>
+        <location filename="../../controller.cpp" line="113"/>
+        <location filename="../../controller.cpp" line="118"/>
+        <location filename="../../controller.cpp" line="123"/>
+        <location filename="../../controller.cpp" line="128"/>
+        <location filename="../../controller.cpp" line="173"/>
+        <location filename="../../controller.cpp" line="178"/>
+        <location filename="../../controller.cpp" line="183"/>
+        <location filename="../../controller.cpp" line="188"/>
+        <location filename="../../controller.cpp" line="251"/>
+        <location filename="../../controller.cpp" line="269"/>
+        <location filename="../../controller.cpp" line="318"/>
+        <location filename="../../controller.cpp" line="367"/>
+        <location filename="../../controller.cpp" line="374"/>
+        <location filename="../../controller.cpp" line="424"/>
+        <location filename="../../controller.cpp" line="431"/>
+        <location filename="../../controller.cpp" line="467"/>
+        <location filename="../../controller.cpp" line="485"/>
+        <location filename="../../controller.cpp" line="487"/>
+        <location filename="../../controller.cpp" line="493"/>
         <source>error</source>
         <translation>Error!</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="88"/>
+        <location filename="../../controller.cpp" line="84"/>
         <source>invalid_master_password</source>
         <translation>The master password does not match the one entered initially</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="93"/>
+        <location filename="../../controller.cpp" line="89"/>
         <source>short_master_password</source>
         <translation>The master password is too short</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="98"/>
+        <location filename="../../controller.cpp" line="94"/>
         <source>service_already_exists</source>
         <translation>A service with this name has already been saved earlier</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="103"/>
+        <location filename="../../controller.cpp" line="99"/>
         <source>service_url_already_exists</source>
         <translation>A service with this URL has already been saved earlier</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="108"/>
+        <location filename="../../controller.cpp" line="104"/>
         <source>config_already_exists</source>
         <translation>A configuration with this name already exists</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="113"/>
+        <location filename="../../controller.cpp" line="109"/>
         <source>invalid_password_length</source>
         <translation>Invalid password length</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="118"/>
+        <location filename="../../controller.cpp" line="114"/>
         <source>invalid_special_chars_count</source>
         <translation>Incorrect number of special characters</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="123"/>
+        <location filename="../../controller.cpp" line="119"/>
         <source>invalid_digits_amount</source>
         <translation>Incorrect number of digits</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="128"/>
-        <location filename="../../controller.cpp" line="346"/>
+        <location filename="../../controller.cpp" line="124"/>
+        <location filename="../../controller.cpp" line="375"/>
         <source>without_any_case</source>
         <translation>Either uppercase or lowercase must be selected</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="133"/>
+        <location filename="../../controller.cpp" line="129"/>
         <source>internal_error</source>
         <translation>Internal error, code: </translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="200"/>
+        <location filename="../../controller.cpp" line="136"/>
+        <source>want_continue</source>
+        <translation>Are you sure you want to continue?</translation>
+    </message>
+    <message>
+        <location filename="../../controller.cpp" line="139"/>
+        <source>warning</source>
+        <translation>Warning!</translation>
+    </message>
+    <message>
+        <location filename="../../controller.cpp" line="141"/>
+        <source>yes</source>
+        <translation>Yes</translation>
+    </message>
+    <message>
+        <location filename="../../controller.cpp" line="142"/>
+        <source>no</source>
+        <translation>No</translation>
+    </message>
+    <message>
+        <location filename="../../controller.cpp" line="229"/>
         <source>welcome</source>
         <translation>Welcome!</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="201"/>
+        <location filename="../../controller.cpp" line="230"/>
         <source>welcome_message</source>
         <translation>It looks like you are using Keysaver for the first time. To get started, enter a new master password. It will be used to generate all new passwords and encrypt the database. The minimum length of the master password is 8 characters. It must contain both lowercase and uppercase letters, at least one digit, and at least one special character. The master password cannot be recovered, so make sure to remember it well!</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="206"/>
-        <location filename="../../controller.cpp" line="213"/>
-        <location filename="../../controller.cpp" line="476"/>
-        <location filename="../../controller.cpp" line="479"/>
-        <location filename="../../controller.cpp" line="488"/>
-        <location filename="../../controller.cpp" line="494"/>
-        <location filename="../../controller.cpp" line="502"/>
-        <location filename="../../controller.cpp" line="505"/>
-        <location filename="../../controller.cpp" line="514"/>
-        <location filename="../../controller.cpp" line="520"/>
+        <location filename="../../controller.cpp" line="235"/>
+        <location filename="../../controller.cpp" line="242"/>
+        <location filename="../../controller.cpp" line="506"/>
+        <location filename="../../controller.cpp" line="509"/>
+        <location filename="../../controller.cpp" line="518"/>
+        <location filename="../../controller.cpp" line="524"/>
+        <location filename="../../controller.cpp" line="532"/>
+        <location filename="../../controller.cpp" line="535"/>
+        <location filename="../../controller.cpp" line="544"/>
+        <location filename="../../controller.cpp" line="550"/>
         <source>add_smth</source>
         <translation>Add new…</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="223"/>
-        <location filename="../../controller.cpp" line="241"/>
-        <location filename="../../controller.cpp" line="290"/>
-        <location filename="../../controller.cpp" line="339"/>
-        <location filename="../../controller.cpp" line="456"/>
+        <location filename="../../controller.cpp" line="252"/>
+        <location filename="../../controller.cpp" line="270"/>
+        <location filename="../../controller.cpp" line="319"/>
+        <location filename="../../controller.cpp" line="368"/>
+        <location filename="../../controller.cpp" line="486"/>
         <source>required_field_empty</source>
         <translation>One of the required fields is empty</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="272"/>
-        <location filename="../../controller.cpp" line="309"/>
-        <location filename="../../controller.cpp" line="407"/>
-        <location filename="../../controller.cpp" line="443"/>
+        <location filename="../../controller.cpp" line="301"/>
+        <location filename="../../controller.cpp" line="338"/>
+        <location filename="../../controller.cpp" line="437"/>
+        <location filename="../../controller.cpp" line="473"/>
         <source>success</source>
         <translation>Success!</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="273"/>
+        <location filename="../../controller.cpp" line="302"/>
         <source>service_deleted_successfull</source>
         <translation>The service has been successfully deleted</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="310"/>
+        <location filename="../../controller.cpp" line="339"/>
         <source>service_updated_successfull</source>
         <translation>The service has been successfully updated</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="375"/>
+        <location filename="../../controller.cpp" line="404"/>
         <source>db_import_warning</source>
         <translation>The current database will be erased. After the import, the application will be closed. Do you want to continue?</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="380"/>
+        <location filename="../../controller.cpp" line="409"/>
         <source>open_dialog_title</source>
         <translation>Select Keysaver DataBase Binary</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="395"/>
-        <location filename="../../controller.cpp" line="402"/>
+        <location filename="../../controller.cpp" line="425"/>
+        <location filename="../../controller.cpp" line="432"/>
         <source>import_error</source>
         <translation>Failed to import the database</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="408"/>
+        <location filename="../../controller.cpp" line="438"/>
         <source>file_imported</source>
         <translation>The database has been successfully imported. The application will be closed.</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="414"/>
+        <location filename="../../controller.cpp" line="444"/>
         <source>db_share_warning</source>
         <translation>An encrypted copy of the current database will be saved. You assume the risks of a potential leak of this file. Do you want to continue?</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="419"/>
+        <location filename="../../controller.cpp" line="449"/>
         <source>save_dialog_title</source>
         <translation>Select Keysaver DataBase Binary</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="438"/>
+        <location filename="../../controller.cpp" line="468"/>
         <source>save_file_error</source>
         <translation>Failed to save the database</translation>
     </message>
     <message>
-        <location filename="../../controller.cpp" line="444"/>
+        <location filename="../../controller.cpp" line="474"/>
         <source>file_saved</source>
         <translation>The database has been successfully saved</translation>
     </message>
