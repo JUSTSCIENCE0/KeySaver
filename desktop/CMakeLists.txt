@@ -35,6 +35,9 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
         /DUNICODE /D_UNICODE  # use unicode
         /MP                   # multiple processes build
     )
+
+    set_target_properties(keysaver-desktop PROPERTIES
+        WIN32_EXECUTABLE $<STREQUAL:$<CONFIG>,Release>)
 elseif ((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
     target_compile_options(keysaver-desktop PRIVATE
         # warnings options
