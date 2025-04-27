@@ -60,7 +60,7 @@ namespace KeysaverDesktop {
 
             auto locale_file = QCoreApplication::applicationDirPath();
             locale_file.append("/");
-            locale_file.append(GetPrefferedLocale() + ".qm");
+            locale_file.append((GetPrefferedLocale() + ".qm").c_str());
             QTranslator translator;
             if (!translator.load(locale_file)) {
                 qDebug() << "Can't load translation file";
