@@ -206,9 +206,8 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
         # warnings options
         /W4 /WX
         # disable protobuf warnings
-        /wd4100 /wd4267 /wd4127
-        /wd4189
-        /DUNICODE /D_UNICODE    # use unicode
+        /wd4100 /wd4267 /wd4127 /wd4189
+        /DUNICODE /D_UNICODE /utf-8 # letters encoding
         /MP                     # multiple processes build
     )
     target_compile_definitions(keysaver-core PRIVATE

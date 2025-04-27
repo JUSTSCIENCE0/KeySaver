@@ -32,12 +32,14 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_compile_options(keysaver-desktop PRIVATE
         # warnings options
         /W4 /WX
-        /DUNICODE /D_UNICODE  # use unicode
+        /DUNICODE /D_UNICODE /utf-8 # letters encoding
         /MP                   # multiple processes build
     )
 
     set_target_properties(keysaver-desktop PROPERTIES
         WIN32_EXECUTABLE $<STREQUAL:$<CONFIG>,Release>)
+
+    target_link_options(keysaver-desktop PRIVATE /MANIFEST:NO)
 elseif ((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
     target_compile_options(keysaver-desktop PRIVATE
         # warnings options
