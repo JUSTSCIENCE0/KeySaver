@@ -17,11 +17,17 @@ KeysaverConfig::Service ConvertService(const KeysaverService& service) {
 }
 
 KeysaverService ConvertService(const KeysaverConfig::Service& service) {
-    return {
-        .url = service.url().c_str(),
-        .name = service.name().c_str(),
-        .conf_id = service.conf_id().c_str()
-    };
+    KeysaverService result{};
+
+    assert(service.url().length() < KEYSAVER_STRING_MAX_SIZE);
+    assert(service.name().length() < KEYSAVER_STRING_MAX_SIZE);
+    assert(service.conf_id().length() < KEYSAVER_STRING_MAX_SIZE);
+
+    std::strcpy(result.url, service.url().c_str());
+    std::strcpy(result.name, service.name().c_str());
+    std::strcpy(result.conf_id, service.conf_id().c_str());
+
+    return result;
 }
 
 KeysaverConfig::Configuration ConvertConfiguration(

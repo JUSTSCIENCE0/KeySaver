@@ -8,6 +8,7 @@
 #define KEYSAVER_API(func_name, ...) \
     extern "C" KeysaverStatus func_name(__VA_ARGS__)
 
+#define keysaverChar         char
 #define keysaverString       const char*
 #define keysaverStringRef    char*
 #define keysaverService      KeysaverService

@@ -49,6 +49,7 @@ namespace KeysaverDesktop {
             assert(m_setup_service.length());
             return QString::fromUtf8(m_setup_service.c_str());
         }
+        Q_INVOKABLE int getSetupServiceConfig() const;
 
         // QT properties
         QStringList servicesList() const;

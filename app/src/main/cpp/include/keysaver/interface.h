@@ -57,9 +57,9 @@ enum KeysaverStatus {
 };
 
 struct KeysaverService {
-    keysaverString url     = NULL;
-    keysaverString name    = NULL;
-    keysaverString conf_id = NULL;
+    keysaverChar url[KEYSAVER_STRING_MAX_SIZE];
+    keysaverChar name[KEYSAVER_STRING_MAX_SIZE];
+    keysaverChar conf_id[KEYSAVER_STRING_MAX_SIZE];
 };
 
 struct KeysaverConfiguration {

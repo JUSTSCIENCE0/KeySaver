@@ -3,6 +3,10 @@
 //
 // License: MIT
 
+#ifdef WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "controller.hpp"
 
 #include <QDebug>
@@ -275,11 +279,10 @@ namespace KeysaverDesktop {
         auto service_name_bytes = service_name.toUtf8();
         auto config_bytes = config.toUtf8();
 
-        KeysaverService new_service = {
-            .url = service_url_bytes.constData(),
-            .name = service_name_bytes.constData(),
-            .conf_id = config_bytes.constData()
-        };
+        KeysaverService new_service{};
+        std::strcpy(new_service.url, service_url_bytes.constData());
+        std::strcpy(new_service.name, service_name_bytes.constData());
+        std::strcpy(new_service.conf_id, config_bytes.constData());
 
         KEYSAVER_CHECK_ERROR(keysaverAddService(new_service));
 
@@ -323,11 +326,10 @@ namespace KeysaverDesktop {
         auto service_name_bytes = service_name.toUtf8();
         auto config_bytes = config.toUtf8();
 
-        KeysaverService edit_service = {
-            .url = "stub",
-            .name = service_name_bytes.constData(),
-            .conf_id = config_bytes.constData()
-        };
+        KeysaverService edit_service{};
+        std::strcpy(edit_service.url, "stub");
+        std::strcpy(edit_service.name, service_name_bytes.constData());
+        std::strcpy(edit_service.conf_id, config_bytes.constData());
 
         if (!ConfirmAction())
             return;
@@ -493,6 +495,37 @@ namespace KeysaverDesktop {
             tr("error"));
 
         return QString::fromUtf8(result);
+    }
+
+    Q_INVOKABLE int Controller::getSetupServiceConfig() const {
+        assert(m_setup_service.length());
+
+        KeysaverService service{};
+        KEYSAVER_CHECK_ERROR(keysaverGetService(m_setup_service.c_str(), &service), 0);
+
+        int serviceCount = 0;
+        KEYSAVER_CHECK_ERROR(keysaverGetServicesCount(&serviceCount), 0 );
+
+        if (!serviceCount) {
+            return 0;
+        }
+
+        std::vector<char> cStrBuffer(KEYSAVER_STRING_MAX_SIZE * serviceCount);
+        std::vector<char*> serviceNamePtrs(serviceCount);
+        for (int i = 0; i < serviceCount; ++i) {
+            serviceNamePtrs[i] = cStrBuffer.data() + (i * KEYSAVER_STRING_MAX_SIZE);
+        }
+        KEYSAVER_CHECK_ERROR(keysaverGetServicesList(serviceNamePtrs.data()), 0);
+
+        int index = 0;
+        for (auto config_name : serviceNamePtrs) {
+            if (!std::strcmp(config_name, service.conf_id))
+                return index;
+
+            index++;
+        }
+
+        return 0;
     }
 
     void Controller::LoadPasswordGenerator() {

@@ -12,6 +12,7 @@
         [[maybe_unused]] JNIEnv* j_env, [[maybe_unused]] jobject j_this \
         __VA_OPT__(,) __VA_ARGS__)
 
+#define keysaverChar         jchar
 #define keysaverString       jstring
 #define keysaverStringRef    jobject
 #define keysaverService      jobject

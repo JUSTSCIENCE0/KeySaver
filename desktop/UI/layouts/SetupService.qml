@@ -12,8 +12,8 @@ Rectangle {
     StackView.onActivated: {
         serviceName.text = Controller.getSetupService()
 
-        selectedConfiguration.currentIndex = 0;
-        Controller.onSelectedConfigChanged(model[0])
+        selectedConfiguration.currentIndex = Controller.getSetupServiceConfig();
+        Controller.onSelectedConfigChanged(model[selectedConfiguration.currentIndex])
     }
 
     HelpButton {
