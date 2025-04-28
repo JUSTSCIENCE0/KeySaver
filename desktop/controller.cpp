@@ -503,22 +503,21 @@ namespace KeysaverDesktop {
         KeysaverService service{};
         KEYSAVER_CHECK_ERROR(keysaverGetService(m_setup_service.c_str(), &service), 0);
 
-        int serviceCount = 0;
-        KEYSAVER_CHECK_ERROR(keysaverGetServicesCount(&serviceCount), 0 );
-
-        if (!serviceCount) {
+        int confCount = 0;
+        KEYSAVER_CHECK_ERROR(keysaverGetConfigurationsCount(&confCount), 0 );
+        if (!confCount) {
             return 0;
         }
 
-        std::vector<char> cStrBuffer(KEYSAVER_STRING_MAX_SIZE * serviceCount);
-        std::vector<char*> serviceNamePtrs(serviceCount);
-        for (int i = 0; i < serviceCount; ++i) {
-            serviceNamePtrs[i] = cStrBuffer.data() + (i * KEYSAVER_STRING_MAX_SIZE);
+        std::vector<char> cStrBuffer(KEYSAVER_STRING_MAX_SIZE * confCount);
+        std::vector<char*> confNamePtrs(confCount);
+        for (int i = 0; i < confCount; ++i) {
+            confNamePtrs[i] = cStrBuffer.data() + (i * KEYSAVER_STRING_MAX_SIZE);
         }
-        KEYSAVER_CHECK_ERROR(keysaverGetServicesList(serviceNamePtrs.data()), 0);
+        KEYSAVER_CHECK_ERROR(keysaverGetConfigurationsList(confNamePtrs.data()), 0);
 
         int index = 0;
-        for (auto config_name : serviceNamePtrs) {
+        for (auto config_name : confNamePtrs) {
             if (!std::strcmp(config_name, service.conf_id))
                 return index;
 
