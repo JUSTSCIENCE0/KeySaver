@@ -454,7 +454,9 @@ namespace KeysaverDesktop {
         );
 
         if (!out_file.isEmpty()) {
+#ifndef WIN32
             out_file += ".bin";
+#endif // !WIN32
 
             KEYSAVER_CHECK_ERROR(keysaverSyncDatabase());
 
