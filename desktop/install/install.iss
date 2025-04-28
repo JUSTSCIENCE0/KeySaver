@@ -35,7 +35,7 @@ LicenseFile=license\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only).
 ;PrivilegesRequired=lowest
 OutputDir={#BuildDir}
-OutputBaseFilename=keysaver_installer
+OutputBaseFilename=keysaver_windows_x64_installer
 SetupIconFile=..\UI\keysaver_logo.ico
 SolidCompression=yes
 WizardStyle=modern
