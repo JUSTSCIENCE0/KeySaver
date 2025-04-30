@@ -1,0 +1,9 @@
+Package: keysaver
+Version: <PUT_VERSION_HERE>
+Section: utils
+Priority: optional
+Architecture: amd64
+Maintainer: Yakov Usoltsev <yakovmen62@gmail.com>
+Depends: libqt6quickcontrols2-6, qml-module-qtquick-controls2, qml-module-qtquick-controls, qml6-module-qtqml-workerscript, qml6-module-qtquick-controls, qml6-module-qtquick-dialogs, qml6-module-qtquick-layouts, qml6-module-qtquick-templates, qt6-base-dev
+Description: Keysaver is an application designed to generate unique passwords for each service based on a single master password.
+

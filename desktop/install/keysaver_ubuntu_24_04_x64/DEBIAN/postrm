@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+rm -f /usr/local/bin/keysaver
+rm -f /usr/share/applications/keysaver.desktop
+rm -f /usr/share/icons/hicolor/*/apps/keysaver.png
+
+for dir in /home/*; do
+    if [ -d "$dir/.config/keysaver" ]; then
+        rm -rf "$dir/.config/keysaver"
+    fi
+done
+rm -rf /root/.config/keysaver
+
+exit 0

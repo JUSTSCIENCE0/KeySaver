@@ -47,9 +47,14 @@ elseif ((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES 
         -Wdisabled-optimization -Wformat=2 -Winit-self 
         -Wmissing-include-dirs -Wold-style-cast -Woverloaded-virtual
         -Wredundant-decls -Wshadow -Wsign-promo 
-        -Wstrict-overflow=5 -Wundef -Wunused
+        -Wundef -Wunused
         -fdiagnostics-show-option
         -Werror
+    )
+
+    set_target_properties(keysaver-desktop PROPERTIES
+        INSTALL_RPATH "$ORIGIN;${CMAKE_BINARY_DIR}/app/src/main/cpp"
+        BUILD_WITH_INSTALL_RPATH TRUE
     )
 endif() # GCC & Clang
 

@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+
+ln -sf /usr/local/bin/keysaver-files/keysaver-desktop /usr/local/bin/keysaver
+
+exit 0

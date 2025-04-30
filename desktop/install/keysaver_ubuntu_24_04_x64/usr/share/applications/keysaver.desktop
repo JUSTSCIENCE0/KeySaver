@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=KeySaver
+Comment=Keysaver is an application designed to generate unique passwords for each service based on a single master password.
+Exec=/usr/local/bin/keysaver-files/keysaver-desktop
+Icon=keysaver
+Terminal=false
+Type=Application
+Categories=Utility;
