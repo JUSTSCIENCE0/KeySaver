@@ -17,4 +17,5 @@
 .cxx
 local.properties
 .vscode/settings.json
+artifacts/
 
