@@ -1,20 +1,32 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Dialogs
 
 ImageButton {
+    id: helpButton
     source: "qrc:/UI/pictures/ic_help.png"
 
-    property alias text: messageDialog.text
+    property string text: ""
 
     anchors.right: parent.right
     anchors.top: parent.top
     anchors.rightMargin: 16
     anchors.topMargin: 16
 
-    MessageDialog {
+    Dialog {
         id: messageDialog
         title: qsTr("info")
+        width: 400
+        standardButtons: DialogButtonBox.Ok
+
+        Text {
+            text: helpButton.text
+            wrapMode: Text.WordWrap
+            anchors.fill: parent
+        }
+
+        onOpened: {
+            messageDialog.x = -1 * messageDialog.width
+        }
     }
 
     onButtonClick: function() {

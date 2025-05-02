@@ -68,11 +68,13 @@ namespace KeysaverDesktop {
             app.m_gui_app.installTranslator(&translator);
 
             const QUrl url(QString::fromUtf8(app.APP_RESOURCE_ID));
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
             QObject::connect(&app.m_qml_app_engine, &QQmlApplicationEngine::objectCreationFailed,
-                             &app.m_gui_app, []() { QCoreApplication::exit(-1); },
-                             Qt::QueuedConnection);
+                              &app.m_gui_app, []() { QCoreApplication::exit(-1); },
+                              Qt::QueuedConnection);
+#endif
             app.m_qml_app_engine.load(url);
-    
+
             if (app.m_qml_app_engine.rootObjects().isEmpty())
                 return -1;
 
