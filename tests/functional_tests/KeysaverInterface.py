@@ -36,6 +36,9 @@ class KeysaverStatus (Enum):
     E_INVALID_ORDER         = -1011
     E_TOO_LONG_STRING       = -1012
 
+# class ServiseStatus(Enum):
+#     SERVISE_URL =
+
 class KeysaverService(ctypes.Structure):
     _max_size_of_string = 100
     _fields_ = [
