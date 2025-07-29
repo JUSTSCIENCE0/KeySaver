@@ -5,6 +5,7 @@ from KeysaverInterface import KeysaverImplementation
 from KeysaverInterface import KeysaverService
 from KeysaverInterface import KeysaverConfiguration
 from KeysaverInterface import KeysaverStatus as KS
+from KeysaverInterface import ServiseStatus as SS
 
 #todo
 """
@@ -24,15 +25,6 @@ path_to_false_config_dir=r"..\\"
 master_password= r"Test123."
 false_master_password= r"Test1239999."
 short_master_password= r"Test"
-
-exist_service_name = r"test_service_0"
-not_exist_service_name = r"test_service_-1"
-
-exist_service_url=exist_service_name+'.com'
-not_exist_service_url = not_exist_service_name+'.com'
-
-exist_config_name = r"Default"
-not_exist_config_name = r"Default NOT EXIST"
 
 service_count = 5
 config_count = 4
@@ -61,19 +53,6 @@ def instance_false_password():
 def instance_short_password():
     return KeysaverImplementation(path_to_dll, path_to_config_dir, short_master_password)
 
-def get_service(bool_url= True,bool_name = True, bool_config= True):
-    """
-    :param bool_url: True - if need exist url- exist_service_url,
-                            else -  not_exist_service_url
-    :param bool_name: True - if need exist name -  exist_service_name,
-                            else - not_exist_service_name
-    :param bool_config: True - if need exist config - r"Default",
-                            else - r"Default NOT EXIST"
-    :return: KeysaverService
-    """
-    return KeysaverService(url = exist_service_url if bool_url else not_exist_service_url,
-                           name= exist_service_name if bool_name else not_exist_service_name,
-                           conf_id= r"Default" if bool_config else r"Default NOT EXIST")
 
 def get_configuration():
 
@@ -174,7 +153,7 @@ def test_generate_password(instance):
     result = []
     result.append(instance.Init())
     result.append(instance.SetMasterPassword())
-    result.append(instance.GeneratePassword(exist_service_name, 0)[0])
+    result.append(instance.GeneratePassword(SS.EXIST_SERVICE_NAME_0.value, 0)[0])
     result.append(instance.Close())
     assert result == [
                         KS.S_OK.value,
@@ -188,7 +167,7 @@ def test_generate_password_no_service(instance):
     result = []
     result.append(instance.Init())
     result.append(instance.SetMasterPassword())
-    result.append(instance.GeneratePassword(not_exist_service_url, 0)[0])
+    result.append(instance.GeneratePassword(SS.NOT_EXIST_SERVICE_NAME.value, 0)[0])
     result.append(instance.Close())
     assert result == [
                         KS.S_OK.value,
@@ -202,7 +181,7 @@ def test_generate_password_invalid_image(instance):
     result = []
     result.append(instance.Init())
     result.append(instance.SetMasterPassword())
-    result.append(instance.GeneratePassword(exist_service_name, 10)[0])
+    result.append(instance.GeneratePassword(SS.EXIST_SERVICE_NAME_0.value, 10)[0])
     result.append(instance.Close())
     assert result == [
                         KS.S_OK.value,
@@ -211,15 +190,6 @@ def test_generate_password_invalid_image(instance):
                         KS.S_OK.value,],  \
                         f"GeneratePassword for not exist image was crashed"
 
-#todo если БД поврежд и конфиг не найден - E_CONFIG_NOT_EXISTS
-def test_generate_password_for_delete_db(instance):
-    result = []
-    result.append(instance.Init())
-    result.append(instance.SetMasterPassword())
-    os.rename(path_to_config_dir+'/database.bin', path_to_config_dir+'/database' )
-    result.append(instance.GeneratePassword(exist_service_name, 10)[0])
-    os.rename(path_to_config_dir + '/database', path_to_config_dir + '/database.bin')
-    result.append(instance.Close())
 
 #---------------------------------------------------------------------------------------------#
 
@@ -340,12 +310,6 @@ def test_get_exist_database_name(instance):
                         KS.S_OK.value], \
                         f"get_exist_database_name  was crashed"
 
-#---------------------------------------------------------------------------------------------#
-
-""" Test of SyncDatabase"""
-
-# def test_SyncDatabase(instance):
-#
 #---------------------------------------------------------------------------------------------#
 
 """ Test of AddConfiguration WITHOUT SYNC DATA BASE"""

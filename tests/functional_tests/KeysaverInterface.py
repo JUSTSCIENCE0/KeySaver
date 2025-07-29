@@ -36,8 +36,19 @@ class KeysaverStatus (Enum):
     E_INVALID_ORDER         = -1011
     E_TOO_LONG_STRING       = -1012
 
-# class ServiseStatus(Enum):
-#     SERVISE_URL =
+class ServiseStatus(Enum):
+    EXIST_SERVICE_NAME_0 = r"test_service_0"
+    EXIST_SERVICE_NAME_1 = r"test_service_1"
+
+    NOT_EXIST_SERVICE_NAME = r"test_service_-1"
+
+    EXIST_SERVICE_URL_0 = r"test_service_0.com"
+    EXIST_SERVICE_URL_1 = r"test_service_1.com"
+
+    NOT_EXIST_SERVICE_URL = r"test_service_-1.com"
+
+    EXIST_CONFIGURATION = r"Default"
+    NOT_EXIST_CONFIGURATION = r"Default NOT EXIST"
 
 class KeysaverService(ctypes.Structure):
     _max_size_of_string = 100
@@ -310,7 +321,7 @@ class KeysaverImplementation:
             attribute - 'Services', 'Configurations' или 'Alphabets' соответственно
             возвращает list[]
         """
-        item_count = self.call_function_GetAttributeCount(attribute)
+        item_count = self.call_function_GetAttributeCount(attribute)[1]
         config_list = [ctypes.create_string_buffer(self.max_size_of_string) for _ in range(item_count)]
         config_list_ptrs = (ctypes.c_char_p * item_count)(
             *[ctypes.cast(buf, ctypes.c_char_p) for buf in config_list])
