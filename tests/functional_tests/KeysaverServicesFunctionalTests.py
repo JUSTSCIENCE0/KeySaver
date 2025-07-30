@@ -39,7 +39,7 @@ def test_get_services(instance):
                         KS.S_OK.value,                      #SetMasterPassword()
                         (KS.S_OK.value, service_identity),  #instance.GetService(SS.EXIST_SERVICE_NAME_0.value)
                         KS.S_OK.value                       # instance.Close()
-                         ],f"get_services was crashed"
+                        ],f"get_services was crashed"
 
 def test_get_not_exist_services(instance):
     result = []
@@ -222,7 +222,7 @@ def test_edit_exist_service_like_another_exist_servise(instance):
 #---------------------------------------------------------------------------------------------#
 """ Test of AddService WITH SYNC DATA BASE"""
 
-def test_add_new_service(instance):
+def test_add_new_service_with_sync_database(instance):
     result = []
     result.append(instance.Init())
     result.append(instance.SetMasterPassword())
@@ -253,4 +253,37 @@ def test_add_new_service(instance):
                         KS.S_OK.value,                      # instance.SyncDatabase()
                         KS.S_OK.value,                      # instance.Close()
                         ],f"AddService new service with SyncDatabase was crashed"
+
+#---------------------------------------------------------------------------------------------#
+""" Test of DeleteService WITH SYNC DATA BASE"""
+
+def test_delete_exist_service_with_sync_database(instance):
+    result = []
+    result.append(instance.Init())
+    result.append(instance.SetMasterPassword())
+    service_identity = instance.GetService(SS.EXIST_SERVICE_NAME_0.value)[1]
+    result.append(instance.DeleteService(SS.EXIST_SERVICE_NAME_0.value))
+    result.append(instance.SyncDatabase())
+    result.append(instance.Close())
+
+    result.append(instance.Init())
+    result.append(instance.SetMasterPassword())
+    result.append(instance.GetService(SS.EXIST_SERVICE_NAME_0.value)[0])
+    result.append(instance.AddService(service_identity))
+    result.append(instance.SyncDatabase())
+    result.append(instance.Close())
+    assert result == [
+                        KS.S_OK.value,                  # instance.Init()
+                        KS.S_OK.value,                  # SetMasterPassword()
+                        KS.S_OK.value,                  # instance.DeleteService(SS.EXIST_SERVICE_NAME_0.value)
+                        KS.S_OK.value,                  # instance.SyncDatabase()
+                        KS.S_OK.value,                  # instance.Close()
+
+                        KS.S_OK.value,                  # instance.Init()
+                        KS.S_OK.value,                  # SetMasterPassword()
+                        KS.E_SERVICE_NOT_EXISTS.value,  # instance.GetService(SS.EXIST_SERVICE_NAME_0.value)
+                        KS.S_OK.value,                  # instance.AddService(service_identity)
+                        KS.S_OK.value,                  # instance.SyncDatabase()
+                        KS.S_OK.value,                  # instance.Close()
+                        ],f"DeleteService for exist_service was crashed"
 

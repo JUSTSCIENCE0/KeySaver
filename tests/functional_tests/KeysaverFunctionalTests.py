@@ -1,16 +1,10 @@
 import pytest
 import platform
-import os
 from KeysaverInterface import KeysaverImplementation
-from KeysaverInterface import KeysaverService
 from KeysaverInterface import KeysaverConfiguration
 from KeysaverInterface import KeysaverStatus as KS
 from KeysaverInterface import ServiseStatus as SS
 
-#todo
-"""
-4. Добавить комментарии к ошибкам (пример в test_get_services_count)
-"""
 
 if (platform.system()=='Windows'):
     path_to_dll=r"..\..\build\bin\RelWithDebInfo\keysaver-core.dll"
@@ -73,19 +67,22 @@ def get_configuration():
 
 # def test_init(instance):
 #     result = instance.Init()
-#     assert result == 0, f"init was crashed"
+#     assert result == KS.S_OK.value,
+#                       f"init was crashed"
 #
 # def test_init_false_DB(instance_false_DB):
 #     result = instance_false_DB.Init()
-#     assert result == 1, f"init was crashed"
+#     assert result == KS.M_DATABASE_NOT_FOUND.value,
+#                       f"init was crashed"
 
 def test_init_close(instance):
     result = []
     result.append(instance.Init())
     result.append(instance.Close())
     assert result == [
-                        KS.S_OK.value,
-                        KS.S_OK.value], f"init or close was crashed"
+                        KS.S_OK.value,  # instance.Init()
+                        KS.S_OK.value   # instance.Close()
+                        ], f"init or close was crashed"
 
 #
 # def test_init_false_DB_close(instance_false_DB):
@@ -93,9 +90,9 @@ def test_init_close(instance):
 #     result.append(instance_false_DB.Init())
 #     result.append(instance_false_DB.Close())
 #     assert result == [
-#                       KS.M_DATABASE_NOT_FOUND.value,
-#                       KS.S_OK.value],
-#                       f"init false_DB or close was crashed"
+#                       KS.M_DATABASE_NOT_FOUND.value,  # instance_false_DB.Init()
+#                       KS.S_OK.value                 # instance.Close()
+#                       ], f"init false_DB or close was crashed"
 
 #---------------------------------------------------------------------------------------------#
 """ Test of master_password"""
@@ -106,9 +103,9 @@ def test_init_close(instance):
 #     result.append(instance.Init())
 #     result.append(instance.SetMasterPassword())
 #     assert result == [
-#                       KS.S_OK.value,
-#                       KS.S_OK.value],
-#                       f"set_master_password was crashed"
+#                       KS.S_OK.value,  # instance.Init()
+#                       KS.S_OK.value # instance.SetMasterPassword()
+#                       ], f"set_master_password was crashed"
 
 def test_init_set_master_password_close(instance):
 
@@ -117,10 +114,10 @@ def test_init_set_master_password_close(instance):
     result.append(instance.SetMasterPassword())
     result.append(instance.Close())
     assert result == [
-                        KS.S_OK.value,
-                        KS.S_OK.value,
-                        KS.S_OK.value], \
-                        f"set_master_password was crashed"
+                        KS.S_OK.value,  # instance.Init()
+                        KS.S_OK.value,  # instance.SetMasterPassword()
+                        KS.S_OK.value   # instance.Close()
+                        ], f"set_master_password was crashed"
 
 def test_init_set_false_master_password_close(instance_false_password):
     result = []
@@ -128,10 +125,10 @@ def test_init_set_false_master_password_close(instance_false_password):
     result.append(instance_false_password.SetMasterPassword())
     result.append(instance_false_password.Close())
     assert result == [
-                        KS.S_OK.value,
-                        KS.E_INVALID_MASTER_PASSWORD.value,
-                        KS.S_OK.value],  \
-                        f"init, set_master_password false or close was crashed"
+                        KS.S_OK.value,                         # instance_false_password.Init()
+                        KS.E_INVALID_MASTER_PASSWORD.value,    # instance_false_password.SetMasterPassword()
+                        KS.S_OK.value                          # instance_false_password.Close()
+                        ], f"init, set_master_password false or close was crashed"
 
 def test_init_set_short_master_password_close(instance_short_password):
     result = []
@@ -139,10 +136,10 @@ def test_init_set_short_master_password_close(instance_short_password):
     result.append(instance_short_password.SetMasterPassword())
     result.append(instance_short_password.Close())
     assert result == [
-                        KS.S_OK.value,
-                        KS.E_TOO_SHORT_MASTER_PASSWORD.value,
-                        KS.S_OK.value], \
-                        f"init, set_master_password short or close was crashed"
+                        KS.S_OK.value,                          # instance_short_password.Init()
+                        KS.E_TOO_SHORT_MASTER_PASSWORD.value,   # instance_short_password.SetMasterPassword()
+                        KS.S_OK.value                           # instance_short_password.Close()
+                        ], f"init, set_master_password short or close was crashed"
 
 #---------------------------------------------------------------------------------------------#
 
@@ -156,11 +153,11 @@ def test_generate_password(instance):
     result.append(instance.GeneratePassword(SS.EXIST_SERVICE_NAME_0.value, 0)[0])
     result.append(instance.Close())
     assert result == [
-                        KS.S_OK.value,
-                        KS.S_OK.value,
-                        KS.S_OK.value,
-                        KS.S_OK.value],  \
-                        f"GeneratePassword was crashed"
+                        KS.S_OK.value,  # instance.Init()
+                        KS.S_OK.value,  # instance.SetMasterPassword()
+                        KS.S_OK.value,  # instance.GeneratePassword(SS.EXIST_SERVICE_NAME_0.value, 0)[0]
+                        KS.S_OK.value   # instance.Close()
+                        ], f"GeneratePassword was crashed"
 
 def test_generate_password_no_service(instance):
 
@@ -170,11 +167,11 @@ def test_generate_password_no_service(instance):
     result.append(instance.GeneratePassword(SS.NOT_EXIST_SERVICE_NAME.value, 0)[0])
     result.append(instance.Close())
     assert result == [
-                        KS.S_OK.value,
-                        KS.S_OK.value,
-                        KS.E_SERVICE_NOT_EXISTS.value,
-                        KS.S_OK.value],  \
-                        f"GeneratePassword for not exist service was crashed"
+                        KS.S_OK.value,                  # instance.Init()
+                        KS.S_OK.value,                  # instance.SetMasterPassword()
+                        KS.E_SERVICE_NOT_EXISTS.value,  # instance.GeneratePassword(SS.NOT_EXIST_SERVICE_NAME.value, 0)[0]
+                        KS.S_OK.value                   # instance.Close()
+                        ], f"GeneratePassword for not exist service was crashed"
 
 def test_generate_password_invalid_image(instance):
 
@@ -184,11 +181,11 @@ def test_generate_password_invalid_image(instance):
     result.append(instance.GeneratePassword(SS.EXIST_SERVICE_NAME_0.value, 10)[0])
     result.append(instance.Close())
     assert result == [
-                        KS.S_OK.value,
-                        KS.S_OK.value,
-                        KS.E_INVALID_ARG.value,
-                        KS.S_OK.value,],  \
-                        f"GeneratePassword for not exist image was crashed"
+                        KS.S_OK.value,              # instance.Init()
+                        KS.S_OK.value,              # instance.SetMasterPassword()
+                        KS.E_INVALID_ARG.value,     # instance.GeneratePassword(SS.EXIST_SERVICE_NAME_0.value, 10)[0]
+                        KS.S_OK.value               # instance.Close()
+                        ], f"GeneratePassword for not exist image was crashed"
 
 
 #---------------------------------------------------------------------------------------------#
@@ -201,11 +198,11 @@ def test_get_services_count(instance):
     result.append(instance.call_function_GetAttributeCount('Services'))
     result.append(instance.Close())
     assert result == [
-                        KS.S_OK.value,
-                        KS.S_OK.value,
-                        (KS.S_OK.value, service_count),
-                        KS.S_OK.value], \
-                        f"get_services_count  was crashed"
+                        KS.S_OK.value,                      # instance.Init()
+                        KS.S_OK.value,                      # instance.SetMasterPassword()
+                        (KS.S_OK.value, service_count),     # instance.call_function_GetAttributeCount('Services')
+                        KS.S_OK.value                       # instance.Close()
+                        ], f"get_services_count  was crashed"
 
 def test_get_config_count(instance):
     result = []
@@ -214,11 +211,11 @@ def test_get_config_count(instance):
     result.append(instance.call_function_GetAttributeCount('Configurations'))
     result.append(instance.Close())
     assert result == [
-                        KS.S_OK.value,
-                        KS.S_OK.value,
-                        (KS.S_OK.value, config_count),
-                        KS.S_OK.value], \
-                        f"get_config_count  was crashed"
+                        KS.S_OK.value,                  # instance.Init()
+                        KS.S_OK.value,                  # instance.SetMasterPassword()
+                        (KS.S_OK.value, config_count),  # instance.call_function_GetAttributeCount('Configurations')
+                        KS.S_OK.value                   # instance.Close()
+                        ], f"get_config_count  was crashed"
 
 def test_get_alphabet_count(instance):
     result = []
@@ -227,11 +224,11 @@ def test_get_alphabet_count(instance):
     result.append(instance.call_function_GetAttributeCount('Alphabets'))
     result.append(instance.Close())
     assert result == [
-                        KS.S_OK.value,
-                        KS.S_OK.value,
-                        (KS.S_OK.value, alphabet_count),
-                        KS.S_OK.value], \
-                        f"get_alphabet_count  was crashed"
+                        KS.S_OK.value,                      # instance.Init()
+                        KS.S_OK.value,                      # instance.SetMasterPassword()
+                        (KS.S_OK.value, alphabet_count),    # instance.call_function_GetAttributeCount('Alphabets')
+                        KS.S_OK.value                       # instance.Close()
+                        ], f"get_alphabet_count  was crashed"
 
 #---------------------------------------------------------------------------------------------#
 
@@ -249,11 +246,11 @@ def test_get_services_list(instance):
     result.append(len(result_list))
     result.append(instance.Close())
     assert result == [
-                        KS.S_OK.value,
-                        KS.S_OK.value,
-                        service_count,
-                        KS.S_OK.value], \
-                        f"get_services_list  was crashed"
+                        KS.S_OK.value,  # instance.Init()
+                        KS.S_OK.value,  # instance.SetMasterPassword()
+                        service_count,  # len(result_list)
+                        KS.S_OK.value   # instance.Close()
+                        ], f"get_services_list  was crashed"
 
 
 def test_get_config_list(instance):
@@ -266,11 +263,11 @@ def test_get_config_list(instance):
     result.append(len(result_list))
     result.append(instance.Close())
     assert result == [
-                        KS.S_OK.value,
-                        KS.S_OK.value,
-                        config_count,
-                        KS.S_OK.value],\
-                        f"get_config_list  was crashed"
+                        KS.S_OK.value,  # instance.Init()
+                        KS.S_OK.value,  # instance.SetMasterPassword()
+                        config_count,  # len(result_list)
+                        KS.S_OK.value  # instance.Close()
+                        ], f"get_config_list  was crashed"
 
 def test_get_alphabet_list(instance):
     result = []
@@ -282,11 +279,11 @@ def test_get_alphabet_list(instance):
     result.append(len(result_list))
     result.append(instance.Close())
     assert result == [
-                        KS.S_OK.value,
-                        KS.S_OK.value,
-                        alphabet_count,
-                        KS.S_OK.value], \
-                        f"get_alphabet_list  was crashed"
+                        KS.S_OK.value,  # instance.Init()
+                        KS.S_OK.value,  # instance.SetMasterPassword()
+                        alphabet_count,  # len(result_list)
+                        KS.S_OK.value  # instance.Close()
+                        ], f"get_alphabet_list  was crashed"
 
 #---------------------------------------------------------------------------------------------#
 
@@ -301,14 +298,13 @@ def test_get_exist_database_name(instance):
     result_list = instance.GetDatabaseName()
 
     result.append(result_list[0])
-    print(result_list[1])
     result.append(instance.Close())
     assert result == [
-                        KS.S_OK.value,
-                        KS.S_OK.value,
-                        KS.S_OK.value,
-                        KS.S_OK.value], \
-                        f"get_exist_database_name  was crashed"
+                        KS.S_OK.value,  # instance.Init()
+                        KS.S_OK.value,  # instance.SetMasterPassword()
+                        KS.S_OK.value,  # result_list[0] - instance.GetDatabaseName() result
+                        KS.S_OK.value   # instance.Close()
+                        ], f"get_exist_database_name  was crashed"
 
 #---------------------------------------------------------------------------------------------#
 
@@ -322,8 +318,8 @@ def test_add_new_configuration(instance):
     result.append(instance.AddConfiguration(configuration_identity))
     result.append(instance.Close())
     assert result == [
-                        KS.S_OK.value,
-                        KS.S_OK.value,
-                        KS.S_OK.value,
-                        KS.S_OK.value], \
-        f"AddConfiguration new was crashed"
+                        KS.S_OK.value,  # instance.Init()
+                        KS.S_OK.value,  # instance.SetMasterPassword()
+                        KS.S_OK.value,  # instance.AddConfiguration(configuration_identity)
+                        KS.S_OK.value   # instance.Close()
+                     ], f"AddConfiguration new was crashed"
