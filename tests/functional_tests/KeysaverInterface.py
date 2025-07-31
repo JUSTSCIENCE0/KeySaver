@@ -1,9 +1,11 @@
 from enum import Enum
+from dataclasses import dataclass
 import ctypes
 import os
 
-class KeysaverStatus (Enum):
-    #SUCCESS
+
+class KeysaverStatus(Enum):
+    # SUCCESS
     S_OK = 0
     S_IS_FOUND = 0
 
@@ -11,30 +13,31 @@ class KeysaverStatus (Enum):
     M_DATABASE_NOT_FOUND = 1
 
     # Errors
-    E_INVALID_MASTER_PASSWORD    = -1
-    E_TOO_SHORT_MASTER_PASSWORD  = -2
-    E_SERVICE_ALREADY_EXISTS     = -3
+    E_INVALID_MASTER_PASSWORD = -1
+    E_TOO_SHORT_MASTER_PASSWORD = -2
+    E_SERVICE_ALREADY_EXISTS = -3
     E_SERVICE_URL_ALREADY_EXISTS = -4
-    E_CONFIG_ALREADY_EXISTS      = -5
-    E_INVALID_PASSWORD_LENGTH    = -6
+    E_CONFIG_ALREADY_EXISTS = -5
+    E_INVALID_PASSWORD_LENGTH = -6
     E_INVALID_SPECIAL_CHAR_COUNT = -7
-    E_INVALID_DIGITS_AMOUNT      = -8
-    E_WITHOUT_ANY_CASE           = -9
+    E_INVALID_DIGITS_AMOUNT = -8
+    E_WITHOUT_ANY_CASE = -9
 
     # Internal Errors
-    E_NOT_IMPLEMENTED       = -1000
-    E_NOT_INITIALIZED       = -1001
+    E_NOT_IMPLEMENTED = -1000
+    E_NOT_INITIALIZED = -1001
     E_INTERNAL_OPENSSL_FAIL = -1002
-    E_INVALID_ARG           = -1003
-    E_SERVICE_NOT_EXISTS    = -1004
-    E_CONFIG_NOT_EXISTS     = -1005
-    E_DB_WRITE_ERROR        = -1006
-    E_DB_READ_ERROR         = -1007
-    E_DB_CORRUPTED          = -1008
-    E_UNSUPPORTED_ALPHABET  = -1009
-    E_UNEXPECTED_EXCEPTION  = -1010
-    E_INVALID_ORDER         = -1011
-    E_TOO_LONG_STRING       = -1012
+    E_INVALID_ARG = -1003
+    E_SERVICE_NOT_EXISTS = -1004
+    E_CONFIG_NOT_EXISTS = -1005
+    E_DB_WRITE_ERROR = -1006
+    E_DB_READ_ERROR = -1007
+    E_DB_CORRUPTED = -1008
+    E_UNSUPPORTED_ALPHABET = -1009
+    E_UNEXPECTED_EXCEPTION = -1010
+    E_INVALID_ORDER = -1011
+    E_TOO_LONG_STRING = -1012
+
 
 class ServiseStatus(Enum):
     EXIST_SERVICE_NAME_0 = r"test_service_0"
@@ -50,12 +53,78 @@ class ServiseStatus(Enum):
     EXIST_CONFIGURATION = r"Default"
     NOT_EXIST_CONFIGURATION = r"Default NOT EXIST"
 
+
+@dataclass(frozen=True)
+class ConfigurationParams:
+    id_name: str
+    length: int
+    use_upper: bool
+    use_lower: bool
+    alphabet: int
+    use_special_chars: bool
+    special_chars_count: int
+    special_charset: str
+    use_digits: bool
+    digits_amount: int
+
+class ConfigurationStatus(Enum):
+    EXIST = ConfigurationParams(
+        id_name=r"conf_20_True_True_0_True_3_True_4",
+        length=20,
+        use_upper=True,
+        use_lower=True,
+        alphabet=0,
+        use_special_chars=True,
+        special_chars_count=3,
+        special_charset=r"!@#$%^&*()_-+=/?.,<>'\";:[]{}",
+        use_digits=True,
+        digits_amount=4
+    )
+    DEFAULT = ConfigurationParams(
+        id_name="Default",
+        length=16,
+        use_upper=True,
+        use_lower=True,
+        alphabet=0,
+        use_special_chars=True,
+        special_chars_count=2,
+        special_charset=r"!@#$%^&*()_-+=/?.,<>'\";:[]{}",
+        use_digits=True,
+        digits_amount=2
+    )
+    NOT_EXIST = ConfigurationParams(
+        id_name="Default NOT EXIST",
+        length=16,
+        use_upper=True,
+        use_lower=True,
+        alphabet=0,
+        use_special_chars=True,
+        special_chars_count=3,
+        special_charset=r"!@#$%^&*()_-+=/?.,<>'\";:[]{}",
+        use_digits=True,
+        digits_amount=1
+    )
+    INVALID_PASSWORD_LENGTH = ConfigurationParams(
+        id_name="INVALID_PASSWORD_LENGTH",
+        length=99,
+        use_upper=True,
+        use_lower=True,
+        alphabet=0,
+        use_special_chars=True,
+        special_chars_count=3,
+        special_charset=r"!@#$%^&*()_-+=/?.,<>'\";:[]{}",
+        use_digits=True,
+        digits_amount=1
+    )
+
+
+
 class KeysaverService(ctypes.Structure):
     _max_size_of_string = 100
     _fields_ = [
-        ("url", ctypes.c_char  * _max_size_of_string),
-        ("name", ctypes.c_char  * _max_size_of_string),
-        ("conf_id", ctypes.c_char  * _max_size_of_string),
+        ("url", ctypes.c_char * _max_size_of_string),
+        ("name", ctypes.c_char * _max_size_of_string),
+        ("conf_id", ctypes.c_char * _max_size_of_string),
     ]
 
     # service = KeysaverService(url=r"https://example.com",
@@ -80,6 +149,7 @@ class KeysaverService(ctypes.Structure):
                 self.name[:] == other.name[:] and
                 self.conf_id[:] == other.conf_id[:]
         )
+
 
 class KeysaverConfiguration(ctypes.Structure):
     """    Название конфига строится из conf_+ 'length'+_+'use_upper'+...
@@ -113,30 +183,44 @@ class KeysaverConfiguration(ctypes.Structure):
     #                                use_digits=True,
     #                                digits_amount=3)
 
-    def __init__(
-            self,
-            id_name="",
-            length=0,
-            use_upper=False,
-            use_lower=False,
-            alphabet=0,
-            use_special_chars=False,
-            special_chars_count=0,
-            special_charset="",
-            use_digits=False,
-            digits_amount=0
-    ):
-        super().__init__()
-        self.id_name = id_name.encode("utf-8") if id_name else None
-        self.length = length
-        self.use_upper = use_upper
-        self.use_lower = use_lower
-        self.alphabet = alphabet
-        self.use_special_chars = use_special_chars
-        self.special_chars_count = special_chars_count
-        self.special_charset = special_charset.encode("utf-8") if special_charset else None
-        self.use_digits = use_digits
-        self.digits_amount = digits_amount
+    # def __init__(
+    #         self,
+    #         id_name="",
+    #         length=0,
+    #         use_upper=False,
+    #         use_lower=False,
+    #         alphabet=0,
+    #         use_special_chars=False,
+    #         special_chars_count=0,
+    #         special_charset="",
+    #         use_digits=False,
+    #         digits_amount=0
+    # ):
+    #     super().__init__()
+    #     self.id_name = id_name.encode("utf-8") if id_name else None
+    #     self.length = length
+    #     self.use_upper = use_upper
+    #     self.use_lower = use_lower
+    #     self.alphabet = alphabet
+    #     self.use_special_chars = use_special_chars
+    #     self.special_chars_count = special_chars_count
+    #     self.special_charset = special_charset.encode("utf-8") if special_charset else None
+    #     self.use_digits = use_digits
+    #     self.digits_amount = digits_amount
+
+    def __init__(self, status: ConfigurationStatus):
+        config: ConfigurationParams = status.value  # получаем dataclass из Enum
+
+        self.id_name = config.id_name.encode("utf-8") if config.id_name else None
+        self.length = config.length
+        self.use_upper = config.use_upper
+        self.use_lower = config.use_lower
+        self.alphabet = config.alphabet
+        self.use_special_chars = config.use_special_chars
+        self.special_chars_count = config.special_chars_count
+        self.special_charset = config.special_charset.encode("utf-8") if config.special_charset else None
+        self.use_digits = config.use_digits
+        self.digits_amount = config.digits_amount
 
     def __eq__(self, other):
         if not isinstance(other, KeysaverConfiguration):
@@ -153,6 +237,7 @@ class KeysaverConfiguration(ctypes.Structure):
                 self.use_digits == other.use_digits and
                 self.digits_amount == other.digits_amount
         )
+
 
 class KeysaverImplementation:
     def __init__(self, path_to_dll, path_to_config_dir, master_password):
@@ -304,14 +389,14 @@ class KeysaverImplementation:
         attribute - 'Services', 'Configurations' или 'Alphabets' соответственно
         возвращает число int
         """
-        func_name = 'keysaverGet'+attribute+'Count'
+        func_name = 'keysaverGet' + attribute + 'Count'
         function = getattr(self.windows_lib, func_name)
         function.argtypes = [ctypes.POINTER(ctypes.c_int)]
         function.restype = ctypes.c_int
 
         value = ctypes.c_int()
         result = function(ctypes.byref(value))
-        print("Result of "+func_name+":", result)
+        print("Result of " + func_name + ":", result)
         print("Count:", value.value)
         return result, value.value
 
@@ -331,11 +416,11 @@ class KeysaverImplementation:
         function.argtypes = [ctypes.POINTER(ctypes.c_char_p)]
         function.restype = ctypes.c_int
         result = function(config_list_ptrs)
-        print("Result of "+func_name+":", result)
+        print("Result of " + func_name + ":", result)
 
         if result == 0:
             print("Список:")
-            return_list =[]
+            return_list = []
             for s in config_list:
                 if s:  # Проверка на NULL
                     s = bytes(s).split(b'\x00', 1)[0].decode('utf-8')
@@ -344,5 +429,3 @@ class KeysaverImplementation:
             return return_list
         else:
             print(f"Ошибка: код {result}")
-
-

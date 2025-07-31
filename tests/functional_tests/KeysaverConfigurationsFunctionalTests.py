@@ -1,8 +1,10 @@
 import pytest
 import platform
 from KeysaverInterface import KeysaverImplementation
+from KeysaverInterface import KeysaverConfiguration
 from KeysaverInterface import KeysaverStatus as KS
-from KeysaverInterface import ServiseStatus as SS
+from KeysaverInterface import ConfigurationStatus as CS
+
 
 if (platform.system() == 'Windows'):
     path_to_dll = r"..\..\build\bin\RelWithDebInfo\keysaver-core.dll"
@@ -14,9 +16,6 @@ path_to_config_dir = r".\storage"
 path_to_false_config_dir = r"..\\"
 
 master_password = r"Test123."
-false_master_password = r"Test1239999."
-short_master_password = r"Test"
-
 
 @pytest.fixture
 # default keySaver with validate data
@@ -24,48 +23,50 @@ def instance():
     return KeysaverImplementation(path_to_dll, path_to_config_dir, master_password)
 
 
+
 # ---------------------------------------------------------------------------------------------#
 
-""" Test of generate_password"""
+""" Test of AddConfiguration WITHOUT SYNC DATA BASE"""
 
-
-def test_generate_password(instance):
+def test_add_new_configuration(instance):
     result = []
     result.append(instance.Init())
     result.append(instance.SetMasterPassword())
-    result.append(instance.GeneratePassword(SS.EXIST_SERVICE_NAME_0.value, 0)[0])
+    configuration_identity = KeysaverConfiguration(CS.NOT_EXIST)
+
+    result.append(instance.AddConfiguration(configuration_identity))
     result.append(instance.Close())
     assert result == [
         KS.S_OK.value,  # instance.Init()
         KS.S_OK.value,  # instance.SetMasterPassword()
-        KS.S_OK.value,  # instance.GeneratePassword(SS.EXIST_SERVICE_NAME_0.value, 0)[0]
+        KS.S_OK.value,  # instance.AddConfiguration(configuration_identity)
         KS.S_OK.value  # instance.Close()
-    ], f"GeneratePassword was crashed"
+    ], f"AddConfiguration new was crashed"
 
-
-def test_generate_password_no_service(instance):
+def test_add_exist_configuration(instance):
     result = []
     result.append(instance.Init())
     result.append(instance.SetMasterPassword())
-    result.append(instance.GeneratePassword(SS.NOT_EXIST_SERVICE_NAME.value, 0)[0])
+    configuration_identity = KeysaverConfiguration(CS.EXIST)
+    result.append(instance.AddConfiguration(configuration_identity))
     result.append(instance.Close())
     assert result == [
         KS.S_OK.value,  # instance.Init()
         KS.S_OK.value,  # instance.SetMasterPassword()
-        KS.E_SERVICE_NOT_EXISTS.value,  # instance.GeneratePassword(SS.NOT_EXIST_SERVICE_NAME.value, 0)[0]
+        KS.E_CONFIG_ALREADY_EXISTS.value,  # instance.AddConfiguration(configuration_identity)
         KS.S_OK.value  # instance.Close()
-    ], f"GeneratePassword for not exist service was crashed"
+    ], f"AddConfiguration not exist was crashed"
 
-
-def test_generate_password_invalid_image(instance):
+def test_add_configuration_invalid_pass_length(instance):
     result = []
     result.append(instance.Init())
     result.append(instance.SetMasterPassword())
-    result.append(instance.GeneratePassword(SS.EXIST_SERVICE_NAME_0.value, 10)[0])
+    configuration_identity = KeysaverConfiguration(CS.INVALID_PASSWORD_LENGTH)
+    result.append(instance.AddConfiguration(configuration_identity))
     result.append(instance.Close())
     assert result == [
         KS.S_OK.value,  # instance.Init()
         KS.S_OK.value,  # instance.SetMasterPassword()
-        KS.E_INVALID_ARG.value,  # instance.GeneratePassword(SS.EXIST_SERVICE_NAME_0.value, 10)[0]
+        KS.E_INVALID_PASSWORD_LENGTH.value,  # instance.AddConfiguration(configuration_identity)
         KS.S_OK.value  # instance.Close()
-    ], f"GeneratePassword for not exist image was crashed"
+    ], f"AddConfiguration invalid_pass_length was crashed"
