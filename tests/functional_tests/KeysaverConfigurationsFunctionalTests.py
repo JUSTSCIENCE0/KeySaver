@@ -22,8 +22,6 @@ master_password = r"Test123."
 def instance():
     return KeysaverImplementation(path_to_dll, path_to_config_dir, master_password)
 
-
-
 # ---------------------------------------------------------------------------------------------#
 
 """ Test of AddConfiguration WITHOUT SYNC DATA BASE"""
@@ -70,3 +68,32 @@ def test_add_configuration_invalid_pass_length(instance):
         KS.E_INVALID_PASSWORD_LENGTH.value,  # instance.AddConfiguration(configuration_identity)
         KS.S_OK.value  # instance.Close()
     ], f"AddConfiguration invalid_pass_length was crashed"
+
+def test_add_configuration_use_upper_lower_false(instance):
+    result = []
+    result.append(instance.Init())
+    result.append(instance.SetMasterPassword())
+    configuration_identity = KeysaverConfiguration(CS.WITHOUT_ANY_CASE)
+    result.append(instance.AddConfiguration(configuration_identity))
+    result.append(instance.Close())
+    assert result == [
+        KS.S_OK.value,  # instance.Init()
+        KS.S_OK.value,  # instance.SetMasterPassword()
+        KS.E_WITHOUT_ANY_CASE.value,  # instance.AddConfiguration(configuration_identity)
+        KS.S_OK.value  # instance.Close()
+    ], f"AddConfiguration without upper&lower case was crashed"
+
+def test_add_configuration_unsupported_alphabet(instance):
+    result = []
+    result.append(instance.Init())
+    result.append(instance.SetMasterPassword())
+    configuration_identity = KeysaverConfiguration(CS.UNSUPPORTED_ALPHABET)
+    result.append(instance.AddConfiguration(configuration_identity))
+    result.append(instance.Close())
+    assert result == [
+        KS.S_OK.value,  # instance.Init()
+        KS.S_OK.value,  # instance.SetMasterPassword()
+        KS.E_UNSUPPORTED_ALPHABET.value,  # instance.AddConfiguration(configuration_identity)
+        KS.S_OK.value  # instance.Close()
+    ], f"AddConfiguration with unsupported_alphabet was crashed"
+

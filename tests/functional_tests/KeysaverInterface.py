@@ -116,6 +116,30 @@ class ConfigurationStatus(Enum):
         use_digits=True,
         digits_amount=1
     )
+    WITHOUT_ANY_CASE = ConfigurationParams(
+        id_name="WITHOUT_ANY_CASE ",
+        length=20,
+        use_upper=False,
+        use_lower=False,
+        alphabet=0,
+        use_special_chars=True,
+        special_chars_count=3,
+        special_charset=r"!@#$%^&*()_-+=/?.,<>'\";:[]{}",
+        use_digits=True,
+        digits_amount=1
+    )
+    UNSUPPORTED_ALPHABET = ConfigurationParams(
+        id_name="UNSUPPORTED_ALPHABET ",
+        length=20,
+        use_upper=True,
+        use_lower=True,
+        alphabet=2,
+        use_special_chars=True,
+        special_chars_count=3,
+        special_charset=r"!@#$%^&*()_-+=/?.,<>'\";:[]{}",
+        use_digits=True,
+        digits_amount=1
+    )
 
 
 
