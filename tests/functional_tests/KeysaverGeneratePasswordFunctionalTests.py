@@ -1,6 +1,6 @@
 import pytest
 import platform
-
+import re
 import KeysaverInterface
 from KeysaverInterface import KeysaverImplementation
 from KeysaverInterface import KeysaverStatus as KS
@@ -20,8 +20,15 @@ master_password = r"Test123."
 false_master_password = r"Test1239999."
 short_master_password = r"Test"
 
-password = b'gM?mWTZei88mE#Nj'
+password = b'gM?mWTZei88mE#Nj' # instance.GeneratePassword(SS.EXIST_SERVICE_NAME_0.value, 0)
+# password_list = []
 
+special_chars = rb"!@#\$%\^&\*\(\)_\-\+=/\?\.,<>'\";:\[\]\{\}"
+special_class = b"!@#\$%\^&\*\(\)_\-\+=/\?\.,<>'\";:\[\]\{\}"
+default_conf_pattern = rb"^(?=(?:.*[A-Za-z]){12,})(?=(?:.*\d){2})(?=(?:.*[" + special_chars + rb"]){2})[A-Za-z\d" + special_chars + rb"]{16}$"
+
+
+# todo check passwords by regex
 @pytest.fixture
 # default keySaver with validate data
 def instance():
@@ -29,9 +36,13 @@ def instance():
 
 # @pytest.fixture(scope="session", autouse=True)
 # def global_passwords_setup():
+#     KS_object = KeysaverImplementation(path_to_dll, path_to_config_dir, master_password)
+#     KS_object.Init()
+#     KS_object.SetMasterPassword()
+#     for i in range(0, 9):
+#         password_list.append(KS_object.GeneratePassword(SS.EXIST_SERVICE_NAME_0.value, i)[1])
+#     KS_object.Close()
 #
-#     # Можно вызвать здесь нужную функцию
-#     # my_setup_function()
 
 # ---------------------------------------------------------------------------------------------#
 
@@ -98,5 +109,37 @@ def test_generate_password_for_ENG_conf(instance):
         (KS.S_OK.value, password),
         KS.S_OK.value  # instance.Close()
     ], f"GeneratePassword for not exist image was crashed"
+
+def test_generate_password_regex(instance):
+    result = []
+    result.append(instance.Init())
+    result.append(instance.SetMasterPassword())
+    service_identity = KeysaverInterface.KeysaverService(url=SS.EXIST_SERVICE_URL_0.value,
+                                                         name=SS.EXIST_SERVICE_NAME_0.value,
+                                                         conf_id=SS.EXIST_CONFIGURATION.value)
+    result.append(instance.EditService(SS.EXIST_SERVICE_NAME_0.value, service_identity))
+
+    for i in range(0, 9):
+        res = instance.GeneratePassword(SS.EXIST_SERVICE_NAME_0.value, i)
+        if (res[0]==0 and re.fullmatch(default_conf_pattern, res[1])): result.append(KS.S_OK.value)
+        else:result.append(KS.E_UNEXPECTED_EXCEPTION.value)
+    result.append(instance.Close())
+
+    assert result == [
+        KS.S_OK.value,  # instance.Init()
+        KS.S_OK.value,  # instance.SetMasterPassword()
+        KS.S_OK.value,  # instance.EditService(SS.EXIST_SERVICE_NAME_0.value, service_identity)
+        KS.S_OK.value,  # instance.GeneratePassword(SS.EXIST_SERVICE_NAME_0.value, i)
+        KS.S_OK.value,
+        KS.S_OK.value,
+        KS.S_OK.value,
+        KS.S_OK.value,
+        KS.S_OK.value,
+        KS.S_OK.value,
+        KS.S_OK.value,
+        KS.S_OK.value,
+        KS.S_OK.value  # instance.Close()
+    ], f"GeneratePassword for not exist image was crashed"
+
 
 
