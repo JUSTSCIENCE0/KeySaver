@@ -51,6 +51,7 @@ class ServiseStatus(Enum):
     NOT_EXIST_SERVICE_URL = r"test_service_-1.com"
 
     EXIST_CONFIGURATION = r"Default"
+    EXIST_EDIT_CONFIGURATION = r"conf_20_True_True_0_True_3_True_4"
     NOT_EXIST_CONFIGURATION = r"Default NOT EXIST"
 
 
