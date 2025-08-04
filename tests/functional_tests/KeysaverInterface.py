@@ -403,10 +403,11 @@ class KeysaverImplementation:
         self.windows_lib.keysaverGeneratePassword.restype = ctypes.c_int
 
         result_buffer = ctypes.create_string_buffer(self.max_size_of_string)
-        result_buffer = ctypes.cast(result_buffer, ctypes.c_char_p)
+        #result_buffer = ctypes.cast(result_buffer, ctypes.c_char_p)
         result = self.windows_lib.keysaverGeneratePassword(serviceName.encode("utf-8"), imageIndex, result_buffer)
+
         print("Result of GeneratePassword:", result)
-        return result, result_buffer.value
+        return result, result_buffer.value.decode("utf-8")
 
     def call_function_GetAttributeCount(self, attribute):
         """

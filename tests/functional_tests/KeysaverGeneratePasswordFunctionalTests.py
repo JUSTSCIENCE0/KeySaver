@@ -50,13 +50,49 @@ def build_pattern(length=16, num_digits=2, num_specials=2, special_chars=None,
 
     if letter_classes:
         parts.append(fr"(?=(?:.*[{letter_class_str}]){{{min_letters},}})".encode())
-        parts.append(fr"(?=(?:.*\d){{{num_digits}}})".encode())
-        parts.append(fr"(?=(?:.*[{special_class_str}]){{{num_specials}}})".encode())
-        parts.append(fr"[{letter_class_str}\d{special_class_str}]{{{length}}}$".encode())
+    parts.append(fr"(?=(?:.*\d){{{num_digits}}})".encode())
+    parts.append(fr"(?=(?:.*[{special_class_str}]){{{num_specials}}})".encode())
+    parts.append(fr"[{letter_class_str}\d{special_class_str}]{{{length}}}$".encode())
 
     return b"".join(parts)
 
-special_chars = rb"!@#\$%\^&\*\(\)_\-\+=/\?\.,<>'\";:\[\]\{\}"
+def build_pattern_str(length=16, num_digits=2, num_specials=2, special_chars=None,
+                  use_upper=True, use_lower=True, use_digits=True):
+    if special_chars is None:
+        special_chars = "!@#$%^&*()_-+=/?.,<>'\";:[]{}"
+
+    if not use_digits:
+        num_digits = 0
+
+    letter_classes = ""
+    if use_upper:
+        letter_classes += "A-Z"
+    if use_lower:
+        letter_classes += "a-z"
+
+    if not letter_classes and (length - num_digits - num_specials) > 0:
+        raise ValueError("Невозможно создать шаблон: буквы запрещены, но их количество требуется.")
+
+    special_class = ''.join(
+        [f"\\{c}" if c in r"\-^[]{}" else c for c in special_chars]
+    )
+
+    min_letters = length - num_digits - num_specials
+
+    parts = ["^"]
+
+    if letter_classes:
+        parts.append(f"(?=(?:.*[{letter_classes}]){{{min_letters},}})")
+    if num_digits > 0:
+        parts.append(f"(?=(?:.*\\d){{{num_digits}}})")
+    if num_specials > 0:
+        parts.append(f"(?=(?:.*[{special_class}]){{{num_specials}}})")
+
+    parts.append(f"[{letter_classes}\\d{special_class}]{{{length}}}$")
+
+    return ''.join(parts)
+
+# special_chars = rb"!@#\$%\^&\*\(\)_\-\+=/\?\.,<>'\";:\[\]\{\}"
 #default_conf_pattern = rb"^(?=(?:.*[A-Za-z]){12,})(?=(?:.*\d){2})(?=(?:.*[" + special_chars + rb"]){2})[A-Za-z\d" + special_chars + rb"]{16}$"
 
 
@@ -186,15 +222,16 @@ def test_generate_password_regex_ENG_EXIST_conf(instance):
                                                          name=SS.EXIST_SERVICE_NAME_0.value,
                                                          conf_id=SS.EXIST_EDIT_CONFIGURATION.value)
     result.append(instance.EditService(SS.EXIST_SERVICE_NAME_0.value, service_identity))
+    pattern = build_pattern_str(length=20,
+                            use_lower=True,
+                            use_upper=True,
+                            use_digits=True,
+                            num_specials=3,
+                            num_digits=4)
 
     for i in range(0, 9):
         res = instance.GeneratePassword(SS.EXIST_SERVICE_NAME_0.value, i)
-        if res[0] == 0 and re.fullmatch(build_pattern(length=20,
-                                                      use_lower=True,
-                                                      use_upper=True,
-                                                      use_digits=True,
-                                                      num_specials=3,
-                                                      num_digits=4), res[1]):
+        if res[0] == 0 and re.fullmatch(pattern, res[1]):
             result.append(KS.S_OK.value)
         else:
             result.append(res[0])
